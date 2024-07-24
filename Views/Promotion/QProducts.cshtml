@@ -1,0 +1,362 @@
+﻿
+@using System.Data
+@using System.Collections
+@using b2b_solution.Models
+
+@{
+    DataModel dm = new DataModel();
+    DataTable dt = ViewBag.QProducts;
+    foreach (DataRow dx in dt.Rows)
+    {
+
+        <div class="col-lg-1-5 col-md-4 col-12 col-sm-6">
+            <div class="product-cart-wrap mb-30 wow animate__animated animate__fadeIn" data-wow-delay=".1s">
+                <div class="product-img-action-wrap">
+                    <div class="product-img product-img-zoom">
+                        <a href="#">
+                            <img class="default-img" src="@dx["itm_Image"].ToString()" alt="" />
+                            <img class="hover-img" src="@dx["itm_Image"].ToString()" alt="" />
+                        </a>
+                    </div>
+                    <div class="product-action-1">
+                        @*<a aria-label="Add To Wishlist" class="action-btn" onclick="InsWishList(' @dx["itm_ID"].ToString() ')" ><i class=" fi-rs-heart"></i></a>*@
+                        @*<a aria-label="Quick view" class="action-btn" data-bs-toggle="modal" data-bs-target="#quickViewModal"><i class="fi-rs-eye"></i></a>*@
+                    </div>
+                    @*<div class="product-badges product-badges-position product-badges-mrg">
+                            <span class="hot">Hot</span>
+                        </div>*@
+                </div>
+                <div class="product-content-wrap">
+                    <div class="product-category">
+                        <a>@dx["sct_Name"].ToString()</a>
+                    </div>
+                    <h2><a>@dx["itm_Name"].ToString()</a></h2>
+
+                    <div class="product-card-bottom">
+                        <div class="col-lg-6">
+                            <div class="header-info header-info">
+                                <ul>
+                                    <li>
+
+                                        @{
+                                            DataTable dtUom = dm.loadList("SelItemHigherUOM", "sp_B2B_Home", @dx["itm_ID"].ToString());
+                                            List<SelectListItem> list = new List<SelectListItem>();
+                                            foreach (DataRow drUom in dtUom.Rows as IEnumerable)
+                                            {
+                                                list.Add(new SelectListItem { Text = drUom["uom_Name"].ToString(), Value = drUom["uom_ID"].ToString() });
+                                            }
+                                        }
+
+                                        @Html.DropDownList("uomID", new SelectList(list, "Value", "Text", dx["crd_HigherUOM"]), new
+                                        {
+                                            @class = "language-dropdown",
+                                       @onchange = "GetLUOM('" + @dx["itm_ID"].ToString() + "' , this)",
+                                            @id = "QHUOM" + @dx["itm_ID"].ToString()
+                                   })
+                                    </li>
+                                </ul>
+                            </div>
+
+                            <div class="product-price">
+                                <span id="QHOP-@dx["itm_ID"].ToString()">@dx["OfferPrice"].ToString()</span>
+
+                                @{ 
+                                    string offerPrice = dx["OfferPrice"].ToString();
+                                    string StandardPrice = dx["standardPrice"].ToString();
+                                    if (offerPrice == StandardPrice)
+                                    {
+                                        StandardPrice = "";
+                                    }
+                                }
+
+                                <span id="QHSP-@dx["itm_ID"].ToString()" class="old-price">@StandardPrice</span>
+                            </div>
+                        </div>
+
+                        <div class="add-cart">
+                            <div class="detail-extralink">
+                                @(Html.Kendo().NumericTextBox()
+            .Name("QHqty" + @dx["itm_ID"].ToString())
+            .Min(0)
+            .Format("##")
+            .Events(e => e.Change("changeHQty").Spin("changeHQty"))
+            .Max(90000)
+            .Value(int.Parse(@dx["crd_HigherQty"].ToString()) )
+            .Step(1)
+            .RestrictDecimals(true)
+            .HtmlAttributes(new { style = "width: 100%; text-align:center" , @class="form-control"  }) )
+                            </div>
+                        </div>
+                    </div>
+
+                    @*LOWER UOM CONFIGURATION AREA*@
+
+                    @{
+
+                        ViewBag.ProductRow = dx;
+                        if (Double.Parse(dx["crd_LowerQty"].ToString()) >= 0)
+                        {
+
+
+                            string[] arr = { dx["itm_ID"].ToString() };
+                            DataTable dtLowerUom = dm.loadList("SelItemLowerUOM", "sp_B2B_Home", dx["crd_HigherUOM"].ToString(), arr);
+
+                            List<UOMModel> transaction_Lists = new List<UOMModel>();
+                            foreach (DataRow drUom in dtLowerUom.Rows as IEnumerable)
+                            {
+                                transaction_Lists.Add(new UOMModel { Text = drUom["uom_Name"].ToString(), Value = drUom["uom_ID"].ToString() });
+                            }
+
+                            var uomLow = new UomList();
+                            uomLow.ListUomModel = transaction_Lists;
+
+                            List<ItemRow> RowItems = new List<ItemRow>();
+                            RowItems.Add(new ItemRow
+                            {
+                                id = dx["itm_ID"].ToString(),
+                                LowerUOM = dx["crd_lowerUOM"].ToString(),
+                                LowerUOMOfferPrice = dx["LowerOfferPrice"].ToString(),
+                                LowerUOMStandardPrice = dx["LowerStdPrice"].ToString(),
+                                lowerQty = dx["crd_LowerQty"].ToString()
+                            });
+
+                            var LowRow = new ItemList();
+                            LowRow.Rowitem = RowItems;
+
+                            <div id="QlowPartial-@dx["itm_ID"]" class="fadeIn">
+                                @{
+                                    if (dtLowerUom.Rows.Count > 0)
+                                    { @Html.Partial("QLowerUOM", new ProductList { LowItem = LowRow, LowUOM = uomLow })}
+                                }
+
+
+                            </div>
+
+
+                        }
+                    }
+
+
+
+
+                </div>
+
+            </div>
+        </div>
+
+
+    }
+
+    <style>
+        .k-select {
+            background-color: #ffffff;
+            border-color: #d32027 !important;
+            color: #d32027 !important;
+            border-style: hidden !important;
+        }
+
+        .k-link-increase {
+            height: 25px !important;
+        }
+
+        .k-link-decrease {
+            height: 25px !important;
+        }
+
+        .k-state-default {
+            border-color: #d32027 !important;
+        }
+    </style>
+    <script>
+
+        function GetLUOM(id, itmValue) {
+            var uomID = itmValue.value;
+            $.ajax({
+            type: "GET",
+            url: '@Url.Action("GetItemUOMPrice", "Home")',
+            contentType: "application/json; charset=utf-8",
+                data: { id: id, itmValues: uomID },
+            dataType: "json",
+                success: function (data) {
+                    document.getElementById("QHOP-" + id).innerHTML = data.OfferPrice;
+                    document.getElementById("QHSP-" + id).innerHTML = data.StandardPrice;
+                }
+
+            });
+
+             $.ajax({
+            type: "GET",
+            url: '@Url.Action("UpdateHUOMCart", "Home")',
+            contentType: "application/json; charset=utf-8",
+                data: { id: id, itmValues: uomID },
+            dataType: "json"
+            });
+
+            $('#QlowPartial-' + id).load('/Home/GetQLowerUOM?id=' + id + "&&itmValues=" + uomID);
+        }
+
+        function changeHQty() {
+            var x = this;
+
+            var id = x.element.attr("id");
+            var itemID = id.replace("QHqty", "");
+            var HUom = $('#QHUOM' + itemID).val();
+            var LQty = $('#QLQTY-' + itemID).val();
+
+            if (LQty == null) {
+                LQty = 0;
+            }
+            var LUOM = $('#QddlUOM-' + itemID).val();
+            if (LUOM == null) {
+                LUOM = 0;
+            }
+
+             $.ajax({
+            type: "GET",
+            url: '@Url.Action("InsCart", "Home")',
+            contentType: "application/json; charset=utf-8",
+                 data: {
+                     "id": itemID,
+                     "HigherQty": x.value(),
+                     "HigherUOM": HUom,
+                     "LowerQty": LQty,
+                     "LowerUOM": LUOM
+                 },
+
+            dataType: "json",
+                 success: function (data) {
+                    //alert(data)
+                }
+             });
+
+             $.ajax({
+            type: "GET",
+            url: '@Url.Action("DelPromoCart", "Promotion")',
+                contentType: "application/json; charset=utf-8",
+                data: { prmID:  @ViewBag.prmID , ashID : @ViewBag.ashID},
+            dataType: "json",
+                success: function (data) {
+
+
+                }
+            });
+
+
+            UpdCartCount();
+            GetTotQualQty();
+
+        }
+
+        function InsWishList(id) {
+
+             $.ajax({
+            type: "GET",
+            url: '@Url.Action("InsWishList", "Home")',
+            contentType: "application/json; charset=utf-8",
+                 data: {
+                     "id": id
+                 },
+
+            dataType: "json",
+                 success: function (data) {
+                    //alert(data)
+                }
+            });
+        }
+
+        function UpdCartCount() {
+
+            $.ajax({
+            type: "GET",
+            url: '@Url.Action("CartCount", "Home")',
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+                 success: function (data) {
+                     $('#crtCount').text(data.message);
+                }
+            });
+        }
+
+
+
+    function GetLUOMPrice(id, itmValue) {
+            var uomID = itmValue.value;
+
+            $.ajax({
+            type: "GET",
+            url: '@Url.Action("GetItemUOMPrice", "Home")',
+            contentType: "application/json; charset=utf-8",
+                data: { id: id, itmValues: uomID },
+            dataType: "json",
+                success: function (data) {
+
+
+                    document.getElementById("QLOP-" + id).innerHTML = data.OfferPrice;
+                    document.getElementById("QLSP-" + id).innerHTML = data.StandardPrice;
+                }
+            });
+          $.ajax({
+            type: "GET",
+            url: '@Url.Action("UpdateLUOMCart", "Home")',
+            contentType: "application/json; charset=utf-8",
+                data: { id: id, itmValues: uomID },
+            dataType: "json"
+            });
+        }
+
+    function changeLQty() {
+        var x = this;
+            var id = x.element.attr("id");
+            var itemID = id.replace("QLQTY-", "");
+            var HUom = $('#QHUOM' + itemID).val();
+        var Hqty = $('#QHqty' + itemID).val();
+
+        if (Hqty == null) {
+            Hqty = 0;
+            }
+            var LUOM = $('#QddlUOM-' + itemID).val();
+            if (LUOM == null) {
+                LUOM = 0;
+        }
+
+             $.ajax({
+            type: "GET",
+            url: '@Url.Action("InsCart", "Home")',
+            contentType: "application/json; charset=utf-8",
+                 data: {
+                     "id": itemID,
+                     "HigherQty": Hqty,
+                     "HigherUOM": HUom,
+                     "LowerQty": x.value(),
+                     "LowerUOM": LUOM
+                 },
+
+            dataType: "json",
+                 success: function (data) {
+                    //alert(data)
+                }
+             });
+
+         $.ajax({
+            type: "GET",
+            url: '@Url.Action("DelPromoCart", "Promotion")',
+                contentType: "application/json; charset=utf-8",
+                data: { prmID:  @ViewBag.prmID , ashID : @ViewBag.ashID},
+            dataType: "json",
+                success: function (data) {
+
+
+                }
+            });
+
+
+        UpdCartCount();
+        GetTotQualQty();
+
+        }
+
+
+
+
+    </script>
+}

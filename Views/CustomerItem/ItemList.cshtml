@@ -1,0 +1,64 @@
+﻿
+@using b2b_solution.Models;
+@{
+    ViewBag.Title = "ItemList";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+
+<main class="main ">
+    <div class="page-content pt-10">
+        <div class="container">
+            <div class="row">
+                <div class="card mb-50">
+                    <div class="card-header" style="background-color: #ecfaf3 !important">
+                        <div class="card-header row " style="background-color: #ecfaf3 !important; border-style:none">
+                            <div class="col-lg-3" style="margin-top:15px">
+                                <h3 class="mb-0">Item List</h3>
+                            </div>
+                            <div class="col-lg-9" style="text-align-last:right">
+                                @using (Html.BeginForm("DownloadOSIItemList", "CustomerItem"))
+                                {
+                                    <div class="form-group" style="margin-top:0px; text-align-last:right">
+                                        <button name="login" style="border-style:none; background-color:transparent">
+                                            <img class="btn-download" id="imgExcelDownload" type="Submit" src="../../Content/imgs/order/xls.png" name="login" height="60" title="Download Excel file" />
+                                        </button>
+                                    </div>
+                                }
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            @( Html.Kendo().Grid<ItemListGrid>()
+    .Name("ItemList")
+    .Columns(columns =>
+    {
+        columns.Bound(p => p.Code).Width(100).Title("Item Code").Filterable(false);
+        columns.Bound(p => p.itm_Name).Width(100).Title("Name").Filterable(false);
+        columns.Bound(p => p.category).Width(100).Title("Category").Filterable(false);
+        columns.Bound(p => p.uom_Name).Width(100).Title("UOM").Filterable(false);
+        columns.Bound(p => p.standardPrice).Width(80).Title("Std.Price").Filterable(false);
+
+    })
+    //.HtmlAttributes(new { style = "height: 550px;" })
+    .Filterable()
+    .Navigatable()
+    .Sortable()
+    .DataSource(dataSource => dataSource
+    .Ajax()
+    .Batch(true)
+    .ServerOperation(false)
+    .Read("GetItemList", "CustomerItem")
+    .Update("GetItemList", "CustomerItem")
+    )
+    )
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+

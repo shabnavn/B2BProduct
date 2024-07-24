@@ -1,0 +1,50 @@
+﻿@using System.Data
+@using b2b_solution.Models;
+
+@{
+    ViewBag.Title = "Brands";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    DataModel dm = new DataModel();
+}
+
+<main class="main pages mb-80">
+
+
+    @{
+        DataTable dt = dm.loadList("SelAllBrands", "sp_B2B_Home",  Session["CusID"].ToString());
+    }
+
+    <div class="page-content pt-50">
+        <div class="container">
+            <div class="archive-header-2 text-center">
+                <h1 class="display-2 mb-50">Our Brands</h1>
+            </div>
+
+            <div class="row vendor-grid">
+
+                @{
+                    foreach (DataRow dr in dt.Rows)
+                    {
+
+                        <div class="col-lg-2 col-md-6 col-12 col-sm-6">
+                            <div class="vendor-wrap mb-40" style="border:none">
+                                <div class="vendor-img-action-wrap">
+                                    <div class="vendor-img">
+                                        <a onclick="Search('0', '@dr["brd_ID"].ToString()','' , '@dr["brd_Name"].ToString()' )">
+                                            <img class="default-img" src=" @dr["brd_Image"].ToString() " alt="" />
+                                        </a>
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+                    }
+                }
+
+
+            </div>
+
+        </div>
+    </div>
+</main>
+

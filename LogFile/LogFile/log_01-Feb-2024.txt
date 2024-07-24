@@ -1,0 +1,15 @@
+01-02-2024 01:22:20 +05:30-=============Mial Sending Started for maillyas683@gmail.com==================
+01-02-2024 01:22:20 +05:30-Mail has been triggered
+01-02-2024 01:22:23 +05:30-=============Mail sent Exception for maillyas683@gmail.com==================The SMTP server requires a secure connection or the client was not authenticated. The server response was: 5.7.0 Must issue a STARTTLS command first. For more information, go to========== No Inner Exception
+01-02-2024 01:23:57 +05:30-=============Mial Sending Started for maillyas683@gmail.com==================
+01-02-2024 01:23:57 +05:30-Mail has been triggered
+01-02-2024 01:23:58 +05:30-=============Mail sent Exception for maillyas683@gmail.com==================The SMTP server requires a secure connection or the client was not authenticated. The server response was: 5.7.0 Must issue a STARTTLS command first. For more information, go to========== No Inner Exception
+01-02-2024 01:27:54 +05:30-=============Mial Sending Started for maillyas683@gmail.com==================
+01-02-2024 01:27:54 +05:30-Mail has been triggered
+01-02-2024 01:27:57 +05:30-=============Mail sent Exception for maillyas683@gmail.com==================The SMTP server requires a secure connection or the client was not authenticated. The server response was: 5.7.0 Must issue a STARTTLS command first. For more information, go to========== No Inner Exception
+01-02-2024 01:34:41 +05:30-=============Mial Sending Started for maillyas683@gmail.com==================
+01-02-2024 01:34:41 +05:30-Mail has been triggered
+01-02-2024 01:34:48 +05:30-=============Mail sent Exception for maillyas683@gmail.com==================The SMTP server requires a secure connection or the client was not authenticated. The server response was: 5.7.0 Must issue a STARTTLS command first. For more information, go to========== No Inner Exception
+01-02-2024 01:36:10 +05:30-=============Mial Sending Started for rishanarasheed24@gmail.com==================
+01-02-2024 01:36:10 +05:30-Mail has been triggered
+01-02-2024 01:36:12 +05:30-=============Mail sent Exception for rishanarasheed24@gmail.com==================The SMTP server requires a secure connection or the client was not authenticated. The server response was: 5.7.0 Must issue a STARTTLS command first. For more information, go to========== No Inner Exception

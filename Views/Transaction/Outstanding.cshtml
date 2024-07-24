@@ -1,0 +1,168 @@
+﻿@using b2b_solution.Models;
+
+@{
+    ViewBag.Title = "Outstanding";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@model SearchComplete
+
+
+<main class="main ">
+    <div class="page-content pt-10">
+        <div class="container">
+            <div class="row">
+                <div class="card mb-50">
+                    <div class="card-header" style="background-color: #ecfaf3 !important">
+
+                        <div class="card-header row " style="background-color: #ecfaf3 !important; border-style:none">
+                            <div class="col-lg-4" style="margin-top:15px">
+                                <h3 class="mb-0">Outstanding Invoices</h3>
+                            </div>
+
+                            <div class="col-lg-8 row " style="justify-content:end">
+                                <div class="col-lg-2" hidden="hidden">
+                                    From Date
+                                    @(Html.Kendo().DatePicker()
+          .Name("datepicker")
+          .Format("dd MMM yyyy")
+          .Value( Model.FromDate == null ? DateTime.Now.AddDays(-(DateTime.Now.Day - 1)) : DateTime.Parse(Model.FromDate))
+          .HtmlAttributes(new { style = "width: 100%", title = "datepicker" , @id="fromDate" , @class="form-control" })
+        )
+                                    <label id="lblFromDate" style="color:red; font-size:small"></label>
+                                </div>
+
+                                <div class="col-lg-2" hidden="hidden">
+                                    To Date
+                                    @(Html.Kendo().DatePicker()
+          .Name("datepicker")
+          .Format("dd MMM yyyy")
+          .Value(DateTime.Now)
+          .HtmlAttributes(new { style = "width: 100%", title = "datepicker" , @id="ToDate" , @class="form-control" })
+        )
+                                    <label id="lblToDate" style="color:red; font-size:small"></label>
+                                </div>
+
+                                <div class="col-lg-3" hidden="hidden">
+                                    <div class="form-group" style="margin-top:25px">
+                                        <button onclick="FilterData()" class="btn btn-heading btn-block hover-up" name="login">Apply Filter</button>
+
+                                    </div>
+                                </div>
+
+                                <div class="col-lg-3">
+                                    @using (Html.BeginForm("DownloadOSI", "Transaction"))
+                                    {
+                                        <div class="form-group" style="margin-top:0px; text-align-last:right">
+                                            <button name="login" style="border-style:none; background-color:transparent">
+
+
+                                                <img class="btn-download" id="imgExcelDownload" type="Submit" src="../../Content/imgs/order/xls.png" name="login" height="60" title="Download Excel file"/>
+
+                                            </button>
+                                        </div>
+                                    }
+
+                                </div>
+
+                            </div>
+
+
+
+
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive">
+
+
+
+                            @( Html.Kendo().Grid<Outstanding>
+    ()
+    .Name("client")
+    .Columns(columns =>
+    {
+        columns.Bound(p => p.cshName).Title("Customer").Width(100).Filterable(false);
+        columns.Bound(p => p.InvoiceID).Title("Invoice ID").Width(100).Filterable(ftb => ftb.Multi(true).Search(true).ItemTemplate("OrderFilter"));
+        columns.Bound(p => p.InvoicedOn).Title("Invoice On").Width(100).Filterable(false);
+        columns.Bound(p => p.InvoiceAmount).Title("Invoice Amount").Width(100).Filterable(false);
+        columns.Bound(p => p.PendingAmount).Title("Pending Amount").Width(100).Filterable(false);
+
+    })
+    //.HtmlAttributes(new { style = "height: 550px;" })
+    .Filterable()
+    .Pageable()
+    .Navigatable()
+    .Sortable()
+    //.Scrollable(scr=>scr.Height(550))
+    .DataSource(dataSource => dataSource
+    .Ajax()
+    .Batch(true)
+    .PageSize(10)
+    .ServerOperation(false)
+    .Read("GetOSI", "Transaction", new { @FromDate = Model.FromDate == null ? DateTime.Now.AddDays(-(DateTime.Now.Day - 1)).ToString("yyyyMMdd") : DateTime.Parse(Model.FromDate).ToString("yyyyMMdd"), @ToDate = Model.ToDate == null ? DateTime.Now.ToString("yyyyMMdd") : DateTime.Parse(Model.ToDate).ToString("yyyyMMdd") })
+    .Update("GetOSI", "Transaction", new { @FromDate = Model.FromDate == null ? DateTime.Now.AddDays(-(DateTime.Now.Day - 1)).ToString("yyyyMMdd") : DateTime.Parse(Model.FromDate).ToString("yyyyMMdd"), @ToDate = Model.ToDate == null ? DateTime.Now.ToString("yyyyMMdd") : DateTime.Parse(Model.ToDate).ToString("yyyyMMdd") })
+    )
+    )
+
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+
+
+<script>
+    function OrderFilter(e) {
+
+        if (e.field == "all") {
+            //handle the check-all checkbox template
+
+            return "<div class='chek-form><div class='custome-checkbox'><input class='form-check-input' type='checkbox'  /> <strong>#= all#</strong> </div></div>";
+        } else {
+            //handle the other checkboxes
+            //return "<span class='col-lg-4' style='padding-left:0px; ' ><label style='display:flex'><input type='checkbox' style='width:13%' class='custome-checkbox' name='" + e.field + "' value='#=OrderNo#'/><span style='margin-top:20px'>#= OrderNo #</span></label></span>"
+            return "<div class='chek-form><div class='custome-checkbox'><input class='form-check-input' type='checkbox' name='" + e.field + "'  value='#=InvoiceID#' /><label class='form-check-label' for='exampleCheckbox1'><span>#= InvoiceID #</span></label></div></div>";
+        }
+
+    }
+
+        function FilterData() {
+        var x = ValidateControls();
+        if (x == true) {
+            var fromDate = document.getElementById("fromDate").value;
+            var toDate = document.getElementById("ToDate").value;
+            window.location.href = '@Url.Action("Outstanding", "Transaction")?FromDate=' + fromDate + '&ToDate=' + toDate;
+        } else {
+
+        }
+
+    }
+
+    function ValidateControls() {
+        var valCount = 0;
+        if (document.getElementById("fromDate").value == "") {
+            valCount++;
+            document.getElementById("lblFromDate").innerHTML = "Please enter from date";
+        } else {
+            document.getElementById("lblFromDate").innerHTML = "";
+        }
+
+        if (document.getElementById("ToDate").value == "") {
+            valCount++;
+            document.getElementById("lblToDate").innerHTML = "Please enter to date";
+        } else {
+            document.getElementById("lblToDate").innerHTML = "";
+        }
+
+        if (valCount > 0) {
+            return false;
+        } else {
+            return true;
+        }
+
+    }
+</script>

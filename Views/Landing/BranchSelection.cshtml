@@ -1,0 +1,112 @@
+﻿@{
+    ViewBag.Title = "Branch Selection";
+    Layout = "~/Views/Shared/guest_master.cshtml";
+}
+
+<script src="~/Scripts/js.cookie.min.js"></script>
+
+<main class="main pages">
+
+    <div class="page-content pt-50 pb-150">
+        <div class="container">
+            <div class="row">
+                <div class="col-xl-12 col-lg-10 col-md-12 m-auto">
+                    <div class="row">
+                        <div class="col-lg-6 pr-30 d-none d-lg-block">
+                            <img class="border-radius-15" src="../Content/imgs/page/login-1.png" alt="" />
+                        </div>
+                        <div class="col-lg-6 col-md-8">
+                            <div class="login_wrap widget-taber-content background-white" style="margin:10%">
+                                <div class="padding_eight_all bg-white">
+                                    <div class="heading_s1   ">
+                                        <h1 class="mb-25">Choose Branch</h1>
+                                    </div>
+
+                                    <div class="text-danger" id="CommonError"></div>
+
+                                    <div class="col-lg-12" id="Customers">
+                                        <div>
+                                            <span>Select outlet</span>
+
+                                        </div>
+                                        @(Html.Kendo().DropDownList()
+  .Name("Customer")
+  .DataTextField("cusName")
+  .DataValueField("cusID")
+  .AutoBind(false)
+  .HtmlAttributes(new { @class = "form-group", @style = "width:100%; margin-bottom:0px", @tabindex = "7" })
+  .DataSource(source => {
+      source.Read(read =>
+      {
+          read.Action("SelectOutletForUser", "Landing");
+      })
+      .ServerFiltering(true);
+  })
+)
+
+
+                                    </div>
+                                    <div class="col-lg-4" style="margin-top:25px;">
+                                        <button type="button" onclick="selectionBranch()" class="btn btn-primary" tabindex="8">Proceed</button>
+                                       
+                                    </div>
+
+                                    <div id="div_loading" style="display:none" class="text-center">
+                                        <img src="../content/imgs/theme/loading.gif" alt="" />
+                                    </div>
+
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+
+
+<script>
+
+    function selectionBranch() {
+
+            var customervalue = $("#Customer").data("kendoDropDownList");
+            var customer = customervalue.value();
+            var customerText = customervalue.text();
+
+            if (customer) {
+
+                Cookies.set('selectedCusID', customer, { expires: 365 });
+
+                Cookies.set('selectedCusName', customerText, { expires: 365 });
+
+                //window.location.href = "@Url.Action("Index", "Home")";
+
+                 $.ajax({
+                    type: "POST",
+                    url: "/Landing/StoreCookiesInSession",
+                    data: { selectedCusID: customer, selectedCusName: customerText },
+                    success: function (data) {
+                       
+                        if (data.success) {
+                            window.location.href = "@Url.Action("Index", "Home")";
+                        } else {
+                            document.getElementById('CommonError').innerHTML = "Error occurred during session storage.";
+                        }
+                    },
+                    error: function (xhr, textStatus, errorThrown) {
+                        console.log("Error: " + errorThrown);
+                    }
+                });
+
+
+
+            } else {
+                
+                document.getElementById('CommonError').innerHTML = "Please select a branch before proceeding.";
+            }
+    }
+
+
+</script>

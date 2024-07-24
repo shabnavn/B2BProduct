@@ -1,0 +1,10 @@
+change Your Templates to Templates
+change add item dropdown to combobx
+Bring Add New button in (https://b2bproduct.dev-ts.online/Order/OrderTemplate)
+	Bring the Template Name at the top as Textbox
+	Add Items Area (Offline Datatable)
+		Items Dropdown
+		UOM Drop Down
+		Qty (Maximum 3 digits)
+	Once Added, refresh the grid immediatly without page load
+	Onec everything added, bring confirm button at the bottom and then upon click, save into templage header and detail

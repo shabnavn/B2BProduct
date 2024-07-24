@@ -1,0 +1,6 @@
+31-01-2024 18:03:05 +05:30-=============Mial Sending Started for maillyas683@gmail.com==================
+31-01-2024 18:03:05 +05:30-Mail has been triggered
+31-01-2024 18:03:07 +05:30-=============Mail sent Exception for maillyas683@gmail.com==================The SMTP server requires a secure connection or the client was not authenticated. The server response was: 5.7.0 Must issue a STARTTLS command first. For more information, go to========== No Inner Exception
+31-01-2024 18:05:11 +05:30-=============Mial Sending Started for maillyas683@gmail.com==================
+31-01-2024 18:05:11 +05:30-Mail has been triggered
+31-01-2024 18:05:12 +05:30-=============Mail sent Exception for maillyas683@gmail.com==================The SMTP server requires a secure connection or the client was not authenticated. The server response was: 5.7.0 Must issue a STARTTLS command first. For more information, go to========== No Inner Exception

@@ -1,0 +1,476 @@
+﻿
+@using System.Data;
+@using b2b_solution.Models;
+@model OrderTemplate
+@{
+    ViewBag.Title = "AddTemplate";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+
+}
+
+
+
+<div>
+    <main class="main">
+        <div class="page-content pt-10">
+            <div class="container">
+                <div class="row">
+                    <div class="card mb-50">
+                        <div class="card-header" style="background-color: #ecfaf3 !important">
+                            <div class="card-header" style="background-color: #ecfaf3 !important; border-style: none">
+                                <div class="col-lg-12 row">
+                                    <div class="heading_s1">
+                                        <h4 class="mb-5">New Template</h4>
+                                    </div>
+                                    <div class="col-lg-6">
+                                        <input type="text" tabindex="1" id="tempname" required="" name="tempname" placeholder="Enter template name" />
+                                        <label id="lbltempname" style="color: red; font-size: small"></label>
+                                    </div>
+                                  
+                                </div>
+                                <div class="col-lg-12 row">
+                                    <div class="col-lg-12 col-md-8">
+                                        <div class="heading_s1">
+                                            <h4 class="mb-5">Add Items</h4>
+                                        </div>
+                                            <div class="row">
+                                                <div class="col-md-4">
+
+                                                    @(Html.Kendo().MultiColumnComboBox()
+    .Name("items")
+    .Placeholder("Select Item")
+    .DataTextField("itmname")
+    .DataValueField("itmid")
+    .Filter("contains")
+    .FilterFields(new string[] { "itmcode", "itmname" })
+    .Columns(columns =>
+    {
+        columns.Add().Field("itmcode").Title("Code").Width(100); // Set the width for itmCode column
+        columns.Add().Field("itmname").Title("Name").Width(500); // Set the width for itmName column
+    })
+    .HtmlAttributes(new { style = "width: 100%", @class = "form-control", @tabindex = "1" })
+    .DataSource(source => {
+        source.Read(read =>
+        {
+            read.Action("GetItems", "OrderTemplate");
+        });
+    })
+    .Enable(true)
+    .AutoBind(true)
+)
+                                                    <label id="lblitems" style="color: red; font-size: small"></label>
+                                                    <span id="itmError" style="color:red; display:none"> Please choose item </span>
+                                                </div>
+
+                                                <div class="col-md-2">
+                                                    @(Html.Kendo().ComboBox()
+            .Name("uom")
+            .DataTextField("uomname")
+            .DataValueField("uomid")
+            .Placeholder("H.UOM")
+            .Filter("contains")
+            .Suggest(true)
+            .AutoBind(false)
+            .HtmlAttributes(new { @class = "form-control", @style = "width:100%;" , @tabindex = "2" })
+            .DataSource(source =>
+            {
+                source.Read(read =>
+                {
+                    read.Action("GetUom", "OrderTemplate").Data("h_UOMFilter");
+                })
+                .ServerFiltering(true);
+            })
+            .CascadeFrom("items")
+            .Events(e =>
+            {
+                e.Change("on_HUOM_Change");
+            })
+        )
+                                                    <label id="lbluom" style="color: red; font-size: small"></label>
+                                                    <span id="HuomError" style="color:red; display:none"> Please choose H.UOM </span>
+                                                </div>
+
+                                                <div class="col-md-1">
+                                                    @*<input type="text" tabindex="3" id="qty" required="" placeholder="H.Qty" name="qty" style="background-color: white" maxlength="3" oninput="this.value = this.value.replace(/[^0-9]/g, '');" class="form-control" />
+                    <label id="lblqty" style="color: red; font-size: small"></label>*@
+
+                                                    @(Html.Kendo().NumericTextBox<int>()
+            .Name("qty")
+            .Format("#")
+            .Placeholder("H.Qty")
+            .Min(0)
+            .Max(2000)
+            .HtmlAttributes(new {  title = "numeric", @tabindex = "3", @class = "form-control", @AutoComplete = "off" , style = "width: 90px;" })
+      )
+                                                    <span id="HQtyError" style="color:red; display:none"> Please enter H.Qty </span>
+                                                </div>
+
+                                                <div class="col-md-2">
+                                                    @(Html.Kendo().ComboBox()
+            .Name("luom")
+            .DataTextField("uomname")
+            .DataValueField("uomid")
+            .Placeholder("L.UOM")
+            .Filter("contains")
+            .Suggest(true)
+            .AutoBind(false)
+            .Enable(false)
+            .HtmlAttributes(new { @class = "form-control", @style = "width:100%;", @tabindex = "4" })
+            .DataSource(source =>
+            {
+                source.Read(read =>
+                {
+                    read.Action("GetLUom", "OrderTemplate").Data("l_UOMFilter");
+                })
+                .ServerFiltering(true);
+            })
+            .CascadeFrom("uom")
+        )
+                                                    <label id="lblluom" style="color: red; font-size: small"></label>
+                                                </div>
+
+                                                <div class="col-md-1">
+                                                    @*<input type="text" tabindex="5" id="lqty" required="" placeholder="L.Qty" name="lqty" style="background-color: white" maxlength="3" oninput="this.value = this.value.replace(/[^0-9]/g, '');" class="form-control" />*@
+                                                    @(Html.Kendo().NumericTextBox<int>()
+                                         .Name("lqty")
+                                         .Format("#")
+                                         .Placeholder("L.Qty")
+                                         .Min(0)
+                                         .Max(2000)
+                                         .HtmlAttributes(new {  title = "numeric" ,  @tabindex = "5", @class = "form-control", @AutoComplete = "off" , style = "width: 90px;" })
+
+                                        )
+                                                    <label id="lbllqty" style="color: red; font-size: small"></label>
+                                                </div>
+
+
+                                                <div class="col-md-2">
+                                                    <button onclick="addNewItemToGrid()" class="btn btn-heading btn-block hover-up" tabindex="6">Add</button>
+                                                    <label id="lblAddError" style="color: red; font-size: small"></label>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-md-12">
+                                                <h4>Added Items</h4>
+                                                <div id="grid"></div>
+                                                <label id="lblgrid" style="color: red; font-size: small"></label>
+
+                                            </div>
+
+                                            <div class="row" style="margin-top: 10px;">
+                                                <!-- Add margin-top to create space -->
+                                                <div class="col-md-3">
+                                                    <button onclick="InsNewTempItem()" class="btn btn-heading btn-block hover-up">Confirm</button><br />
+                                                    <label id="lblCommonError" style="color: red; font-size: small"></label>
+                                                    <label id="lblSuccess" style="color: green; font-size: small"></label>
+                                                </div>
+                                            </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+</div>
+
+
+
+
+
+<script>
+    var gridData = [];
+
+    $(document).ready(function () {
+        $("#grid").kendoGrid({
+            columns: [
+                { field: "itemid", title: "Item ID", hidden: true },
+                { field: "item", title: "Item Name" },
+                { field: "huomid", title: "huom ID", hidden: true },
+                { field: "huom", title: "H.UOM" },
+                { field: "hqty", title: "H.Qty" },
+                { field: "luom", title: "huom ID", hidden: true },
+                { field: "LUOM", title: "L.UOM" },
+                { field: "lqty", title: "L.Qty" },
+                {
+                    template: '<button class="k-button custom-button" onclick="deleteItem(this)">Delete</button>',
+                    title: "",
+                    width: 120 // Adjust the width as needed
+                }
+            ],
+            dataSource: {
+                data: gridData,
+                pageSize: 10
+            },
+            pageable: true
+        });
+    });
+
+function addNewItemToGrid() {
+    var itemname = $("#items").data("kendoMultiColumnComboBox").text();
+    var itemid = $("#items").val();
+
+    //var quantity = $("#qty").val();
+    var quantity = $("#qty").data("kendoNumericTextBox").value();
+    //var lquantity = $("#lqty").val();
+    var lquantity = $("#lqty").data("kendoNumericTextBox").value();
+
+    var uom = $("#uom").data("kendoComboBox").text();
+    var luom = $("#luom").data("kendoComboBox").text();
+
+    var uomid = $("#uom").val();
+    var luomid = $("#luom").val();
+
+
+
+    if (itemid && quantity && uomid) {
+        gridData.push({ itemid: itemid, item: itemname, huomid: uomid,huom: uom, hqty: quantity, luomid:luomid, luom: luom, lqty: lquantity });
+        refreshGrid();
+
+        $.ajax({
+                type: "GET",
+                url: '@Url.Action("AddItem", "OrderTemplate")',
+                contentType: "application/json; charset=utf-8",
+                data: {
+                    "itmID": itemid,
+                    "H_uom_ID": uomid,
+                    "H_Qty": quantity,
+                    "L_uom_ID": luomid,
+                    "L_Qty": lquantity
+                },
+             dataType: "json",
+             success: function (data) {
+                 if (data.res == "0") {
+
+                     $("#items").data("kendoMultiColumnComboBox").input.val("");
+                     $("#uom").data("kendoComboBox").input.val("");
+                     $("#luom").data("kendoComboBox").input.val("");
+                     $("#qty").data("kendoNumericTextBox").value("")
+                     $("#lqty").data("kendoNumericTextBox").value("");
+
+                     $("#items").val("");
+                     $("#uom").val("");
+                     $("#luom").val("");
+                     document.getElementById("lblAddError").innerHTML = "";
+
+                     var ddlItems = $("#items").data("kendoMultiColumnComboBox");
+                     ddlItems.dataSource.read();
+                     ddlItems.focus();
+
+                 }
+             }
+               });
+
+
+    } else {
+        document.getElementById("lblAddError").innerHTML = "All fields are mandatory";
+        refreshGrid();
+    }
+
+    }
+
+    function refreshGrid() {
+        var grid = $("#grid").data("kendoGrid");
+        grid.setDataSource(new kendo.data.DataSource({ data: gridData }));
+    }
+
+
+function deleteItem(button) {
+    // Get the row data from the button's closest parent row
+    var dataItem = $("#grid").data("kendoGrid").dataItem($(button).closest("tr"));
+    var itmid = dataItem.itemid;
+
+    $.ajax({
+        type: "GET",
+        url: '@Url.Action("DeleteItem", "OrderTemplate")',
+        contentType: "application/json; charset=utf-8",
+        data: {
+            "itmID": itmid
+        },
+        dataType: "json",
+        success: function (data) {
+            if (data.res == "0") {
+                var confirmation = confirm("Are you sure you want to delete?");
+                if (confirmation) {
+                    // Remove the item from the gridData array
+                    var index = gridData.findIndex(item => item.itemid === itmid);
+                    if (index !== -1) {
+                        gridData.splice(index, 1);
+                    }
+
+                    // Once the deletion is successful, remove the item from the grid
+                    var grid = $("#grid").data("kendoGrid");
+                    grid.dataSource.remove(dataItem);
+                    // Refresh the grid to reflect the changes
+                    grid.refresh();
+
+                    var ddlItems = $("#items").data("kendoMultiColumnComboBox");
+                    ddlItems.dataSource.read();
+                    ddlItems.focus();
+
+                    $("#items").data("kendoMultiColumnComboBox").input.val("");
+                    $("#uom").data("kendoComboBox").input.val("");
+                    $("#luom").data("kendoComboBox").input.val("");
+                    $("#qty").data("kendoNumericTextBox").value("")
+                    $("#lqty").data("kendoNumericTextBox").value("");
+
+                    $("#items").val("");
+                    $("#uom").val("");
+                    $("#luom").val("");
+                    document.getElementById("lblAddError").innerHTML = "";
+
+                }
+                else {
+
+                }
+
+            } else {
+                toastr.error(data.err);
+            }
+        }
+    });
+}
+
+
+
+
+function validateData(data) {
+    var valCount = 0;
+
+    if (!data.tempname) {
+        valCount++;
+        document.getElementById("lbltempname").innerHTML = "Please enter a template name";
+    } else {
+        document.getElementById("lbltempname").innerHTML = "";
+    }
+
+    if (valCount > 0) {
+        return false;
+    } else {
+        return true;
+    }
+}
+
+function clearForm() {
+    document.getElementById("tempname").value = "";
+    gridData = [];
+    refreshGrid();
+}
+
+    function InsNewTempItem()
+    {
+        var tempname = document.getElementById("tempname").value;
+
+        if (!tempname) {
+            document.getElementById("lblCommonError").innerHTML = "Please enter a template name";
+            return;
+        }
+
+        var data = {
+        tempname: tempname,
+        items: gridData
+        };
+
+        var valid = validateData(data);
+
+        if (valid) {
+            $.ajax({
+                type: "POST",
+                url: '@Url.Action("InsNewTempItem", "OrderTemplate")',
+                contentType: "application/json; charset=utf-8",
+                data: JSON.stringify(data),
+                dataType: "json",
+                success: function (response) {
+                    if (response.mode == -2) {
+                        document.getElementById("lblCommonError").innerHTML = "Template name already exists";
+                    } else if (response.mode == 1)
+                    {
+                        document.getElementById("lblSuccess").innerHTML = "New template and items added successfully";
+                        window.location.href = '/OrderTemplate/OrderTemplate';
+                    }
+            },
+            error: function () 
+            {
+                document.getElementById("lblCommonError").innerHTML = "An error occurred while sending the data to the server";
+            }
+        });
+    }
+    }
+
+    function h_UOMFilter() {
+        return {
+            itmID: $("#items").val(),
+            uomName: $("#uom").data("kendoComboBox").input.val()
+        };
+    }
+
+    function l_UOMFilter() {
+        return {
+            itmID: $("#items").val(),
+            H_uom_ID: $("#uom").val(),
+            uomName: $("#luom").data("kendoComboBox").input.val()
+        };
+    }
+
+    function on_HUOM_Change() {
+
+        itmID = $("#items").val();
+        uomID = $("#uom").val();
+        var huomComboBox = $("#uom").data("kendoComboBox");
+        var uomDataSource = huomComboBox.dataSource;
+
+        var uomList = [];
+        uomDataSource.data().forEach(function (item) {
+            uomList.push(item.uomid);
+        });
+
+        var lastHUOM = uomList[uomList.length - 1];
+        var lQtyInput = $("#lqty").data("kendoNumericTextBox");
+        var luomComboBox = $("#luom").data("kendoMultiColumnComboBox");
+
+        if (uomID != "" && uomID == lastHUOM) {
+            lQtyInput.enable(false);
+            luomComboBox.enable(false);
+            $("#luom").data("kendoComboBox").input.val("");
+            $("#lqty").data("kendoNumericTextBox").value("");
+        }
+        else {
+
+            luomComboBox.enable(true);
+            lQtyInput.enable(true);
+        }
+    }
+
+
+
+
+</script>
+
+
+<style>
+    .k-grid .k-alt {
+        background-color: #ecfaf3; /* specify the alternate background-color */
+    }
+
+    .k-grid-header .k-header {
+        background-color: #ecfaf3;
+    }
+
+    .k-pager-wrap {
+        background-color: #ecfaf3 !important;
+    }
+
+    .pricebg {
+        color: #d32027
+    }
+
+    .k-dropdown {
+        width: 50px;
+    }
+    .k-ComboBox {
+        width: 500px;
+    }
+</style>

@@ -1,0 +1,321 @@
+﻿<script src="~/Content/js/Validation.js"></script>
+
+@{
+    Html.RenderPartial("UserList");
+}
+<main>
+    <div class="col-lg-12 col-md-8">
+        <div class="login_wrap widget-taber-content background-white">
+            <div class="padding_eight_all bg-white">
+                <div class="heading_s1">
+                    <h4 class="mb-5">Request User</h4>
+                </div>
+                <div>
+                    <div>
+                        <div class="col-lg-12 row">
+
+                            <div class="col-lg-6">
+                                <div class="form-group">
+                                    <input type="text" tabindex="1" id="first_name" required="" name="FirstName" placeholder="First Name" />
+                                    <label id="lblfirstname" style="color:red; font-size:small"></label>
+                                </div>
+
+
+                                <div class="form-group">
+                                    <div style="display:flex">
+                                        <input type="text" id="email" tabindex="3" required="" name="Email" placeholder="Email" />
+                                        <img src="../../Content/imgs/profile/info.png" title="Email will be used as username" alt="Email will be used as username" style="height:15px; margin-top:5%" />
+                                    </div>
+
+                                    <label id="lblemail" style="color:red;  font-size:small"></label>
+                                </div>
+
+                            </div>
+                            <div class="col-lg-6">
+
+                                <div class="form-group">
+                                    <input type="text" id="second_name" tabindex="2" required="" name="SecondName" placeholder="Second Name" />
+
+                                    <label id="lblsecondname" style="color:red;  font-size:small"></label>
+                                </div>
+
+
+                                <div class="form-group">
+                                    <input type="text" id="contact_number" tabindex="4" required="" name="ContactNum" placeholder="Contact Number" maxlength="12" />
+                                    <span>Format - 971 ## ### ####</span>
+                                    <label id="lblMobile" style="color:red;  font-size:small"></label>
+                                </div>
+
+
+
+                            </div>
+
+                            <div class="col-lg-6">
+
+                                @(Html.Kendo().MultiSelect()
+          .Name("roles")
+          .DataTextField("rolName")
+          .DataValueField("rolID")
+          .AutoClose(false)
+          .Placeholder("Select Roles")
+          .AutoBind(false)
+          .HtmlAttributes(new { @class = "form-group", @style="margin-bottom:0px" , @tabindex = "5" })
+          .DataSource(source => {
+              source.Read(read =>
+              {
+                  read.Action("GetCusRoles", "Profile");
+              })
+              .ServerFiltering(true);
+          })
+        )
+                                <label id="lblroles" style="color:red;  font-size:small"></label>
+
+                            </div>
+                            <div class="row">
+                                <div class="col-lg-6">
+
+                                    <div>
+                                        <span>Select type</span>
+
+                                    </div>
+
+                                    @(Html.Kendo().DropDownList()
+          .Name("type")
+          .DataTextField("TypeName")
+          .DataValueField("TypeCode")
+          .AutoBind(false)
+          .HtmlAttributes(new { @class = "form-group", @style = "width:100%; margin-bottom:0px" , @tabindex = "6" })
+          .DataSource(source => {
+              source.Read(read =>
+              {
+                  read.Action("GetCusType", "Profile");
+              })
+              .ServerFiltering(true);
+          })
+        )
+                                    <label id="lbltype" style="color:red;  font-size:small"></label>
+
+                                </div>
+
+                                <div class="col-lg-6" id="Customers">
+                                    <div>
+                                        <span>Select Customer</span>
+                                    </div>
+                                    @(Html.Kendo().DropDownList()
+          .Name("Customer")
+          .DataTextField("cusName")
+          .DataValueField("cusID")
+          .AutoBind(false)
+          .HtmlAttributes(new { @class = "form-group", @style = "width:100%; margin-bottom:0px", @tabindex = "7" })
+          .DataSource(source => {
+              source.Read(read =>
+              {
+                  read.Action("SelectCustomerByType", "Profile");
+              })
+              .ServerFiltering(true);
+          })
+        )
+                                    <label id="lblcustomer" style="color:red;  font-size:small"></label>
+
+                                </div>
+                            </div>
+
+                            <div class="col-lg-12">
+
+                                <label id="lblCommonError" style="color:red;  font-size:small"></label>
+                                <label id="lblSuccess" style="color:green;  font-size:small"></label>
+                                <br />
+                                <button onclick="newReq()" class="btn btn-primary" tabindex="8">Submit Request</button>
+                            </div>
+                            <p class="font-xs text-muted"><strong>Note:</strong>The user will be created upon the approval from Armada Distribution. Once approved, the user will be receving an email with verification URL</p>
+                        </div>
+                        <div class="row">
+                            <span id="IsCusVisible" hidden="hidden"></span>
+                            <span id="defcusid" hidden="hidden"></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+<style>
+  
+    .k-dropdown {
+        width: 500px;
+    }
+</style>
+
+<script>
+    $(document).ready(function () {
+        $('#Customers').hide();
+
+        var isCustomersVisible = $("#Customers").is(":visible");
+        document.getElementById("IsCusVisible").innerHTML = isCustomersVisible;
+
+        $('#type').change(function () {
+            var selectedValue = $(this).val();
+
+
+            if (selectedValue == "HO") {
+                $('#Customers').hide()
+                document.getElementById("IsCusVisible").innerHTML =false
+            }
+            else{
+                $('#Customers').show()
+                document.getElementById("IsCusVisible").innerHTML =true
+            }
+
+        });
+
+    });
+    function newReq() {
+        document.getElementById("lblCommonError").innerHTML = "";
+        document.getElementById("lblSuccess").innerHTML = "";
+        var first_name = document.getElementById("first_name").value;
+        var second_name = document.getElementById("second_name").value;
+        var email = document.getElementById("email").value;
+        var contact_number = document.getElementById("contact_number").value.replace(/\s/g, "");
+
+        var multiselect = $("#roles").data("kendoMultiSelect");
+        var selItems = "";
+        var items = multiselect.value();
+        for (let elements of items) {
+            selItems = selItems + elements + ",";
+        }
+
+        var radtype = $("#type").data("kendoDropDownList");
+        var Itemstype = radtype.value();
+        var customer;
+
+        if (document.getElementById("IsCusVisible").innerHTML == "false") {
+             customer = 0;
+        }
+        else
+        {
+            var customervalue = $("#Customer").data("kendoDropDownList");
+            customer = customervalue.value();
+        }
+        
+        
+        
+
+
+        var x = ValidCon(first_name, email, selItems, Itemstype, contact_number,customer);
+
+        if (x == true) {
+
+             $.ajax({
+                type: "GET",
+                 url: '@Url.Action("InsUserReq", "Profile")',
+                 contentType: "application/json; charset=utf-8",
+                data: {
+                    "firstName": first_name,
+                    "lastName": second_name,
+                    "email": email,
+                    "contactNum": contact_number,
+                    "roles": selItems,
+                    "type": Itemstype,
+                    "cusid": customer
+                },
+                dataType: "json",
+                success: function (data) {
+                    if (data.mode == -2) {
+                        document.getElementById("lblCommonError").innerHTML = "We are facing some issues now, please try again later";
+                        //Tech Exception
+                    } else if (data.mode == -1) {
+                        //Already
+                        document.getElementById("lblCommonError").innerHTML = "This account already existing, please check the email";
+                    } else if (data.mode == 0) {
+                         //Tech Exception
+                        document.getElementById("lblCommonError").innerHTML = "We are facing some issues now, please try again later";
+                    } else if (data.mode == 1) {
+                        //Success
+                        document.getElementById("lblSuccess").innerHTML = "Your request submitted successfully";
+
+                        document.getElementById("first_name").value = "";
+                        document.getElementById("second_name").value = "";
+                        document.getElementById("email").value = "";
+                        document.getElementById("contact_number").value = "";
+                        multiselect.value([]);
+                        radtype.value([]);
+                    }
+                }
+            });
+
+        }
+    }
+
+    function ValidCon(first_name, email, roles, type, mobile, customer) {
+        var valCount = 0;
+        
+
+        if (first_name == "") {
+            valCount++;
+            document.getElementById("lblfirstname").innerHTML = "Please enter first name";
+        } else {
+            document.getElementById("lblfirstname").innerHTML = "";
+        }
+
+        if (email == "") {
+            valCount++;
+            document.getElementById("lblemail").innerHTML = "Please enter email";
+        } else {
+            document.getElementById("lblemail").innerHTML = "";
+        }
+
+        if (!ValidateEmail(email)) {
+            valCount++;
+            document.getElementById("lblemail").innerHTML = "Invalid email format";
+        } else {
+            document.getElementById("lblemail").innerHTML = "";
+        }
+
+
+        if (mobile == "") {
+            valCount++;
+            document.getElementById("lblMobile").innerHTML = "Please enter mobile number";
+        }
+    //else if (!ValidateNumber(mobile)) {
+    //        valCount++;
+    //        document.getElementById("lblMobile").innerHTML = "Invalid number format";
+    //    }
+        else {
+            document.getElementById("lblMobile").innerHTML = "";
+        }
+
+        if (roles == "") {
+            valCount++;
+            document.getElementById("lblroles").innerHTML = "Please choose roles";
+        } else {
+            document.getElementById("lblroles").innerHTML = "";
+        }
+
+        if (type == "") {
+            valCount++;
+            document.getElementById("lbltype").innerHTML = "Please choose type";
+        } else {
+            document.getElementById("lbltype").innerHTML = "";
+        }
+        var radtype = $("#type").data("kendoDropDownList");
+        var Itemstype = radtype.value();
+        var isvisible = document.getElementById("IsCusVisible").innerHTML;
+
+        if (Itemstype == "BR" && isvisible=="true") {
+            if (customer == "") {
+                valCount++;
+                document.getElementById("lblcustomer").innerHTML = "Please choose Customer";
+            } else {
+                document.getElementById("lblcustomer").innerHTML = "";
+            }
+        }
+
+
+        if (valCount > 0) {
+            return false;
+        } else {
+            return true;
+        }
+    }
+
+</script>

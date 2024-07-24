@@ -1,0 +1,74 @@
+﻿@using System.Data;
+@using System.Collections;
+@using b2b_solution.Models
+
+@model ProductList
+
+@{
+    if (Model != null)
+    {
+        <div class="product-card-bottom">
+            <div class="col-lg-6">
+                <div class="header-info header-info">
+                    <ul>
+
+                        <li id="LowerUOM-@Model.LowItem.Rowitem[0].id">
+
+                            @{
+                                string s = Model.LowItem.Rowitem[0].id;
+                                List<SelectListItem> list = new List<SelectListItem>();
+                                foreach (var item in Model.LowUOM.ListUomModel)
+                                {
+                                    list.Add(new SelectListItem { Text = item.Text.ToString(), Value = item.Value.ToString() });
+                                }
+
+                                @Html.DropDownList("Value", new SelectList(list, "Value", "Text", Model.LowItem.Rowitem[0].LowerUOM), new
+                                {
+                                    @id = "QddlUOM-" + Model.LowItem.Rowitem[0].id,
+                               @onchange = "GetLUOMPrice('" + Model.LowItem.Rowitem[0].id + "' , this)"
+                                });
+                            }
+
+                        </li>
+
+                    </ul>
+                </div>
+
+                <div class="product-price">
+                    @{
+                        string offerPrice = Model.LowItem.Rowitem[0].LowerUOMOfferPrice.ToString();
+                        string StandardPrice = Model.LowItem.Rowitem[0].LowerUOMStandardPrice.ToString();
+
+                        if (offerPrice == StandardPrice)
+                        {
+                            StandardPrice = "";
+                        }
+                    }
+                    <span id="QLOP-@Model.LowItem.Rowitem[0].id">@Model.LowItem.Rowitem[0].LowerUOMOfferPrice</span>
+                    <span id="QLSP-@Model.LowItem.Rowitem[0].id" class="old-price">@StandardPrice</span>
+                </div>
+            </div>
+
+
+            <div class="add-cart">
+                <div class="detail-extralink ">
+                    @(Html.Kendo().NumericTextBox<Int32>()
+            .Name("QLQTY-" + @Model.LowItem.Rowitem[0].id)
+            .Min(0)
+            .Format("##")
+            .Events(e => e.Change("changeLQty").Spin("changeLQty"))
+            .Value(int.Parse(@Model.LowItem.Rowitem[0].lowerQty.ToString()))
+            .Max(90000)
+            .Step(1)
+            .HtmlAttributes(new { style = "width: 100% ;text-align:center", @class="form-control" }) )
+                </div>
+            </div>
+        </div>
+    }
+}
+
+<script>
+
+</script>
+
+

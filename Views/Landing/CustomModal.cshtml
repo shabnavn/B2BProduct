@@ -1,0 +1,28 @@
+﻿
+<div class="modal fade" tabindex="-1" id="modal_custom">
+    <div class="modal-dialog" data-backdrop="static" dmodal_customata-keyboard="false">
+        <div class="modal-content position-absolute">
+            <div class="modal-header">
+                <h5 class="modal-title" id="success"></h5>
+              
+               
+            </div>
+
+            <div class="modal-body">
+               
+                <h5 id="msg"></h5>
+            </div>
+            <div class="modal-footer">
+                <button type="button" onclick="Cancel()" class="btn btn-primary">OK</button>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<script>
+    function Cancel() {
+        var url = "../Landing/Login";
+        window.location.href = url;
+    }
+</script>

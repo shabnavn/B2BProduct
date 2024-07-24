@@ -1,0 +1,51 @@
+﻿@model int
+
+
+@{
+    ViewBag.Title = "Verify";
+    Layout = "~/Views/Shared/guest_master.cshtml";
+}
+
+<main class="main page-404">
+    <div class="page-content pt-150 pb-150">
+        <div class="container">
+            <div class="row">
+                <div class="col-xl-8 col-lg-10 col-md-12 m-auto text-center">
+                    @{
+                        if (Model == 1)
+                        {
+                            <p class="mb-20"><img src="../Content/imgs/banner/success.png" alt="" class="hover-up" /></p>
+                            <h1 class="display-2 mb-30">Your account has been verified</h1>
+                            <p class="font-lg text-grey-700 mb-30">
+                                Kindly proceed to login<br />
+                                <a href="/Landing/Login"> <span> Login</span></a>
+                            </p>
+                            <a class="btn btn-default submit-auto-width font-xs hover-up mt-30" href="/Landing/Landing"><i class="fi-rs-home mr-5"></i> Back To Home Page</a>
+                        }
+                        else if (Model == -1)
+                        {
+                            <p class="mb-20"><img src="../Content/imgs/banner/expired.png" alt="" class="hover-up" /></p>
+                            <h1 class="display-2 mb-30">Oops!!!The link you are trying to open is expired. Kindly initiate the process again</h1>
+                            <p class="font-lg text-grey-700 mb-30">
+                                Kindly proceed to login<br />
+                                <a href="/Landing/Login"> <span> Login</span></a>
+                            </p>
+                            <a class="btn btn-default submit-auto-width font-xs hover-up mt-30" href="/Landing/Landing"><i class="fi-rs-home mr-5"></i> Back To Home Page</a>
+                        }
+                        else
+                        {
+                            <p class="mb-20"><img src="../Content/imgs/banner/accountNotFound.png" alt="" class="hover-up" /></p>
+                            <h1 class="display-2 mb-30">We coudlnot find your account, please initiate the process again</h1>
+                            <p class="font-lg text-grey-700 mb-30">
+                                Kindly proceed to login<br />
+                                <a href="/Landing/Login"> <span> Login</span></a>
+                            </p>
+                            <a class="btn btn-default submit-auto-width font-xs hover-up mt-30" href="/Landing/Landing"><i class="fi-rs-home mr-5"></i> Back To Home Page</a>
+                        }
+                    }
+
+                </div>
+            </div>
+        </div>
+    </div>
+</main>

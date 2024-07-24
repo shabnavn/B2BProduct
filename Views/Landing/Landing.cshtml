@@ -1,0 +1,264 @@
+﻿@using b2b_solution.Models;
+@using System.Data;
+
+@{
+
+    ViewBag.Title = "Landing";
+    Layout = "~/Views/Shared/guest_master.cshtml";
+    DataModel dm = new DataModel();
+
+}
+
+
+<main class="main">
+    <section class="home-slider position-relative mb-30">
+        <div class="container">
+            <div class="home-slide-cover mt-30">
+                <div class="hero-slider-1 style-4 dot-style-1 dot-style-1-position-1" style="height:600px">
+                    @{ try
+                        {
+                            DataTable dtSlider = dm.loadList("Selbanners", "sp_B2B_Guest");
+                            foreach (DataRow dr in dtSlider.Rows)
+                            {
+                                <div class="single-hero-slider single-animation-wrap" style="background-image:url(@dr["bnr_Image"].ToString()) ">
+                                    <div class="slider-content">
+                                        @*<h1 class="display-2 mb-40">
+                                                @{
+                                                    string[] arr = dr["bnr_Heading"].ToString().Split('-');
+
+                                                }
+                                                @if (arr.Length > 1)
+                                                {
+                                                    @arr[0] <br> @arr[1]
+                                                }
+                                                else
+                                                {
+                                                    @arr[0]
+                                                }
+
+
+                                            </h1>
+                                            <p class="mb-65"> @dr["bnr_ShortMessage"].ToString()</p>*@
+                                    </div>
+                                </div>
+                            }
+                        }
+                        catch
+                        {
+                            <div class="single-hero-slider single-animation-wrap" style="background-image: url(../content/imgs/sliders/slider-1.png)">
+                                <div class="slider-content">
+                                    <h1 class="display-2 mb-40">
+                                        Don’t miss amazing<br />
+                                        deals
+                                    </h1>
+                                    <p class="mb-65">Great B2B Offers</p>
+                                </div>
+                            </div>
+                        }
+
+
+                    }
+
+                </div>
+                <div class="slider-arrow hero-slider-1-arrow"></div>
+            </div>
+        </div>
+    </section>
+
+    @*<section class="popular-categories section-padding">
+            <div class="container wow animate__animated animate__fadeIn">
+                <div class="section-title">
+                    <div class="title">
+                        <h3>Featured Sub Categories</h3>
+                    </div>
+                    <div class="slider-arrow slider-arrow-2 flex-right carausel-10-columns-arrow" id="carausel-10-columns-arrows"></div>
+                </div>
+                <div class="carausel-10-columns-cover position-relative">
+                    <div class="carausel-10-columns" id="carausel-10-columns">
+
+
+
+                        @{
+                            DataTable dtSubCats = dm.loadList("SelSubCats", "sp_B2B_Guest");
+                            int i = 0;
+                            foreach (DataRow dr in dtSubCats.Rows)
+                            {
+
+
+                                            <div class="card-2 bg-@i wow animate__animated animate__fadeInUp" data-wow-delay=".1s">
+                                                <figure class="img-hover-scale overflow-hidden">
+                                                    <a href="/Landing/Login"><img src="@dr["sct_Image"].ToString()" alt="" /></a>
+                                                </figure>
+
+                                                @{
+
+                                                    string sctName = dr["sct_Name"].ToString();
+                                                    if (sctName.Length <= 14)
+                                                    {
+                                                        sctName += "";
+                                                    }
+
+                                                }
+
+                                                <h6><a href="/Landing/Login"> @sctName <br /> </a></h6>
+                                                <span>@dr["itmCount"].ToString() items</span>
+                                            </div>
+
+                                i++;
+                            }
+
+                        }
+
+
+
+                    </div>
+                </div>
+            </div>
+        </section>*@
+
+    <section class="banners mb-25">
+
+
+        <div class="container">
+            <div class="section-title">
+                <div class="title">
+                    <h3>Featured Categories</h3>
+                </div>
+                <div class="slider-arrow slider-arrow-2 flex-right carausel-10-columns-arrow" id="carausel-10-columns-arrows"></div>
+            </div>
+            <div class="row">
+                @{
+                    DataTable dt = dm.loadList("SelFeaturedCategories", "sp_B2B_Home");
+                    foreach (DataRow dr in  dt.Rows)
+                    {
+                        <div class="col-lg-4 col-md-6">
+                            <div class="banner-img wow animate__animated animate__fadeInUp" data-wow-delay="0">
+                                <img src="@dr["fct_Image"].ToString()" onclick="javascript:Search('@dr["tct_cat_ID"]', '0', '@dr["cat_Name"].ToString()', '')" alt="" width="100%" />
+                                <div class="banner-text">
+
+                                    <a href="" class="btn btn-xs"> @dr["fct_Name"].ToString() <i class="fi-rs-arrow-small-right"></i></a>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                }
+
+
+            </div>
+        </div>
+
+    </section>
+
+    <section class="product-tabs section-padding position-relative">
+        <div class="container">
+            <div class="section-title style-2 wow animate__animated animate__fadeIn">
+                <h3>Best Selling Products</h3>
+
+            </div>
+
+            <div class="tab-content" id="myTabContent">
+                <div class="tab-pane fade show active" id="tab-one" role="tabpanel" aria-labelledby="tab-one">
+                    <div class="row product-grid-4">
+                        @{
+
+                            DataTable dtBestSellPrd = dm.loadList("SelBestSellingProds", "sp_B2B_Guest");
+                            foreach (DataRow dx in dtBestSellPrd.Rows)
+                            {
+
+                                <div class="col-lg-1-5 col-md-4 col-12 col-sm-6">
+                                    <div class="product-cart-wrap mb-30 wow animate__animated animate__fadeIn" data-wow-delay=".1s">
+                                        <div class="product-img-action-wrap">
+                                            <div class="product-img product-img-zoom">
+                                                <a href="shop-product-right.html">
+                                                    <img class="default-img hh-250" src="@dx["itm_Image"].ToString()" alt="" />
+                                                    <img class="hover-img hh-250" src="@dx["itm_Image"].ToString()" alt="" />
+                                                </a>
+                                            </div>
+                                            @*<div class="product-action-1">
+                                                <a aria-label="Add To Wishlist" class="action-btn" href="/Landing/Login"><i class="fi-rs-heart"></i></a>
+                                            </div>*@
+
+                                        </div>
+                                        <div class="product-content-wrap">
+                                            <div class="product-category">
+                                                <a href="/Landing/Login">@dx["sct_Name"].ToString()</a>
+                                            </div>
+
+                                            @{
+                                                string itmName1 = "", itmName2 = "";
+                                                string itmName = dx["itm_Name"].ToString();
+                                                string[] Namearr = dm.SplitString(itmName);
+
+                                                <h6><a>@Namearr[0]</a></h6>
+                                                <h6><a>@Namearr[1]</a></h6>
+
+                                            }
+
+                                        </div>
+                                    </div>
+                                </div>
+
+
+                            }
+                        }
+                    </div>
+
+                </div>
+
+
+
+
+
+
+
+
+            </div>
+
+        </div>
+    </section>
+
+
+
+    <section class="section-padding pb-5">
+        <div class="container">
+            <div class="section-title wow animate__animated animate__fadeIn" data-wow-delay="0">
+                <h3 class="">Brands We Carry</h3>
+                <a class="show-all" href="/Landing/Brands">
+                    All Brands
+                    <i class="fi-rs-angle-right"></i>
+                </a>
+            </div>
+            <div class=" col-lg-12 row">
+
+                @{
+                    DataTable dtBrands = dm.loadList("SelBrands", "sp_B2B_Guest");
+                    foreach (DataRow dr in dtBrands.Rows)
+                    {
+                        <div class="col-lg-2">
+                            <div class="style-2 wow animate__animated animate__fadeInUp" data-wow-delay="0">
+                                <div class="product-img-action-wrap">
+                                    <div class="product-img text-center">
+                                        <a >
+                                            <img height="150" src="@dr["brd_Image"]" alt="@dr["brd_Name"]" />
+                                        </a>
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+                    }
+                }
+            </div>
+        </div>
+    </section>
+
+
+
+</main>
+
+
+<style>
+    .hh-250 {
+        /*height: 280px*/
+    }
+</style>

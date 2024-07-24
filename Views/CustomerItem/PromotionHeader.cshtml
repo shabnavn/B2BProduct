@@ -1,0 +1,73 @@
+﻿
+@using b2b_solution.Models;
+@{
+    ViewBag.Title = "Promotion";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@model SearchComplete
+
+
+
+<main class="main ">
+    <div class="page-content pt-10">
+        <div class="container">
+            <div class="row">
+                <div class="card mb-50">
+                    <div class="card-header" style="background-color: #ecfaf3 !important">
+
+                        <div class="card-header row " style="background-color: #ecfaf3 !important; border-style:none">
+                            <div class="col-lg-3" style="margin-top:15px">
+                                <h3 class="mb-0">Promotions</h3>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive">
+
+
+
+                            @( Html.Kendo().Grid<PromotionGrid>
+()
+.Name("Promotion")
+.Columns(columns =>
+{
+    columns.Bound(p => p.Code).Width(100).Title("Number").Filterable(false);
+    columns.Bound(p => p.Name).Width(100).Filterable(false);
+    columns.Bound(p => p.Qualification).Width(80).Filterable(false);
+    columns.Bound(p => p.Assignment).Width(80).Filterable(false);
+    columns.Command(command => command.Custom("View").Click("View").HtmlAttributes(new { @class = "btn btn-primary"})).Width(80);
+})
+    //.HtmlAttributes(new { style = "height: 550px;" })
+    .Filterable()
+    .Pageable()
+    .Navigatable()
+    .Sortable()
+    //.Scrollable(scr=>scr.Height(550))
+    .DataSource(dataSource => dataSource
+    .Ajax()
+    .Batch(true)
+    .PageSize(10)
+    .ServerOperation(false)
+    .Read("GetPromotion", "CustomerItem" , new { @FromDate = Model.FromDate == null ? DateTime.Now.AddDays(-(DateTime.Now.Day - 1)).ToString("yyyyMMdd") : DateTime.Parse(Model.FromDate).ToString("yyyyMMdd"), @ToDate = Model.ToDate == null ? DateTime.Now.ToString("yyyyMMdd") : DateTime.Parse(Model.ToDate).ToString("yyyyMMdd") })
+    .Update("GetPromotion", "CustomerItem", new { @FromDate = Model.FromDate == null ? DateTime.Now.AddDays(-(DateTime.Now.Day - 1)).ToString("yyyyMMdd") : DateTime.Parse(Model.FromDate).ToString("yyyyMMdd"), @ToDate = Model.ToDate == null ? DateTime.Now.ToString("yyyyMMdd") : DateTime.Parse(Model.ToDate).ToString("yyyyMMdd") })
+    )
+    )
+
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+
+<script>
+    function View(e) {
+        e.preventDefault();
+
+        var dataItem = this.dataItem($(e.currentTarget).closest("tr"));
+        window.location.href = '@Url.Action("PromotionDetail", "CustomerItem")?id=' + dataItem.id + '&rcpId=' + dataItem.rcpId;
+    }
+</script>

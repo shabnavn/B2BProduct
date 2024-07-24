@@ -1,0 +1,123 @@
+﻿
+@using System.Data;
+@using b2b_solution.Models;
+
+@{
+    ViewBag.Title = "Credit Note Detail";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@{
+    DataTable dt = (DataTable)ViewBag.Creditnote;
+    DataTable dtHeader = (DataTable)ViewBag.HeaderCRN;
+}
+
+
+
+<main class="main ">
+    <div class="page-content pt-10">
+        <div class="container">
+            <div class="row">
+                <div class="card mb-50">
+                    <div class="card-header" style="background-color: #ecfaf3 !important">
+
+                        <div class="card-header" style="background-color: #ecfaf3 !important; border-style:none">
+                            <div class="col-lg-12 row">
+                                <div class="col-lg-6 row" style="margin-bottom:5px">
+                                    <div class="col-lg-4">
+                                        <h3 class="mb-0">Invoice ID : </h3>
+                                    </div>
+                                    <div class="col-lg-8">
+                                        <h3> @dtHeader.Rows[0]["cnh_Number"].ToString()  </h3>
+                                    </div>
+                                </div>
+                                <div class="col-lg-6 row" style="margin-bottom: 5px; justify-content: end;">
+                                    <a href="../UploadFiles/downloads/invoice.pdf" target="_blank" style="display: contents; display: none">
+                                        <img src="../Content/imgs/order/pdf.png" height="40" alt="Download Order" />
+                                    </a>
+
+                                </div>
+                            </div>
+                            <div class="col-lg-12 row">
+                                <div class="col-lg-6 row " style="margin-bottom:5px">
+                                    <div class="col-lg-3">
+                                        <strong> @dt.Rows.Count Items </strong>
+                                    </div>
+                                    <div class="col-lg-3">
+                                        <strong>@dtHeader.Rows[0]["CreatedDate"].ToString() </strong>
+                                    </div>
+                                </div>
+
+                            </div>
+
+                            <div class="col-lg-12 row">
+                                <div class="col-lg-6 row">
+                                    <div class="col-lg-6">
+                                        <strong style="font-size:larger"> Status : @dtHeader.Rows[0]["Status"].ToString()</strong>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            @( Html.Kendo().Grid<ViewCRNoteByID>
+    ()
+    .Name("client")
+    .Columns(columns =>
+    {
+        columns.Bound(p => p.itmCode).Width(25).Title("Item Code").Filterable(false);
+        columns.Bound(p => p.itmName).Width(100).Title("Item Name").Filterable(false).ClientTemplate("<div style='display:flex' class='image product-thumbnail'><img height='40' src='#: itmImage #'> <div style='padding-top:1%'>#: itmName # </div></div>");
+        columns.Bound(p => p.HUOM).Width(40).Title("Price & Quantity").Filterable(false).ClientTemplate("" +
+            "<div class='product-card-bottom row col-lg-12'><div class='col-lg-4'><div class='header-info header-info'><ul><li>#: HUOM #</li></ul></div><div class='product-price'><span class='pricebg' style='font-size: 18px; font-weight: bold;' id='CHOP'>#: HPrice #</span></div></div><div class='add-cart col-lg-4'" +
+            " style='margin-top:5%'><div class='detail-extralink'><span  class='pricebg'  style='font-size: 18px; font-weight: bold;' id='CHOP'>#: HQty #</span>  </div></div> </div>" +
+            "<div class='product-card-bottom row col-lg-12'><div class='col-lg-4'><div class='header-info header-info'><ul><li>#: LUOM #</li></ul></div><div class='product-price'><span class='pricebg' style='font-size: 18px; font-weight: bold;' id='CHOP'>#: Lprice #</span></div></div><div class='add-cart col-lg-4' " +
+            "style='margin-top:5%'><div class='detail-extralink'><span  class='pricebg'  style='font-size: 18px; font-weight: bold;' id='CHOP'>#: LQty #</span>  </div></div> </div>");
+        columns.Bound(p => p.SubTotal).Width(30).Filterable(false);
+        columns.Bound(p => p.VAT).Width(30).Filterable(false);
+        columns.Bound(p => p.GrandTotal).Width(30).Filterable(false);
+    })
+    .HtmlAttributes(new { style = "" })
+    .Filterable()
+    .Pageable()
+    .Navigatable()
+    .Sortable()
+    //.Scrollable(scr=>scr.Height(550))
+    .DataSource(dataSource => dataSource
+    .Ajax()
+    .Batch(true)
+    .PageSize(10)
+    .ServerOperation(false)
+    .Read("GetCRNDetail", "CustomerService")
+    .Update("GetCRNDetail", "CustomerService")
+    )
+    )
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+
+
+
+
+<style>
+    .k-grid .k-alt {
+        background-color: #ecfaf3; /* specify the alternate background-color */
+    }
+
+    .k-grid-header .k-header {
+        background-color: #ecfaf3;
+    }
+
+    .k-pager-wrap {
+        background-color: #ecfaf3 !important;
+    }
+
+    .pricebg {
+        color: #d32027
+    }
+</style>
+

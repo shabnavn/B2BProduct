@@ -1,0 +1,29 @@
+01-07-2024 13:22:23 +05:30-GetOutstandingInvoices STARTED 01-07-2024 13:22:23
+01-07-2024 13:22:23 +05:30-======================================
+01-07-2024 13:23:31 +05:30-Object reference not set to an instance of an object.
+01-07-2024 13:23:31 +05:30-GetOutstandingInvoices ENDED 01-07-2024 13:23:31
+01-07-2024 13:23:32 +05:30-======================================
+01-07-2024 13:29:56 +05:30-GetOutstandingInvoices STARTED 01-07-2024 13:29:56
+01-07-2024 13:29:56 +05:30-======================================
+01-07-2024 13:30:10 +05:30-Column 'InvoiceBalance' does not belong to table TT.
+01-07-2024 13:30:10 +05:30-GetOutstandingInvoices ENDED 01-07-2024 13:30:10
+01-07-2024 13:30:10 +05:30-======================================
+01-07-2024 13:32:49 +05:30-GetOutstandingInvoices STARTED 01-07-2024 13:32:49
+01-07-2024 13:32:49 +05:30-======================================
+01-07-2024 13:35:17 +05:30-GetCompletedDisputeReqDetailData STARTED 01-07-2024 13:35:17
+01-07-2024 13:35:17 +05:30-======================================
+01-07-2024 13:35:17 +05:30-Column 'drh_DisputeType' does not belong to table SelCompletedDisputeReqDetailData.
+01-07-2024 13:35:17 +05:30-GetCompletedDisputeReqDetailData ENDED 01-07-2024 13:35:17
+01-07-2024 13:35:17 +05:30-======================================
+01-07-2024 13:35:42 +05:30-GetCompletedDisputeReqDetailData STARTED 01-07-2024 13:35:42
+01-07-2024 13:35:42 +05:30-======================================
+01-07-2024 13:35:42 +05:30-Column 'drd_InvoiceBalance' does not belong to table SelCompletedDisputeReqDetailData.
+01-07-2024 13:35:42 +05:30-GetCompletedDisputeReqDetailData ENDED 01-07-2024 13:35:42
+01-07-2024 13:35:42 +05:30-======================================
+01-07-2024 13:36:38 +05:30-GetCompletedDisputeReqDetailData STARTED 01-07-2024 13:36:38
+01-07-2024 13:36:38 +05:30-======================================
+01-07-2024 13:36:39 +05:30-Column 'drd_oid_ID' does not belong to table SelCompletedDisputeReqDetailData.
+01-07-2024 13:36:39 +05:30-GetCompletedDisputeReqDetailData ENDED 01-07-2024 13:36:39
+01-07-2024 13:36:39 +05:30-======================================
+01-07-2024 13:37:13 +05:30-GetCompletedDisputeReqDetailData STARTED 01-07-2024 13:37:13
+01-07-2024 13:37:13 +05:30-======================================

@@ -1,0 +1,437 @@
+﻿@using System.Data;
+@using b2b_solution.Models;
+@using System.Collections;
+@{
+    DataModel dm = new DataModel();
+    DataTable dt = ViewBag.CartProducts;
+    ViewBag.Title = "Cart";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<script>
+    $(document).ready(function () {
+        GetCartTotal();
+    });
+</script>
+<main class="main">
+
+    <div class="container mb-80 mt-50">
+
+        <div class="row">
+            <div class="col-lg-9">
+                <div class="table-responsive shopping-summery">
+                    <div id="crtList">
+                        @{
+                            Html.RenderPartial("CartList");
+                        }
+
+                    </div>
+                </div>
+                <div class="divider-2 mb-30"></div>
+                <div class="cart-action d-flex justify-content-between">
+                    <a class="btn " href="/Home/Search"><i class="fi-rs-arrow-left mr-10"></i>Continue Shopping</a>
+                    <a class="btn  mr-10 mb-sm-15" href="javascript: ClearAllCart()"><i class="fi-rs-file-delete mr-10"></i>Clear All</a>
+                </div>
+            </div>
+            <div class="col-lg-3">
+                <div class="border p-md-4 cart-totals ml-30">
+                    <div class="table-responsive">
+                        <table class="table no-border">
+                            <tbody>
+                                <tr hidden>
+                                    <td class="cart_total_label">
+                                        <h6 class="text-muted">Total</h6>
+                                    </td>
+                                    <td class="cart_total_amount">
+                                        <h6 id="subTotal_WO_D" class="text-heading text-end"></h6>
+                                    </td>
+                                </tr>
+
+                                <tr hidden>
+                                    <td class="cart_total_label">
+                                        <h6 class="text-muted">Discount</h6>
+                                    </td>
+                                    <td class="cart_total_amount">
+                                        <h6 id="TotalDisc" style="color:red" class="text-heading text-end"></h6>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="cart_total_label">
+                                        <h6 class="text-muted">Sub Total</h6>
+                                    </td>
+                                    <td class="cart_total_amount">
+                                        <h6 id="SubTotal" class="text-heading text-end"></h6>
+                                    </td>
+                                </tr>
+
+                                <tr>
+                                    <td class="cart_total_label">
+                                        <h6 class="text-muted">VAT</h6>
+                                    </td>
+                                    <td class="cart_total_amount">
+                                        <h6 id="vat" class="text-heading text-end"></h6>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="cart_total_label">
+                                        <h6 class="text-muted">Grand Total</h6>
+                                    </td>
+                                    <td class="cart_total_amount">
+                                        <h6 id="grandTotal" class="text-brand text-end"></h6>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td scope="col" colspan="2">
+                                        <div class="divider-2 mt-10 mb-10"></div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="cart_total_label">
+                                        <h6 class="text-muted">Total Credit Limit</h6>
+                                    </td>
+                                    <td class="cart_total_amount">
+                                        <h6 id="totcrdlimit" class="text-heading text-end"></h6>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="cart_total_label">
+                                        <h6 class="text-muted">Available Credit Limit</h6>
+                                    </td>
+                                    <td class="cart_total_amount">
+                                        <h6 id="availablecredit" class="text-heading text-end"></h6>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="cart_total_label">
+                                        <h6 class="text-muted">Minimum Order Value</h6>
+                                    </td>
+                                    <td class="cart_total_amount">
+                                        <h6 id="minOrderValue" class="text-heading text-end"></h6>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td scope="col" colspan="2">
+                                        <div class="divider-2 mt-10 mb-10"></div>
+                                    </td>
+                                </tr>
+
+                            </tbody>
+                        </table>
+                    </div>
+                    <a onclick="CheckSum();" class="btn mb-20 w-100">Proceed To PO<i class="fi-rs-sign-out ml-15"></i></a>
+                </div>
+            </div>
+
+        </div>
+
+
+    </div>
+</main>
+
+
+<div class="modal fade custom-modal" id="ShowImage" tabindex="-1" aria-labelledby="quickViewModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-md-6 col-sm-12 col-xs-12 mb-md-0 mb-sm-5">
+                        <div class="detail-gallery">
+                         
+                            <div class="">
+                                <figure class="border-radius-10">
+                                    <img id="EnlargedImage" alt="product image" />
+                                </figure>
+                            </div>
+                        </div>
+                        <!-- End Gallery -->
+                    </div>
+                    <div class="col-md-6 col-sm-12 col-xs-12">
+                        <div class="detail-info pr-30 pl-30">
+                            <span id="itmCode" class="stock-status out-stock">  </span>
+                            <h3 id="itmName" class="title-detail"></h3>
+                         
+                        </div>
+                        <div class="detail-info pr-30 pl-30 pt-4 d-flex">
+                            <h3 id="uomName" class="title-detail pe-2">  </h3>
+                            <h3 class="title-detail pe-2"> - </h3>
+                            <h3 class="title-detail" id="price" style=" font-weight: bold; color: #d32027;"></h3>
+                        </div>
+                        <!-- Detail Info -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div class="modal fade custom-modal" id="ErrorModal" tabindex="-1" aria-labelledby="quickViewModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            <div class="modal-body">
+                <div class="timeline">
+                    <div class="col-lg-12">
+                        <div class="form-group">
+                            <h4> <span id="errorMsg"></span></h4>
+                        </div>
+                        <div class="form-group" style="margin-top: 25px; text-align-last:end">
+                            <button style="background-color:lightcoral" onclick="DismissModelRes()" class="btn btn-secondary ">Dismiss</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+<style>
+
+
+
+
+    .k-select {
+        background-color: #ffffff;
+        border-color: #d32027 !important;
+        color: #d32027 !important;
+        border-style: hidden !important;
+    }
+
+    .k-link-increase {
+        height: 25px !important;
+    }
+
+    .k-link-decrease {
+        height: 25px !important;
+    }
+
+    .k-state-default {
+        border-color: #d32027 !important;
+    }
+</style>
+
+<script>
+
+    function ClearAllCart() {
+        //
+
+
+
+           $.ajax({
+            type: "GET",
+            url: '@Url.Action("RemoveAllCart", "Home")',
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+                success: function (data) {
+
+                }
+           });
+         window.location.href = "@Url.Action("Cart", "Home")";
+    }
+
+
+        function GetLUOM(id, itmValue) {
+            var uomID = itmValue.value;
+            $.ajax({
+            type: "GET",
+            url: '@Url.Action("GetItemUOMPrice", "Home")',
+            contentType: "application/json; charset=utf-8",
+                data: { id: id, itmValues: uomID },
+            dataType: "json",
+                success: function (data) {
+                    document.getElementById("CHOP-" + id).innerHTML = data.OfferPrice;
+                }
+            });
+
+             $.ajax({
+            type: "GET",
+            url: '@Url.Action("UpdateHUOMCart", "Home")',
+            contentType: "application/json; charset=utf-8",
+                data: { id: id, itmValues: uomID },
+            dataType: "json"
+             });
+
+
+               $.ajax({
+            type: "GET",
+            url: '@Url.Action("GetItemCartSubTotal", "Home")',
+            contentType: "application/json; charset=utf-8",
+                data: { id: id},
+            dataType: "json",
+                success: function (data) {
+
+                    document.getElementById("LineTotal-" + id).innerHTML = data.GrandTotal;
+                }
+            });
+            $('#lowPartial-' + id).load('/Home/GetCartItemLowerUOM?id=' + id + "&&itmValues=" + uomID);
+            GetCartTotal();
+        }
+
+    function changeHQty() {
+
+            var x = this;
+
+            var id = x.element.attr("id");
+            var itemID = id.replace("Hqty", "");
+            var HUom = $('#HUOM' + itemID).val();
+            var LQty = $('#LQTY-' + itemID).val();
+
+            if (LQty == null) {
+                LQty = 0;
+            }
+            var LUOM = $('#ddlUOM-' + itemID).val();
+            if (LUOM == null) {
+                LUOM = 0;
+            }
+
+            if (1 != "0") {
+
+
+
+             $.ajax({
+            type: "GET",
+            url: '@Url.Action("InsCart", "Home")',
+            contentType: "application/json; charset=utf-8",
+                 data: {
+                     "id": itemID,
+                     "HigherQty": x.value(),
+                     "HigherUOM": HUom,
+                     "LowerQty": LQty,
+                     "LowerUOM": LUOM},
+
+            dataType: "json",
+                 success: function (data) {
+
+
+                     UpdateCartDetails(itemID);
+                     GetCartTotal();
+                }
+            });
+        }
+
+
+
+
+    }
+
+    function UpdateCartDetails(itemID) {
+          $.ajax({
+            type: "GET",
+            url: '@Url.Action("GetItemCartSubTotal", "Home")',
+            contentType: "application/json; charset=utf-8",
+                  data: { id: itemID},
+            dataType: "json",
+                success: function (data) {
+                    document.getElementById("subTotal-" + itemID).innerHTML = data.Total_W_D;
+                    document.getElementById("TotalVAT-" + itemID).innerHTML = data.VAT;
+                    document.getElementById("LineTotal-" + itemID).innerHTML = data.GrandTotal;
+
+                }
+
+           });
+    }
+
+
+    function PartialCartUpd() {
+
+              $.ajax({
+            type: "GET",
+            url: '@Url.Action("PartialCart", "Home")',
+            contentType: "application/json; charset=utf-8",
+                  success: function (result) {
+                      $("#crtList").html('');
+                    $("#crtList").html(result);
+                }
+
+            });
+    }
+
+       function GetCartTotal() {
+         $.ajax({
+            type: "GET",
+            url: '@Url.Action("GetCartTotal", "Home")',
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+                success: function (data) {
+                    document.getElementById("subTotal_WO_D").innerHTML = data.Total_WO_D;
+                    document.getElementById("TotalDisc").innerHTML = data.TotalDisc;
+                    document.getElementById("SubTotal").innerHTML = data.Total_W_D;
+                    document.getElementById("vat").innerHTML = data.VAT;
+                    document.getElementById("grandTotal").innerHTML = data.GrandTotal;
+                    document.getElementById("totcrdlimit").innerHTML = data.TotalCredit;
+                    document.getElementById("availablecredit").innerHTML = data.AvailableCredit;
+                    document.getElementById("minOrderValue").innerHTML = data.MinOrderValue;
+                }
+            });
+    }
+
+
+    function CheckSum() {
+
+
+          $.ajax({
+            type: "GET",
+            url: '@Url.Action("OrderEligibility", "Profile")',
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+                success: function (data) {
+                    res = data.res;
+                    if (data.res == "1") {
+
+                            GetCartTotal();
+                        var grndTotal = parseFloat(document.getElementById("grandTotal").innerHTML.replaceAll(/,/g, ''));
+                        var avCreditLimit = parseFloat(document.getElementById("availablecredit").innerHTML.replaceAll(/,/g, ''));
+                        var minOrderValue = parseFloat(document.getElementById("minOrderValue").innerHTML.replaceAll(/,/g, ''));
+
+                      
+                            var bal = Math.floor(minOrderValue - grndTotal);
+
+                            if (minOrderValue > grndTotal) {
+                                $('#errorMsg').text('You are currently AED' + bal + ' short of the minimum order value of AED' + minOrderValue + '. Please add more items to your cart')
+                                $('#ErrorModal').modal('show');
+                            }
+                            else if (grndTotal > avCreditLimit) {
+                                $('#errorMsg').text('Grand Total exceeds the available credit limit')
+                                $('#ErrorModal').modal('show');
+                            }
+                            else if (grndTotal <= avCreditLimit) {
+                                window.location.href = "@Url.Action("CartPromo", "Promotion")";
+                        }
+
+                    } else {
+                        $('#errorMsg').text('Sorry, you dont have permission to place the order. Only Admin/Order-Taker can place the order')
+                        $('#ErrorModal').modal('show');
+                    }
+                }
+        });
+
+
+
+
+
+    }
+
+    function DismissModelRes() {
+        $('#ErrorModal').modal('hide');
+
+    }
+
+
+    function ShowImage(src, itmCode, itmName,uomName,Price) {
+        var img = document.getElementById("EnlargedImage");
+        img.src = src;
+        document.getElementById("itmCode").innerHTML = itmCode;
+        document.getElementById("itmName").innerHTML = itmName;
+        document.getElementById("uomName").innerHTML = uomName;
+        document.getElementById("price").innerHTML = Price;
+
+        $('#ShowImage').modal('show');
+    }
+
+
+
+
+</script>

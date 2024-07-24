@@ -1,0 +1,190 @@
+﻿@using System.Data;
+@using b2b_solution.Models;
+@using System.Collections;
+@{
+    DataModel dm = new DataModel();
+    string[] arrX = {  Session["CusID"].ToString() };
+    DataTable dt = dm.loadList("SelCartItems", "sp_B2B_Home", Session["userID"].ToString(), arrX);
+}
+<table class="table table-wishlist">
+    <thead>
+        <tr class="main-heading">
+            <th scope="col" style="padding-left:1%" colspan="2">Product</th>
+            <th scope="col">Unit Price & Quantity</th>
+            <th  scope="col">Total </th>
+            <th scope="col">Discount</th>
+            <th scope="col">Sub Total</th>
+            <th scope="col">VAT</th>
+            <th scope="col">Grand Total</th>
+            <th scope="col" class="end"></th>
+        </tr>
+    </thead>
+
+    <tbody>
+
+
+        @{
+            foreach (DataRow dx in dt.Rows)
+            {
+                <tr class="">
+                    <td class="image product-thumbnail pl-10">
+                        <img id="thumb-image" onclick="ShowImage('@dx["itm_Image"].ToString()', '@dx["itm_Code"].ToString()','@dx["itm_Name"].ToString()','@dx["uom_Name"].ToString()','@dx["GrandTotal"].ToString()')"
+                             src=" @dx["itm_Image"].ToString() " style="max-width:50px" alt="#">
+
+                    </td>
+                    <td class="product-des product-name">
+                        <div class="product-category">
+                            <a>@dx["itm_Code"].ToString()</a>
+                        </div>
+                        <h6 class="mb-5"><a class="product-name mb-10 text-heading" href="#"> @dx["itm_Name"].ToString() </a></h6>
+                    </td>
+                    <td class="price">
+                        <div class="product-card-bottom row col-lg-12">
+                            <div class="col-lg-6">
+                                <div class="header-info header-info">
+                                    <ul>
+                                        <li>
+
+                                            @{
+                                                DataTable dtUom = dm.loadList("SelItemHigherUOM", "sp_B2B_Home", @dx["itm_ID"].ToString());
+                                                List<SelectListItem> list = new List<SelectListItem>();
+                                                foreach (DataRow drUom in dtUom.Rows as IEnumerable)
+                                                {
+                                                    list.Add(new SelectListItem { Text = drUom["uom_Name"].ToString(), Value = drUom["uom_ID"].ToString() });
+                                                }
+                                            }
+
+                                            @Html.DropDownList("uomID", new SelectList(list, "Value", "Text", dx["crd_HigherUOM"]), new
+                                            {
+                                                @class = "language-dropdown",
+                                           @onchange = "GetLUOM('" + @dx["itm_ID"].ToString() + "' , this)",
+                                                @id = "HUOM" + @dx["itm_ID"].ToString()
+                                       })
+
+                                        </li>
+                                    </ul>
+                                </div>
+
+                                <div class="product-price">
+                                    <span style="font-size: 15px; font-weight: bold; color: #d32027;" id="CHOP-@dx["itm_ID"].ToString()">@dx["OfferPrice"].ToString()</span>
+                                </div>
+
+
+                            </div>
+
+                            <div class="add-cart col-lg-6">
+                                <div class="detail-extralink">
+                                    @(Html.Kendo().NumericTextBox()
+            .Name("Hqty" + @dx["itm_ID"].ToString())
+            .Min(0)
+            .Format("##")
+            .Events(e => e.Change("changeHQty").Spin("changeHQty"))
+            .Max(90000)
+            .Value(int.Parse(@dx["crd_HigherQty"].ToString()) )
+            .Step(1)
+            .RestrictDecimals(true)
+            .HtmlAttributes(new { style = "width: 80%; text-align:center" , @class="form-control"  }) )
+                                </div>
+                            </div>
+                        </div>
+
+                        @{
+
+                            ViewBag.CartProductRow = dx;
+
+
+
+                            string[] arr = { dx["itm_ID"].ToString() };
+                            DataTable dtLowerUom = dm.loadList("SelItemLowerUOM", "sp_B2B_Home", dx["crd_HigherUOM"].ToString(), arr);
+
+                            List<UOMModel> transaction_Lists = new List<UOMModel>();
+                            foreach (DataRow drUom in dtLowerUom.Rows as IEnumerable)
+                            {
+                                transaction_Lists.Add(new UOMModel { Text = drUom["uom_Name"].ToString(), Value = drUom["uom_ID"].ToString() });
+                            }
+
+                            var uomLow = new UomList();
+                            uomLow.ListUomModel = transaction_Lists;
+
+                            string[] arrItems = { Session["userID"].ToString() , Session["CusID"].ToString() };
+                            DataTable dtBestSellPrd = dm.loadList("SelCartItemsByID", "sp_B2B_Home", dx["itm_ID"].ToString(), arrItems);
+                            string uom = "0", price = "0";
+                            if (uomLow.ListUomModel.Count > 0)
+                            {
+                                if (Decimal.Parse(dtBestSellPrd.Rows[0]["LowerPrice"].ToString()) == 0)
+                                {
+                                    string[] uomArr = { dx["itm_ID"].ToString(),  Session["CusID"].ToString() };
+                                    DataTable dtItemPrice = dm.loadList("SelItemUomPrice", "sp_B2B_Home", uomLow.ListUomModel[0].Value, uomArr);
+                                    if (dtItemPrice.Rows.Count > 0)
+                                    {
+                                        price = dtItemPrice.Rows[0]["OfferPrice"].ToString();
+                                        uom = uomLow.ListUomModel[0].Value;
+                                    }
+
+                                }
+                                else
+                                {
+                                    price = dtBestSellPrd.Rows[0]["LowerPrice"].ToString();
+                                    uom = dtBestSellPrd.Rows[0]["crd_lowerUOM"].ToString();
+                                }
+                            }
+
+                            List<ItemRow> RowItems = new List<ItemRow>();
+                            RowItems.Add(new ItemRow
+                            {
+                                id = dx["itm_ID"].ToString(),
+                                LowerUOM = uom,
+                                LowerUOMOfferPrice = price,
+                                lowerQty = dx["crd_LowerQty"].ToString()
+                            });
+
+                            var LowRow = new ItemList();
+                            LowRow.Rowitem = RowItems;
+
+                            <div id="lowPartial-@dx["itm_ID"]" class="mt-2">
+                                @{
+                                    if (dtLowerUom.Rows.Count > 0)
+                                    { @Html.Partial("CartLowerUOM", new ProductList { LowItem = LowRow, LowUOM = uomLow })}
+                                }
+                            </div>
+                        }
+                    </td>
+                    <td  class="disocunt">
+                        <h4 id="Total-@dx["itm_ID"]" class="text-body" style="font-size:15px"> @dx["SubTotal_WO_D"].ToString() </h4>
+                    </td>
+                    <td  class="disocunt">
+                        <h4 id="Discount-@dx["itm_ID"]" class="text-body" style="color: #ff0101 !important; font-size: 15px "> @dx["TotalDisc"].ToString() </h4>
+                    </td>
+
+                    <td class="price">
+                        <h4 id="subTotal-@dx["itm_ID"]" class="text-body" style="font-size:15px"> @dx["SubTotal_W_D"].ToString() </h4>
+                    </td>
+
+                    <td class="price">
+                        <h4 id="TotalVAT-@dx["itm_ID"]" class="text-body" style="font-size:15px"> @dx["TotalVAT"].ToString() </h4>
+                    </td>
+
+
+                    <td class="price">
+                        <h5 id="LineTotal-@dx["itm_ID"]" class="text-body" style="color: #d32027 !important; font-size: 15px; text-align:center "> @dx["GrandTotal"].ToString() </h5>
+                    </td>
+                    @using (Html.BeginForm("DelCartItem", "Home", FormMethod.Post))
+                    {
+                        <td class="action text-center">
+
+                            @Html.Editor("id", new { htmlAttributes = new { @hidden = "hidden", @Value = dx["itm_ID"].ToString() } })
+
+                            <button class="icon" style="background-color: #ffffff !important; color: black; padding: 0px; border-style: none;" type="submit">
+
+                                <i class="fi-rs-trash"></i>
+                            </button>
+                        </td>
+                    }
+
+                </tr>
+            }
+        }
+
+    </tbody>
+</table>
+

@@ -1,0 +1,540 @@
+﻿
+@using System.Data;
+@using b2b_solution.Models;
+@model OrderTemplate
+@{
+    ViewBag.Title = "ViewTemplate";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+
+    DataTable dtHeader = (DataTable)ViewBag.HeaderTemplate;
+    DataTable dt = (DataTable)ViewBag.CurrentTemplate;
+
+
+    if (dt == null)
+    {
+        Response.Redirect("~/OrderTemplate/ViewTemplate");
+    }
+}
+
+
+
+<div>
+    <main class="main ">
+        <div class="page-content pt-10">
+            <div class="container">
+
+                <div class="row">
+                    <div class="card mb-50">
+                        <div class="card-header" style="background-color: #ecfaf3 !important">
+                            <div>
+                                <div class="card-header" style="background-color: #ecfaf3 !important; border-style:none">
+                                    <div class="col-lg-12 row">
+                                        <div class="col-lg-12" style="text-align: right;">
+                                            <button id="deleteButton" onclick="DeleteTemplate()" class="btn btn-primary">Delete Template</button>
+                                        </div>
+                                        <div class="col-lg-5" style="margin-top:15px">
+                                            <h3 class="mb-0">Name: @dtHeader.Rows[0]["oth_templateName"].ToString() </h3>
+                                            <h5> (Code:  @dtHeader.Rows[0]["oth_templateCode"].ToString())</h5>
+                                        </div>
+                                        <div class="table-responsive">
+                                            @( Html.Kendo().Grid<TemplateItems>
+    ()
+    .Name("client")
+    .Columns(columns =>
+    {
+        //columns.Bound(p => p.itmid).Width(15).Title("Item Code").Filterable(false);
+        columns.Bound(p => p.itmname).Width(55).Title("Item Name").Filterable(false);
+        columns.Bound(p => p.itmhuom).Width(10).Title("H.UOM").Filterable(false);
+        columns.Bound(p => p.itmhqty).Width(15).Title("H.Qty").Filterable(false);
+        columns.Bound(p => p.itmluom).Width(10).Title("L.UOM").Filterable(false);
+        columns.Bound(p => p.itmlqty).Width(15).Title("L.Qty").Filterable(false);
+        columns.Command(command => command.Custom("Delete").Click("Delete").HtmlAttributes(new { @class = "btn btn-primary" })).Width(15);
+
+
+    })
+    .HtmlAttributes(new { style = "" })
+    .Filterable()
+    .Pageable()
+    .Navigatable()
+    .Sortable()
+    //.Scrollable(scr=>scr.Height(550))
+    .DataSource(dataSource => dataSource
+    .Ajax()
+    .Batch(true)
+    .PageSize(10)
+    .ServerOperation(false)
+    .Read("GetTemplateDetail", "OrderTemplate")
+    .Update("GetTemplateDetail", "OrderTemplate")
+    )
+    )
+                                        </div>
+                                        <div>
+                                            <div class="col-lg-2">
+                                                <div class="form-group" style="margin-top:25px">
+                                                    <button onclick="GenerateOrder()" class="btn btn-heading btn-block hover-up">
+                                                        Generate Order
+                                                    </button>
+                                                    <label id="lblCommonError2" style="color:red;  font-size:small"></label>
+                                                    <label id="lblSuccess2" style="color:green;  font-size:small"></label>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                    </div>
+
+
+                                </div>
+
+
+                                <div class="col-lg-12 row">
+                                    <div class="col-lg-12 col-md-12">
+                                        @*<div class="heading_s1">
+                                                <h4 class="mb-5"> Add More Items</h4>
+                                            </div>*@
+                                        <div class="col-lg-5" style="margin-top:15px">
+                                            <h4 class="mb-5"> Add More Items</h4>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-md-4" style="display: block; ">
+                                                @(Html.Kendo().MultiColumnComboBox()
+    .Name("items")
+    .Placeholder("Select Item")
+    .DataTextField("itmname")
+    .DataValueField("itmid")
+    .Filter("contains")
+    .FilterFields(new string[] { "itmcode", "itmname" })
+    .Columns(columns =>
+    {
+        columns.Add().Field("itmcode").Title("Code").Width(100); // Set the width for itmCode column
+        columns.Add().Field("itmname").Title("Name").Width(500); // Set the width for itmName column
+    })
+    .HtmlAttributes(new { style = "width: 100%", @class = "form-control", @tabindex = "5" })
+    .DataSource(source => {
+        source.Read(read =>
+        {
+            read.Action("GetItems", "OrderTemplate");
+        });
+    })
+    .Enable(true)
+    .AutoBind(true)
+)
+                                                <label id="lblitems" style="color: red; font-size: small"></label>
+                                                <span id="itmError" style="color:red; display:none"> Please choose item </span>
+                                            </div>
+
+                                            <div class="col-md-2">
+                                                @(Html.Kendo().ComboBox()
+            .Name("uom")
+            .DataTextField("uomname")
+            .DataValueField("uomid")
+            .Placeholder("H.UOM")
+            .Filter("contains")
+            .Suggest(true)
+            .AutoBind(false)
+            .HtmlAttributes(new { @class = "form-control", @style = "width:100%;" })
+            .DataSource(source =>
+            {
+                source.Read(read =>
+                {
+                    read.Action("GetUom", "OrderTemplate").Data("h_UOMFilter");
+                })
+                .ServerFiltering(true);
+            })
+            .CascadeFrom("items")
+            .Events(e =>
+            {
+                e.Change("on_HUOM_Change");
+            })
+        )
+                                                <label id="lbluom" style="color: red; font-size: small"></label>
+                                                <span id="HuomError" style="color:red; display:none"> Please choose H.UOM </span>
+                                            </div>
+                                            <div class="col-md-1">
+                                                @*<input type="text" tabindex="1" id="qty" required="" placeholder="H.Qty" name="qty" style="background-color: white" maxlength="3" oninput="this.value = this.value.replace(/[^0-9]/g, '');" class="form-control" />*@
+                                                <label id="lblqty" style="color: red; font-size: small"></label>
+
+                                                @(Html.Kendo().NumericTextBox<int>()
+            .Name("qty")
+            .Format("#")
+            .Placeholder("H.Qty")
+            .Min(0)
+            .Max(2000)
+            .HtmlAttributes(new {  title = "numeric", @tabindex = "3", @class = "form-control", @AutoComplete = "off" , style = "width: 90px;" })
+      )
+                                                <span id="HQtyError" style="color:red; display:none"> Please enter H.Qty </span>
+                                            </div>
+                                            <div class="col-md-2">
+                                                @(Html.Kendo().ComboBox()
+            .Name("luom")
+            .DataTextField("uomname")
+            .DataValueField("uomid")
+            .Placeholder("L.UOM")
+            .Filter("contains")
+            .Suggest(true)
+            .AutoBind(false)
+            .Enable(false)
+            .HtmlAttributes(new { @class = "form-control", @style = "width:100%;" })
+            .DataSource(source =>
+            {
+                source.Read(read =>
+                {
+                    read.Action("GetLUom", "OrderTemplate").Data("l_UOMFilter");
+                })
+                .ServerFiltering(true);
+            })
+            .CascadeFrom("uom")
+        )
+                                                <label id="lblluom" style="color: red; font-size: small"></label>
+                                            </div>
+
+                                            <div class="col-md-1">
+                                                @(Html.Kendo().NumericTextBox<int>()
+                                         .Name("lqty")
+                                         .Format("#")
+                                         .Placeholder("L.Qty")
+                                         .Min(0)
+                                         .Max(2000)
+                                         .HtmlAttributes(new {  title = "numeric" ,  @tabindex = "5", @class = "form-control", @AutoComplete = "off" , style = "width: 90px;" })
+
+
+                                        )
+
+                                                <label id="lbllqty" style="color: red; font-size: small"></label>
+                                            </div>
+                                            <div class="col-md-2">
+                                                <button onclick="newItem()" class="btn btn-heading btn-block hover-up">Add</button>
+                                                <label id="lblCommonError" style="color: red; font-size: small"></label>
+                                                <label id="lblSuccess" style="color: green; font-size: small"></label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+    <div class="modal fade custom-modal" id="SuccessRes" tabindex="-1" aria-labelledby="quickViewModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                <div class="modal-body">
+                    <div class="timeline">
+                        <div class="col-lg-12">
+                            <div class="form-group">
+                                <h4> Generate Order Succesfully, Items Added to Cart</h4>
+                            </div>
+                            <div class="form-group" style="margin-top: 25px; text-align-last:end">
+                                <button style="background-color:lightcoral" onclick="DismissSuccess()" class="btn btn-secondary ">OK</button>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade custom-modal" id="FailureRes" tabindex="-1" aria-labelledby="quickViewModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                <div class="modal-body">
+                    <div class="timeline">
+                        <div class="col-lg-12">
+                            <div class="form-group">
+                                <h4 style="color:red"> We are facing some technical issues now, please try again later <img height="40" src="../Content/imgs/order/sad.png" />  </h4>
+                            </div>
+
+                            <div class="form-group" style="margin-top: 25px; text-align-last:end">
+                                <button style="background-color:lightcoral" onclick="DismissModelRes()" class="btn btn-secondary ">OK</button>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+<script>
+    function DismissModelRes() {
+        $('#FailureRes').modal('hide');
+    }
+
+    function ShowSuccess() {
+        $('#SuccessRes').modal('show');
+    }
+
+    function ShowFailure() {
+        $('#FailureRes').modal('show');
+    }
+
+
+    function DismissSuccess() {
+        window.location.href = '@Url.Action("OrderTemplate", "OrderTemplate")'; 
+    }
+
+     function newItem()
+     {
+        document.getElementById("lblCommonError").innerHTML = "";
+        document.getElementById("lblSuccess").innerHTML = "";
+         var radtype = $("#items").data("kendoMultiColumnComboBox");
+
+         var item = $("#items").data("kendoMultiColumnComboBox").text();
+         var itemid = $("#items").val();
+
+         var quantity = $("#qty").val();
+         var lquantity = $("#lqty").val();
+
+         var uom = $("#uom").data("kendoComboBox").text();
+         var luom = $("#luom").data("kendoComboBox").text();
+
+         var uomid = $("#uom").val();
+         var luomid = $("#luom").val();
+
+         var x = ValidCon(itemid, quantity, uomid);
+
+         if (x == true) {
+
+            $.ajax({
+                type: "GET",
+                url: '@Url.Action("InsItem", "OrderTemplate")',
+                contentType: "application/json; charset=utf-8",
+                data: {
+                  "ID":@dtHeader.Rows[0]["oth_ID"], //itm.huomid,itm.itmhuom, itm.itmhqty,itm.luomid ,itm.itmhuom, itm.itmlqty
+                  "itmid": itemid,
+                  "huomid": uomid,
+                  "itmhqty": quantity,
+                  "luomid": luomid,
+                  "itmlqty":lquantity
+
+                },
+             dataType: "json",
+            success: function (data) {
+                 if (data.mode == -2)
+                 {
+                     document.getElementById("lblCommonError").innerHTML = "Sorry, please try again later";
+                     //Tech Exception
+
+                 }
+                 else if (data.mode == 0)
+                 {
+                      //Tech Exception
+                     document.getElementById("lblCommonError").innerHTML = "We are facing some issues now, please try again later";
+                 }
+                 else if (data.mode == 1)
+                 {
+
+                     document.getElementById("lblSuccess").innerHTML = "New item added successfully";
+                     location.reload();
+                     radtype.value([]);
+                     document.getElementById("qty").value = "";
+                     document.getElementById("lqty").value = "";
+
+
+                 }
+            }
+            });
+
+         }
+    }
+
+    function Delete(e)
+    {
+        e.preventDefault();
+        var dataItem = this.dataItem($(e.currentTarget).closest("tr"));
+        var radtype = $("#items").data("kendoMultiColumnComboBox");
+        var confirmation = confirm("Are you sure you want to delete?");
+        if (confirmation) {
+            $.ajax({
+                type: "GET",
+                url: '@Url.Action("DeleteItemFromDetail", "OrderTemplate")',
+                contentType: "application/json; charset=utf-8",
+                data: {
+                    "ID":@dtHeader.Rows[0]["oth_ID"], //itm.huomid,itm.itmhuom, itm.itmhqty,itm.luomid ,itm.itmhuom, itm.itmlqty
+                    "itmid": dataItem.itmid
+
+                },
+                dataType: "json",
+                success: function (data) {
+                    if (data.mode == -2) {
+                        //Tech Exception
+                        document.getElementById("lblCommonError").innerHTML = "We are facing some issues now, please try again later";
+                    }
+                    else {
+
+                        document.getElementById("lblSuccess").innerHTML = "New item added successfully";
+                        location.reload();
+                        radtype.value([]);
+                        document.getElementById("qty").value = "";
+                        document.getElementById("lqty").value = "";
+
+
+                    }
+                }
+            });
+        }
+    }
+    function DeleteTemplate()
+    {
+
+        var confirmation = confirm("Are you sure you want to delete?");
+        if (confirmation) {
+
+            $.ajax({
+                type: "GET",
+                url: '@Url.Action("DeleteTemplate", "OrderTemplate")',
+                contentType: "application/json; charset=utf-8",
+                data: {
+                    "ID": @dtHeader.Rows[0]["oth_ID"]
+                },
+                dataType: "json",
+                success: function (data) {
+                    if (data.mode == -2) {
+                        //Tech Exception
+                        document.getElementById("lblCommonError").innerHTML = "We are facing some issues now, please try again later";
+                    }
+                    else {
+                        window.location.href = '/OrderTemplate/OrderTemplate';
+                    }
+                }
+            });
+        }
+
+    }
+
+    function GenerateOrder()
+    {
+        $.ajax({
+            type: "GET",
+            url: '@Url.Action("GenerateOrder", "OrderTemplate")',
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            success: function (data) {
+                if (data.mode == -2) {
+                    ShowFailure();
+
+                    //Tech Exception
+                }
+                  else if(data.mode == 0) {
+                    //Tech Exception
+                    ShowFailure();
+                } else if (data.mode == 1) {
+                    //Success
+                    //document.getElementById("lblSuccess2").innerHTML = "Items aded to cart";
+                    //window.location.href = '/OrderTemplate/OrderTemplate';
+                    ShowSuccess();
+
+                }
+            }
+        });
+    }
+
+    function ValidCon(Itemstype, qty, Itemuom) {
+     var valCount = 0;
+     if (qty == "") {
+         valCount++;
+         document.getElementById("lblqty").innerHTML = "Please enter a quantity";
+     } else {
+         document.getElementById("lblqty").innerHTML = "";
+     }
+        if (Itemstype == "") {
+         valCount++;
+         document.getElementById("lblitems").innerHTML = "Please choose an item";
+     } else {
+         document.getElementById("lblitems").innerHTML = "";
+
+     }
+
+        if (Itemuom == "") {
+         valCount++;
+            document.getElementById("lbluom").innerHTML = "Please choose a UOM";
+     } else {
+            document.getElementById("lbluom").innerHTML = "";
+
+     }
+
+
+
+     if (valCount > 0) {
+         return false;
+     } else {
+         return true;
+     }
+ }
+
+    function h_UOMFilter() {
+        return {
+            itmID: $("#items").val(),
+            uomName: $("#uom").data("kendoComboBox").input.val()
+        };
+    }
+
+    function l_UOMFilter() {
+        return {
+            itmID: $("#items").val(),
+            uomid: $("#uom").val(),
+            uomName: $("#luom").data("kendoComboBox").input.val()
+        };
+    }
+
+    function on_HUOM_Change() {
+
+        itmID = $("#items").val();
+        uomID = $("#uom").val();
+        var huomComboBox = $("#uom").data("kendoComboBox");
+        var uomDataSource = huomComboBox.dataSource;
+
+        var uomList = [];
+        uomDataSource.data().forEach(function (item) {
+            uomList.push(item.uomid);
+        });
+
+        var lastHUOM = uomList[uomList.length - 1];
+        var lQtyInput = $("#lqty").data("kendoNumericTextBox");
+        var luomComboBox = $("#luom").data("kendoComboBox");
+
+        if (uomID != "" && uomID == lastHUOM) {
+            lQtyInput.enable(false);
+            luomComboBox.enable(false);
+            $("#lqty").data("kendoNumericTextBox").value("");
+        }
+        else {
+
+            luomComboBox.enable(true);
+            lQtyInput.enable(true);
+        }
+
+    }
+</script>
+
+
+<style>
+    .k-grid .k-alt {
+        background-color: #ecfaf3; /* specify the alternate background-color */
+    }
+
+    .k-grid-header .k-header {
+        background-color: #ecfaf3;
+    }
+
+    .k-pager-wrap {
+        background-color: #ecfaf3 !important;
+    }
+
+    .pricebg {
+        color: #d32027
+    }
+
+    .k-dropdown {
+        width: 500px;
+    }
+</style>

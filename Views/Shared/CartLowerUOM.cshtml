@@ -1,0 +1,162 @@
+﻿@using System.Data;
+@using System.Collections;
+@using b2b_solution.Models;
+
+@model ProductList
+
+@{
+    if (Model != null)
+    {
+        <div class="product-card-bottom row col-lg-12">
+            <div class="col-lg-6">
+                <div class="header-info header-info">
+                    <ul>
+
+                        <li id="LowerUOM-@Model.LowItem.Rowitem[0].id">
+
+                            @{
+                                string s = Model.LowItem.Rowitem[0].id;
+                                List<SelectListItem> list = new List<SelectListItem>();
+                                foreach (var item in Model.LowUOM.ListUomModel)
+                                {
+                                    list.Add(new SelectListItem { Text = item.Text.ToString(), Value = item.Value.ToString() });
+                                }
+
+                                @Html.DropDownList("Value", new SelectList(list, "Value", "Text", Model.LowItem.Rowitem[0].LowerUOM), new
+                                {
+                                    @id = "ddlUOM-" + Model.LowItem.Rowitem[0].id,
+                               @onchange = "GetLUOMPrice('" + Model.LowItem.Rowitem[0].id + "' , this)"
+                                });
+                            }
+
+                        </li>
+
+                    </ul>
+                </div>
+
+                <div class="product-price">
+                    <span  style="font-size: 18px; font-weight: bold; color: #d32027;" id="LOP-@Model.LowItem.Rowitem[0].id">@Model.LowItem.Rowitem[0].LowerUOMOfferPrice</span>
+                </div>
+            </div>
+
+
+            <div class="add-cart col-lg-6">
+                <div class="detail-extralink ">
+                    @(Html.Kendo().NumericTextBox<Int32>()
+            .Name("LQTY-" + @Model.LowItem.Rowitem[0].id)
+            .Min(0)
+            .Format("##")
+            .Events(e => e.Change("changeLQty").Spin("changeLQty"))
+            .Value(int.Parse(@Model.LowItem.Rowitem[0].lowerQty.ToString()))
+            .Max(90000)
+            .Step(1)
+            .HtmlAttributes(new { style = "width: 80% ;text-align:center", @class="form-control" }) )
+                </div>
+            </div>
+        </div>
+    }
+}
+
+<script>
+
+ 
+
+    function GetLUOMPrice(id, itmValue) {
+            var uomID = itmValue.value;
+
+            $.ajax({
+            type: "GET",
+            url: '@Url.Action("GetItemUOMPrice", "Home")',
+            contentType: "application/json; charset=utf-8",
+                data: { id: id, itmValues: uomID },
+            dataType: "json",
+                success: function (data) {
+
+
+                    document.getElementById("LOP-" + id).innerHTML = data.OfferPrice;
+                }
+            });
+          $.ajax({
+            type: "GET",
+            url: '@Url.Action("UpdateLUOMCart", "Home")',
+            contentType: "application/json; charset=utf-8",
+                data: { id: id, itmValues: uomID },
+            dataType: "json"
+          });
+
+         $.ajax({
+            type: "GET",
+            url: '@Url.Action("GetItemCartSubTotal", "Home")',
+            contentType: "application/json; charset=utf-8",
+                data: { id: id},
+            dataType: "json",
+                success: function (data) {
+
+                    document.getElementById("LineTotal-" + id).innerHTML = data.LineTotal;
+                }
+
+         });
+     
+
+        GetCartTotal();
+    }
+
+
+
+
+    function changeLQty() {
+        var x = this;
+        debugger;
+            var id = x.element.attr("id");
+            var itemID = id.replace("LQTY-", "");
+            var HUom = $('#HUOM' + itemID).val();
+        var Hqty = $('#Hqty' + itemID).val();
+
+        if (Hqty == null) {
+            Hqty = 0;
+            }
+            var LUOM = $('#ddlUOM-' + itemID).val();
+            if (LUOM == null) {
+                LUOM = 0;
+            }
+
+            if (1 != "0") {
+
+
+
+             $.ajax({
+            type: "GET",
+            url: '@Url.Action("InsCart", "Home")',
+            contentType: "application/json; charset=utf-8",
+                 data: {
+                     "id": itemID,
+                     "HigherQty": Hqty,
+                     "HigherUOM": HUom,
+                     "LowerQty": x.value(),
+                     "LowerUOM": LUOM},
+
+            dataType: "json",
+                 success: function (data) {
+                    //alert(data)
+                }
+            });
+        }
+
+          $.ajax({
+            type: "GET",
+            url: '@Url.Action("GetItemCartSubTotal", "Home")',
+            contentType: "application/json; charset=utf-8",
+              data: { id: itemID},
+            dataType: "json",
+                success: function (data) {
+
+                    document.getElementById("LineTotal-" + itemID).innerHTML = data.LineTotal;
+                }
+
+            });
+        GetCartTotal();
+        }
+
+</script>
+
+
