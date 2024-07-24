@@ -1,0 +1,331 @@
+﻿
+@using System.Data;
+@using b2b_solution.Models
+@using System.Collections.Generic
+@using System.Collections
+@model SearchComplete
+
+@{
+    DataModel dm = new DataModel();
+    ViewBag.Title = "Search";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+
+
+}
+
+@{      
+
+    string catID = "0", catName = "" , brdID = "0" , brdName = "";
+    try
+    {
+        catID = Model.catID;
+        catName = Model.catName;
+        brdID = Model.brdID;
+        brdName = Model.brdName;
+    }
+    catch (Exception ex)
+    {
+
+    }
+}
+<script src="../Kendo/js/kendo.all.min.js"></script>
+<script src="../Kendo/js/kendo.aspnetmvc.min.js"></script>
+<main class="main">
+
+    <div class="container mb-30 mt-30">
+        <div class="row">
+            <div class="col-lg-12 row" hidden="hidden">
+                <div class="col-lg-10">
+                    <a class="shop-filter-toogle" href="#">
+                        <span class="fi-rs-filter mr-5"></span>
+                        Filters
+                        <i class="fi-rs-angle-small-down angle-down"></i>
+                        <i class="fi-rs-angle-small-up angle-up"></i>
+                    </a>
+                </div>
+                <div class="col-lg-2">
+                    <a class="btn btn-outline-success" onclick="GetItemSearch()">
+                        <span class="fi-rs-filter mr-5"></span>
+                        Apply Filters
+                    </a>
+                </div>
+
+                <div class="shop-product-fillter-header">
+                    <div class="row">
+                        @*@using (Html.BeginForm("Search", "Home", FormMethod.Post, new { id = "filterarea" , @class="row" }))
+                    {*@
+                        <div class="col-xl-3 col-lg-6 col-md-6 mb-lg-0 mb-md-2 mb-sm-2">
+                            <div class="card">
+                                <h5 class="mb-30">By Categories</h5>
+                                <div class="categories-dropdown-wrap font-heading">
+                                    <ul>
+                                        @(Html.Kendo().ComboBox()
+.Name("Categories")
+.Placeholder("Select Category")
+.DataTextField("Text")
+.DataValueField("Value")
+.HtmlAttributes(new { style = "width:100%;" })
+.Filter(FilterType.Contains)
+.HtmlAttributes(new { style = "width: 100%", @tabindex = "1", @class = "form-control" })
+.DataSource(source => {
+    source.Read(read =>
+    {
+        read.Action("GetCategories", "Home");
+    });
+}).Events(e =>
+{
+    e.Change("CatChange");
+})
+                                    )
+
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-xl-3 col-lg-6 col-md-6 mb-lg-0 mb-md-2 mb-sm-2">
+                            <div class="card">
+                                <h5 class="mb-30">By Brands</h5>
+                                <div class="d-flex">
+                                    <div class="col-lg-12 row">
+
+                                        @(Html.Kendo().ComboBox()
+.Name("Brands")
+.Placeholder("Select Brands")
+.DataTextField("Text")
+.DataValueField("Value")
+.HtmlAttributes(new { style = "width:100%;" })
+.Filter(FilterType.Contains)
+.HtmlAttributes(new { style = "width: 100%", title = "datepicker", @tabindex = "1", @class = "form-control" })
+.DataSource(source => {
+    source.Read(read =>
+    {
+        read.Action("GetBrands", "Home").Data("BrdFilter");
+    }).ServerFiltering(true);
+})
+.Enable(true)
+.AutoBind(false)
+.CascadeFrom("Categories")
+                                    )
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-xl-3 col-lg-6 col-md-6 mb-lg-0 mb-md-2 mb-sm-2" hidden="hidden">
+                            <div class="card">
+                                <h5 class="mb-30">By Tags</h5>
+                                <div class="sidebar-widget widget-tags">
+                                    <ul class="tags-list">
+                                        <li class="hover-up">
+                                            @(Html.Kendo().CheckBoxFor(model => model.specialPrice).Checked(false).
+    HtmlAttributes(new { @class = "form-check-input", @id = "specialPrice", @type = "checkbox", @onchange = "SaveSP(this)" }).Label("Special Price"))
+                                        </li>
+
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+          
+            <div class="col-12">
+                @*<div class="shop-product-fillter">
+            <div class="totall-product">
+                <p>We found <strong class="text-brand">29</strong> items for you!</p>
+            </div>
+
+        </div>*@
+                <div class="page-header mb-30 border" style="border-radius:10px">
+                    <div class="container">
+                        <div class="archive-header" style="padding:0px">
+                            <div class="row align-items-center">
+                                <div class="col-xl-3">
+
+                                    <div class="breadcrumb">
+                                        <a href="/Home/Index" rel="nofollow"><i class="fi-rs-home mr-5"></i>Home</a>
+                                        <span></span> @Model.prdName
+                                    </div>
+                                </div>
+                                <div class="col-xl-9 text-end d-none d-xl-block">
+                                    <ul class="tags-list" style="padding:10px">
+                                        @{
+                                            if (Model.catName != null && Model.catName != "")
+                                            {
+                                                <li class="hover-up">
+                                                    <a onclick="UpdateFilter('cat')"><i class="fi-rs-cross mr-10"></i>@Model.catName</a>
+                                                </li>
+                                            }
+
+                                            if (Model.brdName != null && Model.brdName != "")
+                                            {
+                                                <li class="hover-up active">
+                                                    <a onclick="UpdateFilter('brd')"><i class="fi-rs-cross mr-10"></i>@Model.brdName</a>
+                                                </li>
+                                            }
+                                        }
+
+
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row product-grid" id="lstProducts">
+                    @{
+                        Html.RenderPartial("Products");
+                    }
+                    <!--end product card-->
+                </div>
+
+
+                @{
+                    Html.RenderPartial("Pagination", Model);
+                }
+
+
+            </div>
+        </div>
+    </div>
+</main>
+<script>
+
+    function GetSubCats(cats) {
+        var CatID = cats.value;
+        document.getElementById("SCPartial").innerHTML = '';
+        $('#SCPartial').load('/Home/GetSubCats?catID=' + CatID);
+        SetSession(CatID, "CAT");
+    }
+
+    function SaveSP(sps) {
+        var sp = sps.checked;
+        SetSession(sp, "SP");
+    }
+
+    function SetSession(id , mode) {
+             $.ajax({
+            type: "GET",
+            url: '@Url.Action("SetFilterSession", "Home")',
+            contentType: "application/json; charset=utf-8",
+                 data: {
+                     "value": id,
+                     "mode":mode
+                 },
+            dataType: "json"
+            });
+    }
+
+    function SaveCatID(sctIDs) {
+        var sctID = sctIDs.value;
+        SetSession(sctID, "SUBCAT");
+    }
+
+    function GetItemSearch() {
+        document.getElementById("lstProducts").innerHTML = '';
+        $('#lstProducts').load('/Home/GetSearchItems');
+    }
+</script>
+
+<script>
+    var currentPage = 1;
+    var PageSize = 6;
+    var NoMoreData = false;
+    $(document).ready(function () {
+
+
+        $(window).scroll(function () {
+            if ($(window).scrollTop()-2000 > (Number($("#lstProducts").height())) && !NoMoreData) {
+              
+                currentPage += 1;
+                loadPageData(currentPage);
+            }
+        });
+    });
+    function loadPageData(currentPageNumber) {
+        $("#loading").show();
+        var obj = {};
+        obj.PageNum = currentPageNumber ;
+
+        $.ajax({
+            url: '@Url.Action("ScrollSearch", "Home")',
+            method: 'post',
+            contentType: "application/json; charset=utf-8",
+            data: JSON.stringify(obj),
+            dataType: "html",
+            success: function (data) {
+                //alert(data);
+                $("#loading").hide();
+                $('#lstProducts').append(data);
+                //$('#lstProducts').innerHTML += data;
+                NoMoreData = false;
+            },
+            error: function (err) {
+                $("#loading").hide();
+                console.log(err)
+                NoMoreData = true;
+            }
+        });
+    }
+
+
+    function BrdFilter() {
+        return {
+            catID: $("#Categories").val(),
+            brdName: $("#Brands").data("kendoComboBox").input.val()
+        };
+    }
+
+    function CatChange() {
+        catID = $("#Categories").val();
+        brdID = $("#Brands").val();
+
+
+         $.ajax({
+                type: "GET",
+                url: '@Url.Action("GetSearchItems", "Home")',
+                contentType: "application/json; charset=utf-8",
+                data: {
+                    "catID": catID,
+                    "brdID": brdID
+                },
+             dataType: "json",
+             success: function (data) {
+                 //document.getElementById("lstProducts").innerHTML = '';
+                 $('#lstProducts').append(data);
+             },
+              error: function (err) {
+                 console.log(err)
+             }
+               });
+    }
+
+    function UpdateFilter(mode) {
+        if (mode == "cat") {
+
+            window.location.href = '@Url.Action("Search", "Home")?brdID=' + "@brdID" + "&&brdName=" + "@brdName";
+        } else {
+            window.location.href = '@Url.Action("Search", "Home")?catID=' + " @catID " + "&&catName=" + "@catName";
+        }
+
+    }
+
+
+</script>
+
+
+
+<style>
+    .select2-selection--single {
+        border-style: none !important
+    }
+
+    .select2-container {
+        max-width: 100% !important;
+    }
+
+    .k-checkbox:checked {
+        color: #d32027 !important
+    }
+  
+</style>

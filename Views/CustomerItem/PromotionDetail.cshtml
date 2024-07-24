@@ -1,0 +1,134 @@
+﻿
+@using System.Data;
+@using b2b_solution.Models;
+@model PromotionRange
+
+@{
+    ViewBag.Title = "PromotionDetail";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@{
+    DataTable dtHeader = (DataTable)ViewBag.HeaderOrder;
+
+    if (dtHeader == null)
+    {
+        Response.Redirect("~/PromotionHeader/CustomerItem");
+    }
+}
+<div id="trackHistorydiv">
+</div>
+<main class="main ">
+    <div class="page-content pt-10">
+        <div class="container">
+            <div class="row">
+                <div class="card mb-50">
+                    <div class="card-header" style="background-color: #ecfaf3 !important">
+                        <div class="card-header" style="background-color: #ecfaf3 !important; border-style:none">
+                            <div class="col-lg-12 row">
+                                <div class="col-lg-9 row" style="margin-bottom:5px">
+                                    <h3 id="ordNumber"> @dtHeader.Rows[0]["prm_Number"].ToString()  </h3>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-lg-6">
+                                    <strong>@dtHeader.Rows[0]["prm_Name"].ToString() - @dtHeader.Rows[0]["prt_Name"].ToString() </strong>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive mb-4">
+                            <div class="row">
+                                <h4> Qualification Details</h4>
+                            </div>
+                            @( Html.Kendo().Grid<Qitems>
+    ()
+    .Name("Qualification")
+    .Columns(columns =>
+    {
+        columns.Bound(p => p.Code).Width(25).Title("Item Code").Filterable(false);
+        columns.Bound(p => p.itm_Name).Width(100).Title("Item Name").Filterable(false);
+    })
+    .HtmlAttributes(new { style = "" })
+    .Filterable()
+    .Pageable()
+    .Navigatable()
+    .Sortable()
+    //.Scrollable(scr=>scr.Height(550))
+    .DataSource(dataSource => dataSource
+    .Ajax()
+    .Batch(true)
+    .PageSize(10)
+    .ServerOperation(false)
+    .Read("GetQualification", "CustomerItem")
+    .Update("GetQualification", "CustomerItem")
+    )
+    )
+                        </div>
+                        @if (dtHeader.Rows[0]["prm_ash_ID"].ToString() != "0")
+                        {
+                            <div class="table-responsive mb-4">
+                                <div class="row">
+                                    <h4> Assignment Details</h4>
+                                </div>
+                                @( Html.Kendo().Grid<Aitems>
+    ()
+    .Name("Assignment")
+    .Columns(columns =>
+    {
+        columns.Bound(p => p.Code).Width(25).Title("Item Code").Filterable(false);
+        columns.Bound(p => p.itm_Name).Width(100).Title("Item Name").Filterable(false);
+    })
+    .HtmlAttributes(new { style = "" })
+    .Filterable()
+    .Pageable()
+    .Navigatable()
+    .Sortable()
+    //.Scrollable(scr=>scr.Height(550))
+    .DataSource(dataSource => dataSource
+    .Ajax()
+    .Batch(true)
+    .PageSize(10)
+    .ServerOperation(false)
+    .Read("GetAssignment", "CustomerItem")
+    .Update("GetAssignment", "CustomerItem")
+    )
+    )
+                            </div>
+                        }
+                        <div class="table-responsive mb-4">
+                            <div class="row">
+                                <h4> Promotion Range</h4>
+                            </div>
+                            @( Html.Kendo().Grid<PromotionRange>
+    ()
+    .Name("Range")
+    .Columns(columns =>
+    {
+        columns.Bound(p => p.MinVal).Width(25).Title("Min Value").Filterable(false);
+        columns.Bound(p => p.MaxVal).Width(100).Title("Max Value").Filterable(false);
+        columns.Bound(p => p.Val).Width(100).Title("Value").Filterable(false);
+    })
+    .HtmlAttributes(new { style = "" })
+    .Filterable()
+    .Pageable()
+    .Navigatable()
+    .Sortable()
+    //.Scrollable(scr=>scr.Height(550))
+    .DataSource(dataSource => dataSource
+    .Ajax()
+    .Batch(true)
+    .PageSize(10)
+    .ServerOperation(false)
+    .Read("GetPromotionRange", "CustomerItem")
+    .Update("GetPromotionRange", "CustomerItem")
+    )
+    )
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>

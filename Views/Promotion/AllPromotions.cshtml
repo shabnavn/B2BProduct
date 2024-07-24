@@ -1,0 +1,85 @@
+﻿
+@using b2b_solution.Models;
+@using System.Data;
+@{
+    ViewBag.Title = "AllPromotions";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    DataModel dm = new DataModel();
+}
+
+
+<div class="page-header mt-30 mb-25">
+    <div class="container">
+        <div class="archive-header" style="background-image:url(../Content/imgs/promotion/bg-head.png) !important; ">
+            <div class="row align-items-center">
+                <div class="col-xl-6">
+                    <h2 class="mb-15">All Promotions</h2>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container">
+    
+    <div class="row">
+        @{
+            DataTable dtPromo = dm.loadList("SelAllPromotions", "sp_B2B_Promotions", Session["CusID"].ToString());
+            if (dtPromo.Rows.Count > 0)
+            {
+                foreach (DataRow dr in dtPromo.Rows)
+                {
+                    <div class="col-xl-3 col-lg-4 col-md-6">
+                        <div class="product-cart-wrap style-2 wow animate_animated animate_fadeInUp" data-wow-delay="0">
+                            <div class="product-img-action-wrap">
+                                <div class="product-img">
+                                    <a href="/Promotion/Detail?id=@dr["prm_ID"].ToString()">
+                                        <img src="@dr["prm_Image"].ToString()" alt="" />
+                                    </a>
+                                </div>
+                            </div>
+                            <div class="product-content-wrap">
+                                <div class="deals-countdown-wrap">
+                                    <div class="deals-countdown" data-countdown="@dr["rcp_EndDate"].ToString()"></div>
+                                </div>
+                                <div class="deals-content">
+                                    <h2><a href="/Promotion/Detail?id=@dr["prm_ID"].ToString()">@dr["prm_Name"].ToString()</a></h2>
+                                    <div>
+                                        <span class="font-small text-muted">@dr["itmCount"].ToString() Items</span>
+                                    </div>
+                                    <div class="product-card-bottom">
+                                        <div class="add-cart">
+
+                                            @{
+                                                string page = dr["prt_Page"].ToString();
+
+                                                <a class="add" href="/Promotion/@page?id=@dr["prm_ID"].ToString()"><i class="fi-rs-angle-right mr-5"></i>View Details </a>
+                                            }
+
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                }
+            }
+            else
+            {
+                <div class="col-xl-12 col-lg-12 col-md-6">
+                    <div class="product-cart-wrap style-2 wow animate_animated animate_fadeInUp" data-wow-delay="0">
+                        <div class="product-img-action-wrap">
+                            <div class="product-img">
+                                <a href="#">
+                                    <img src="../Content/imgs/banner/banner-1.png" alt="" />
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+
+        }
+
+    </div>
+</div>

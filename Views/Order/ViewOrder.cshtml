@@ -1,0 +1,331 @@
+﻿
+@using System.Data;
+@using b2b_solution.Models;
+@model ViewAllOrder
+@{
+    ViewBag.Title = "ViewOrder";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@{
+    DataTable dtHeader = (DataTable)ViewBag.HeaderOrder;
+    DataTable dt = (DataTable)ViewBag.CurrentOrder;
+
+    if(dtHeader == null)
+    {
+        Response.Redirect("~/Order/ViewOrder");
+    }
+}
+
+<div id="trackHistorydiv">
+
+</div>
+
+<main class="main ">
+    <div class="page-content pt-10">
+        <div class="container">
+            <div class="row">
+                <div class="card mb-50">
+                    <div class="card-header" style="background-color: #ecfaf3 !important">
+
+                        <div class="card-header" style="background-color: #ecfaf3 !important; border-style:none">
+                            <div class="col-lg-12 row">
+                                <div class="col-lg-6 row" style="margin-bottom:5px">
+                                    <div class="col-lg-3">
+                                        <h3 class="mb-0">Order ID : </h3>
+                                    </div>
+                                    <div class="col-lg-9">
+                                        <h3 id="ordNumber"> @dtHeader.Rows[0]["ord_Number"].ToString()  </h3>
+                                    </div>
+                                    <div class="col-lg-2">
+                                        <strong> @dt.Rows.Count Items </strong>
+                                    </div>
+                                    <div class="col-lg-4">
+                                        Created On -  <strong>@dtHeader.Rows[0]["CreatedDate"].ToString() </strong>
+                                    </div>
+                                    <div class="col-lg-5">
+                                        Expected Delivery Date -  <strong>@dtHeader.Rows[0]["ExpDate"].ToString() </strong>
+                                    </div>
+                                </div>
+                                <div class="col-lg-6 row" style="margin-bottom: 5px; justify-content: end;  text-align: -webkit-right ">
+                                    <a href=" javascript:OpenPDF('@dtHeader.Rows[0]["ord_ID"].ToString()' , '@dtHeader.Rows[0]["ord_Number"].ToString()' , '@Session["cusID"]')">
+                                        <img src="../Content/imgs/order/pdf.png" height="50" alt="Download Order" title="Download PDF file" />
+
+                                    </a>
+                                    <div class="col-lg-4" style="display:grid">
+                                        <table style="margin-bottom: 0px !important; ">
+                                            <tbody style="text-align: -webkit-right">
+                                                <tr>
+                                                    <td style="padding:0px !important">Sub Total </td>
+                                                    <td style="padding:0px !important">
+                                                        <strong>@dtHeader.Rows[0]["ord_SubTotal"].ToString() </strong>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td style="padding:0px !important">VAT </td>
+                                                    <td style="padding:0px !important">
+                                                        <strong>@dtHeader.Rows[0]["ord_Vat"].ToString() </strong>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td style="padding:0px !important">Grand Total </td>
+                                                    <td style="padding:0px !important"> <strong>@dtHeader.Rows[0]["ord_GrandTotal"].ToString() </strong>   </td>
+                                                </tr>
+                                            </tbody>
+
+                                        </table>
+
+                                    </div>
+
+                                </div>
+                            </div>
+                            <div class="col-lg-12 row">
+                                <div class="col-lg-6 row " style="margin-bottom:5px">
+
+                                </div>
+
+
+                            </div>
+
+                            <div class="col-lg-12 row">
+                                <div class="col-lg-6 row">
+                                    <div class="col-lg-6">
+                                        <strong style="font-size:larger"> Status : @dtHeader.Rows[0]["Status"].ToString()</strong>
+                                    </div>
+                                </div>
+                                <div class="col-lg-6 row " style="margin-bottom:5px; justify-content:end">
+                                    <div class="col-lg-4">
+                                        @{
+                                            string x = dtHeader.Rows[0]["ord_DeliveredDate"].ToString();
+                                            string sts = "";
+                                            if (dtHeader.Rows[0]["ord_DeliveredDate"].ToString() != "")
+                                            {
+                                                sts = "Delivered On :";
+                                            }
+                                        }
+                                        <strong>@sts @dtHeader.Rows[0]["ord_DeliveredDate"].ToString()</strong>
+                                    </div>
+
+                                    <div class="col-lg-2" style="display:contents">
+                                        <a class="btn" onclick="TrackOrder(@dtHeader.Rows[0]["ord_ID"].ToString())" style="display:contents">
+                                            <strong class="p-2" style="color:green">Track Order</strong>
+                                        </a>
+                                        <a class="btn" onclick="ReOrder('@dtHeader.Rows[0]["ord_Number"].ToString()' , @dtHeader.Rows[0]["ord_ID"].ToString())" style="display:contents">
+                                            <strong class="p-2" style="color:blue">Re-Order</strong>
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-lg-12 row">
+                                <div class="col-lg-6 row">
+                                    <div class="col-lg-6">
+                                        <strong style="font-size: larger"> LPO Details: @dtHeader.Rows[0]["ord_LPO"].ToString()</strong> <br />                                       
+                                        <a href="@dtHeader.Rows[0]["ord_LPO_Attachment"].ToString()" target="_blank">
+                                            View LPO Attachment
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+
+
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            @( Html.Kendo().Grid<VieworderByID>
+    ()
+    .Name("client")
+    .Columns(columns =>
+    {
+        columns.Bound(p => p.itmCode).Width(25).Title("Item Code").Filterable(false);
+        columns.Bound(p => p.itmName).Width(100).Title("Item Name").Filterable(false).ClientTemplate("<div style='display:flex' class='image product-thumbnail'><img height='40' src='#: itmImage #'> <div style='padding-top:1%'>#: itmName # </div></div>");
+        columns.Bound(p => p.HUOM).Width(40).Title("Price & Quantity").Filterable(false).ClientTemplate("" +
+            "<div class='product-card-bottom row col-lg-12'><div class='col-lg-6'><div class='header-info header-info'><ul><li>#: HUOM #</li></ul></div><div class='product-price'><span class='pricebg' style='font-size: 15px; font-weight: bold;' id='CHOP'>#: HPrice #</span></div></div><div class='add-cart col-lg-2'" +
+            " style='margin-top:5%'><div class='detail-extralink'><span  class='pricebg'  style='font-size: 18px; font-weight: bold;' id='CHOP'>#: HQty #</span>  </div></div> </div>" +
+            "<div class='product-card-bottom row col-lg-12'><div class='col-lg-6'><div class='header-info header-info'><ul><li>#: LUOM #</li></ul></div><div class='product-price'><span class='pricebg' style='font-size: 15px; font-weight: bold;' id='CHOP'>#: Lprice #</span></div></div><div class='add-cart col-lg-2' " +
+            "style='margin-top:5%'><div class='detail-extralink'><span  class='pricebg'  style='font-size: 18px; font-weight: bold;' id='CHOP'>#: LQty #</span>  </div></div> </div>");
+        columns.Bound(p => p.TransType).Width(30).Filterable(false);
+        //columns.Bound(p => p.Total).Width(30).Filterable(false);
+        //columns.Bound(p => p.Discount).Width(30).Filterable(false).ClientTemplate("<span style='color:red'>#: Discount #</span>"); ;
+        columns.Bound(p => p.SubTotal).Width(30).Filterable(false).ClientTemplate("<span style='color:green'>#: SubTotal #</span>");
+        columns.Bound(p => p.VAT).Width(30).Filterable(false);
+        columns.Bound(p => p.GrandTotal).Width(30).Filterable(false).ClientTemplate("<span style='color:green;  font-weight:bold'>#: GrandTotal #</span>");
+    })
+    .HtmlAttributes(new { style = "" })
+    .Filterable()
+    .Pageable()
+    .Navigatable()
+    .Sortable()
+    //.Scrollable(scr=>scr.Height(550))
+    .DataSource(dataSource => dataSource
+    .Ajax()
+    .Batch(true)
+    .PageSize(10)
+    .ServerOperation(false)
+    .Read("GetOrderDetail", "Order")
+    .Update("GetOrderDetail", "Order")
+    )
+    )
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+
+
+<div class="modal fade custom-modal" id="ReOrder" tabindex="-1" aria-labelledby="quickViewModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            <div class="modal-body">
+                <div class="timeline">
+                    <div class="col-lg-12">
+                        <div class="form-group">
+                            <h4> Are you sure you want repeat this order ( <span id="OrderID"></span> )..?</h4>
+                        </div>
+                        <span hidden="hidden" id="ordID"></span>
+
+                        <div class="col-lg-12 row">
+                            <div class="col-lg-6" style="margin-top: 25px">
+                                <button onclick="RepeatOrder()" class="btn btn-heading btn-block" name="login">Proceed</button>
+
+                            </div>
+                            <div class="col-lg-6" style="margin-top: 25px; text-align-last:end">
+                                <button style="background-color:lightcoral" onclick="DismissModel()" class="btn btn-secondary ">Dismiss</button>
+
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div class="modal fade custom-modal" id="ReOrderRes" tabindex="-1" aria-labelledby="quickViewModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            <div class="modal-body">
+                <div class="timeline">
+                    <div class="col-lg-12">
+                        <div class="form-group">
+                            <h4 style="color:red"> We cannot repeat this order for now, please try again with another order <img height="40" src="../Content/imgs/order/sad.png" />  </h4>
+                        </div>
+
+                        <div class="form-group" style="margin-top: 25px; text-align-last:end">
+                            <button style="background-color:lightcoral" onclick="DismissModelRes()" class="btn btn-secondary ">OK</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+@{
+    Html.RenderPartial("OrderFlow");
+}
+
+
+<style>
+    .k-grid .k-alt {
+        background-color: #ecfaf3; /* specify the alternate background-color */
+    }
+
+    .k-grid-header .k-header {
+        background-color: #ecfaf3;
+    }
+
+    .k-pager-wrap {
+        background-color: #ecfaf3 !important;
+    }
+
+    .pricebg {
+        color: #d32027
+    }
+</style>
+
+<script>
+
+    function TrackOrder(id) {
+
+
+        $('#trackHistory').modal('show');
+    }
+
+    function ReOrder(OrderNo, id) {
+        $('#OrderID').text(OrderNo)
+        $('#ordID').text(id)
+        $('#ReOrder').modal('show');
+    }
+
+    function DismissModel() {
+        $('#ReOrder').modal('hide');
+        $('#OrderID').text('')
+        $('#ordID').text('')
+    }
+
+    function DismissModelRes() {
+        $('#ReOrderRes').modal('hide');
+
+    }
+
+
+     function RepeatOrder() {
+        const span = document.getElementById('ordID');
+        const text1 = span.textContent;
+           $.ajax({
+            type: "GET",
+            url: '@Url.Action("getPrevOrders", "Order")',
+            contentType: "application/json; charset=utf-8",
+
+               data: {
+                   "ordID": text1
+               },
+               dataType: "json",
+               success: function (data) {
+                   if (data.mode == "1") {
+                       window.location.href = '@Url.Action("Cart", "Home")';
+                   } else {
+                       DismissModel();
+                       $('#ReOrderRes').modal('show');
+                   }
+                }
+            });
+    }
+
+
+    function OpenPDF(ordID, ordNum, cusID) {
+        
+
+      
+           $.ajax({
+            type: "GET",
+            url: '@Url.Action("GenerateOrderDetail", "Order")',
+            contentType: "application/json; charset=utf-8",
+
+               data: {
+                   "OrderID": ordID,
+                   "OrderNum": ordNum,
+                   "cusID": cusID
+               },
+               dataType: "json",
+               success: function (data) {
+                   if (data.url == "") {
+                       alert('we are facing some technical issues,please try later')
+                   } else {
+                       //alert(data.url)
+                       window.open(data.url, '_blank');
+                       
+                   }
+                }
+            });
+    }
+
+</script>

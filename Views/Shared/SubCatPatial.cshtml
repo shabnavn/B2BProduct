@@ -1,0 +1,49 @@
+﻿
+@using b2b_solution.Models
+@using System.Data;
+@using System.Collections.Generic
+@using System.Collections
+
+
+@{
+
+    DataModel dm = new DataModel();
+    DataTable dt = ViewBag.SubCats;
+
+    List<SelectListItem> list = new List<SelectListItem>();
+    try
+    {
+        if ( dt !=  null && dt.Rows.Count > 0)
+        {
+            foreach (DataRow dr in dt.Rows as IEnumerable)
+            {
+                list.Add(new SelectListItem { Text = dr["sct_Name"].ToString(), Value = dr["sct_ID"].ToString() });
+            }
+        }
+        @Html.DropDownList("sctID", new SelectList(list, "Value", "Text"), "Select Subcategory" , new { @class = "select-active fontbold", @id = "ddlSubCats", @onchange = "SaveCatID(this)" })
+    }
+    catch (Exception ex)
+    {
+
+    }
+
+}
+<style>
+    .select2-selection--single {
+        border-style: none !important
+    }
+
+    .select2-container {
+        max-width: 100% !important;
+    }
+
+    .k-checkbox:checked {
+        color: #d32027 !important
+    }
+    
+    .fontbold{
+        font-weight:bold;
+    }
+
+</style>
+

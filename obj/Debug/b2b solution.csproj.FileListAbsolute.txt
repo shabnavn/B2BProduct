@@ -1,0 +1,154 @@
+E:\ProdB\obj\Debug\b2b solution.csproj.AssemblyReference.cache
+E:\ProdB\obj\Debug\b2b solution.csproj.CoreCompileInputs.cache
+E:\ProdB\bin\b2b solution.dll.config
+E:\ProdB\bin\b2b solution.dll
+E:\ProdB\bin\b2b solution.pdb
+E:\ProdB\bin\roslyn\csc.exe.config
+E:\ProdB\bin\roslyn\csc.rsp
+E:\ProdB\bin\roslyn\csi.exe.config
+E:\ProdB\bin\roslyn\csi.rsp
+E:\ProdB\bin\roslyn\Microsoft.CSharp.Core.targets
+E:\ProdB\bin\roslyn\Microsoft.Managed.Core.targets
+E:\ProdB\bin\roslyn\Microsoft.VisualBasic.Core.targets
+E:\ProdB\bin\roslyn\vbc.exe.config
+E:\ProdB\bin\roslyn\vbc.rsp
+E:\ProdB\bin\roslyn\VBCSCompiler.exe.config
+E:\ProdB\obj\Debug\b2b solution.dll
+E:\ProdB\obj\Debug\b2b solution.pdb
+E:\TurboSoft\ProdB\bin\b2b solution.dll.config
+E:\TurboSoft\ProdB\bin\b2b solution.dll
+E:\TurboSoft\ProdB\bin\b2b solution.pdb
+E:\TurboSoft\ProdB\bin\roslyn\csc.exe
+E:\TurboSoft\ProdB\bin\roslyn\csc.exe.config
+E:\TurboSoft\ProdB\bin\roslyn\csc.rsp
+E:\TurboSoft\ProdB\bin\roslyn\csi.exe
+E:\TurboSoft\ProdB\bin\roslyn\csi.exe.config
+E:\TurboSoft\ProdB\bin\roslyn\csi.rsp
+E:\TurboSoft\ProdB\bin\roslyn\Microsoft.Build.Tasks.CodeAnalysis.dll
+E:\TurboSoft\ProdB\bin\roslyn\Microsoft.CodeAnalysis.CSharp.dll
+E:\TurboSoft\ProdB\bin\roslyn\Microsoft.CodeAnalysis.CSharp.Scripting.dll
+E:\TurboSoft\ProdB\bin\roslyn\Microsoft.CodeAnalysis.dll
+E:\TurboSoft\ProdB\bin\roslyn\Microsoft.CodeAnalysis.Scripting.dll
+E:\TurboSoft\ProdB\bin\roslyn\Microsoft.CodeAnalysis.VisualBasic.dll
+E:\TurboSoft\ProdB\bin\roslyn\Microsoft.CSharp.Core.targets
+E:\TurboSoft\ProdB\bin\roslyn\Microsoft.DiaSymReader.Native.amd64.dll
+E:\TurboSoft\ProdB\bin\roslyn\Microsoft.DiaSymReader.Native.x86.dll
+E:\TurboSoft\ProdB\bin\roslyn\Microsoft.Managed.Core.targets
+E:\TurboSoft\ProdB\bin\roslyn\Microsoft.VisualBasic.Core.targets
+E:\TurboSoft\ProdB\bin\roslyn\Microsoft.Win32.Primitives.dll
+E:\TurboSoft\ProdB\bin\roslyn\System.AppContext.dll
+E:\TurboSoft\ProdB\bin\roslyn\System.Collections.Immutable.dll
+E:\TurboSoft\ProdB\bin\roslyn\System.Console.dll
+E:\TurboSoft\ProdB\bin\roslyn\System.Diagnostics.DiagnosticSource.dll
+E:\TurboSoft\ProdB\bin\roslyn\System.Diagnostics.FileVersionInfo.dll
+E:\TurboSoft\ProdB\bin\roslyn\System.Diagnostics.StackTrace.dll
+E:\TurboSoft\ProdB\bin\roslyn\System.Globalization.Calendars.dll
+E:\TurboSoft\ProdB\bin\roslyn\System.IO.Compression.dll
+E:\TurboSoft\ProdB\bin\roslyn\System.IO.Compression.ZipFile.dll
+E:\TurboSoft\ProdB\bin\roslyn\System.IO.FileSystem.dll
+E:\TurboSoft\ProdB\bin\roslyn\System.IO.FileSystem.Primitives.dll
+E:\TurboSoft\ProdB\bin\roslyn\System.Net.Http.dll
+E:\TurboSoft\ProdB\bin\roslyn\System.Net.Sockets.dll
+E:\TurboSoft\ProdB\bin\roslyn\System.Reflection.Metadata.dll
+E:\TurboSoft\ProdB\bin\roslyn\System.Runtime.InteropServices.RuntimeInformation.dll
+E:\TurboSoft\ProdB\bin\roslyn\System.Security.Cryptography.Algorithms.dll
+E:\TurboSoft\ProdB\bin\roslyn\System.Security.Cryptography.Encoding.dll
+E:\TurboSoft\ProdB\bin\roslyn\System.Security.Cryptography.Primitives.dll
+E:\TurboSoft\ProdB\bin\roslyn\System.Security.Cryptography.X509Certificates.dll
+E:\TurboSoft\ProdB\bin\roslyn\System.Text.Encoding.CodePages.dll
+E:\TurboSoft\ProdB\bin\roslyn\System.Threading.Tasks.Extensions.dll
+E:\TurboSoft\ProdB\bin\roslyn\System.ValueTuple.dll
+E:\TurboSoft\ProdB\bin\roslyn\System.Xml.ReaderWriter.dll
+E:\TurboSoft\ProdB\bin\roslyn\System.Xml.XmlDocument.dll
+E:\TurboSoft\ProdB\bin\roslyn\System.Xml.XPath.dll
+E:\TurboSoft\ProdB\bin\roslyn\System.Xml.XPath.XDocument.dll
+E:\TurboSoft\ProdB\bin\roslyn\vbc.exe
+E:\TurboSoft\ProdB\bin\roslyn\vbc.exe.config
+E:\TurboSoft\ProdB\bin\roslyn\vbc.rsp
+E:\TurboSoft\ProdB\bin\roslyn\VBCSCompiler.exe
+E:\TurboSoft\ProdB\bin\roslyn\VBCSCompiler.exe.config
+E:\TurboSoft\ProdB\bin\Newtonsoft.Json.dll
+E:\TurboSoft\ProdB\bin\System.Buffers.dll
+E:\TurboSoft\ProdB\bin\System.Memory.dll
+E:\TurboSoft\ProdB\bin\System.Numerics.Vectors.dll
+E:\TurboSoft\ProdB\bin\System.Runtime.CompilerServices.Unsafe.dll
+E:\TurboSoft\ProdB\bin\System.Runtime.InteropServices.RuntimeInformation.dll
+E:\TurboSoft\ProdB\bin\System.Threading.Tasks.Extensions.dll
+E:\TurboSoft\ProdB\obj\Debug\b2b solution.csproj.AssemblyReference.cache
+E:\TurboSoft\ProdB\obj\Debug\b2b solution.csproj.CoreCompileInputs.cache
+E:\TurboSoft\ProdB\obj\Debug\b2b solution.csproj.CopyComplete
+E:\TurboSoft\ProdB\obj\Debug\b2b solution.dll
+E:\TurboSoft\ProdB\obj\Debug\b2b solution.pdb
+E:\ProdB\bin\roslyn\csc.exe
+E:\ProdB\bin\roslyn\csi.exe
+E:\ProdB\bin\roslyn\Microsoft.Build.Tasks.CodeAnalysis.dll
+E:\ProdB\bin\roslyn\Microsoft.CodeAnalysis.CSharp.dll
+E:\ProdB\bin\roslyn\Microsoft.CodeAnalysis.CSharp.Scripting.dll
+E:\ProdB\bin\roslyn\Microsoft.CodeAnalysis.dll
+E:\ProdB\bin\roslyn\Microsoft.CodeAnalysis.Scripting.dll
+E:\ProdB\bin\roslyn\Microsoft.CodeAnalysis.VisualBasic.dll
+E:\ProdB\bin\roslyn\Microsoft.DiaSymReader.Native.amd64.dll
+E:\ProdB\bin\roslyn\Microsoft.DiaSymReader.Native.x86.dll
+E:\ProdB\bin\roslyn\Microsoft.Win32.Primitives.dll
+E:\ProdB\bin\roslyn\System.AppContext.dll
+E:\ProdB\bin\roslyn\System.Collections.Immutable.dll
+E:\ProdB\bin\roslyn\System.Console.dll
+E:\ProdB\bin\roslyn\System.Diagnostics.DiagnosticSource.dll
+E:\ProdB\bin\roslyn\System.Diagnostics.FileVersionInfo.dll
+E:\ProdB\bin\roslyn\System.Diagnostics.StackTrace.dll
+E:\ProdB\bin\roslyn\System.Globalization.Calendars.dll
+E:\ProdB\bin\roslyn\System.IO.Compression.dll
+E:\ProdB\bin\roslyn\System.IO.Compression.ZipFile.dll
+E:\ProdB\bin\roslyn\System.IO.FileSystem.dll
+E:\ProdB\bin\roslyn\System.IO.FileSystem.Primitives.dll
+E:\ProdB\bin\roslyn\System.Net.Sockets.dll
+E:\ProdB\bin\roslyn\System.Reflection.Metadata.dll
+E:\ProdB\bin\roslyn\System.Runtime.InteropServices.RuntimeInformation.dll
+E:\ProdB\bin\roslyn\System.Security.Cryptography.Algorithms.dll
+E:\ProdB\bin\roslyn\System.Security.Cryptography.Encoding.dll
+E:\ProdB\bin\roslyn\System.Security.Cryptography.Primitives.dll
+E:\ProdB\bin\roslyn\System.Security.Cryptography.X509Certificates.dll
+E:\ProdB\bin\roslyn\System.Text.Encoding.CodePages.dll
+E:\ProdB\bin\roslyn\System.Threading.Tasks.Extensions.dll
+E:\ProdB\bin\roslyn\System.ValueTuple.dll
+E:\ProdB\bin\roslyn\System.Xml.ReaderWriter.dll
+E:\ProdB\bin\roslyn\System.Xml.XmlDocument.dll
+E:\ProdB\bin\roslyn\System.Xml.XPath.dll
+E:\ProdB\bin\roslyn\System.Xml.XPath.XDocument.dll
+E:\ProdB\bin\roslyn\vbc.exe
+E:\ProdB\bin\roslyn\VBCSCompiler.exe
+E:\ProdB\obj\Debug\b2b solu.8B8E8799.Up2Date
+E:\ProdB\bin\Stimulsoft.Base.dll
+E:\ProdB\bin\Stimulsoft.Blockly.dll
+E:\ProdB\bin\Stimulsoft.Map.dll
+E:\ProdB\bin\Stimulsoft.Report.Check.dll
+E:\ProdB\bin\Stimulsoft.Report.dll
+E:\ProdB\bin\Stimulsoft.Report.Web.dll
+E:\ProdB\bin\Stimulsoft.Data.dll
+E:\ProdB\bin\Stimulsoft.Report.Helper.dll
+E:\ProdB\bin\Stimulsoft.Base.pdb
+E:\ProdB\bin\Stimulsoft.Base.xml
+E:\ProdB\bin\Stimulsoft.Blockly.pdb
+E:\ProdB\bin\Stimulsoft.Blockly.xml
+E:\ProdB\bin\Stimulsoft.Map.pdb
+E:\ProdB\bin\Stimulsoft.Map.xml
+E:\ProdB\bin\Stimulsoft.Report.pdb
+E:\ProdB\bin\Stimulsoft.Report.xml
+E:\ProdB\bin\Stimulsoft.Report.Check.pdb
+E:\ProdB\bin\Stimulsoft.Report.Check.xml
+E:\ProdB\bin\Stimulsoft.Report.Web.pdb
+E:\ProdB\bin\Stimulsoft.Report.Web.xml
+E:\ProdB\bin\Stimulsoft.Data.pdb
+E:\ProdB\bin\Stimulsoft.Data.xml
+E:\ProdB\bin\Stimulsoft.Report.Helper.pdb
+E:\ProdB\bin\Stimulsoft.Report.Helper.xml
+E:\ProdB\bin\LibExcel.dll
+E:\ProdB\bin\Stimulsoft.Report.Mvc.dll
+E:\ProdB\bin\Stimulsoft.Report.WebDesign.dll
+E:\ProdB\bin\Stimulsoft.Svg.dll
+E:\ProdB\bin\Stimulsoft.Report.Mvc.pdb
+E:\ProdB\bin\Stimulsoft.Report.Mvc.xml
+E:\ProdB\bin\Stimulsoft.Report.WebDesign.pdb
+E:\ProdB\bin\Stimulsoft.Report.WebDesign.xml
+E:\ProdB\bin\Stimulsoft.Svg.pdb
+E:\ProdB\bin\Stimulsoft.Svg.xml

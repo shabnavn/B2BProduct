@@ -1,0 +1,33 @@
+﻿
+@{
+    ViewBag.Title = "SuccessOrder";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+
+<main class="main">
+    <div class="page-content pt-10">
+        <div class="container">
+            <div class="row">
+                <div class="col-xl-8 col-lg-10 col-md-12 m-auto text-center">
+                    <h4 class="display-6">Your order is placed</h4>
+                    <h4 class="display-6" style="color:green">Successfully</h4>
+                     
+                    <p class="mb-20"><img src="../Content/imgs/order/success.png" height="400" alt="" class="hover-up" /></p>
+
+                    <div class="search-form">
+                        <a onclick="ViewOrder(@ViewBag.OrderID)"> <h4>Order ID: <strong> @ViewBag.OrderNo </strong> </h4></a>
+                    </div>
+                    <a class="btn btn-default submit-auto-width font-xs hover-up mt-30" href="/Home/Index"><i class="fi-rs-home mr-5"></i> Back To Home Page</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+
+
+<script>
+    function ViewOrder(id) {
+         window.location.href = '@Url.Action("ViewOrder", "Order")?id=' + id;
+    }
+</script>

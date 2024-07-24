@@ -1,0 +1,154 @@
+﻿
+@{
+    ViewBag.Title = "Activate";
+    Layout = "~/Views/Shared/guest_master.cshtml";
+}
+
+<script src="~/Content/js/Validation.js"></script>
+
+<main class="main pages">
+
+    <div class="page-content pt-50 pb-150">
+        <div class="container">
+            <div class="row">
+                <div class="col-xl-12 col-lg-10 col-md-12 m-auto">
+                    <div class="row">
+                        <div class="col-lg-6 pr-30 d-none d-lg-block">
+                            <img class="border-radius-15" src="../Content/imgs/page/login-1.png" alt="" />
+                        </div>
+                        <div class="col-lg-6 col-md-8">
+                            <div class="login_wrap widget-taber-content background-white" style="margin:10%">
+                                <div class="padding_eight_all bg-white">
+                                    <div class="heading_s1   ">
+                                        <h1 class="mb-5">Update Password</h1>
+                                        <p class="mb-30"></p>
+                                    </div>
+
+
+
+
+
+                                    <div class="text-danger" id="CommonError"></div>
+
+                                    <div class="form-group" style="display:flex">
+                                        <input required="" id="oldPass" type="password" name="OldPass" placeholder="Current Password" />
+                                        <span class="">
+                                            <i class=" fi-rs-eye-crossed " style=" margin-left: -20px; margin-top: 20px; position: absolute; " id="oldPasstoggle" onclick="PasswordVisibility( 'oldPass' , 'oldPasstoggle' )"></i>
+                                        </span>
+
+
+                                      <br />  <div class="text-danger" id="errMsgOld"></div>
+                                    </div>
+
+                                    <div class="form-group" >
+                                        <input required="" id="newPass" type="password" name="NewPass" placeholder="New Password" />
+                                        <span class="">
+                                            <i class=" fi-rs-eye-crossed " style=" margin-left: -20px; margin-top: 20px; position: absolute; " id="newPasstoggle" onclick="PasswordVisibility( 'newPass' , 'newPasstoggle' )"></i>
+                                        </span>
+                                        <br />
+
+                                        <small>Password must contain one lower case,one upper case,one special character,a minimum of eight characters and maximum of 15 characters.</small>
+                                        <div class="text-danger" id="errMsgNew"></div>
+
+
+                                    </div>
+
+                                    <div class="form-group" style="display:flex">
+                                        <input required="" id="conPass" type="password" name="ConPass" placeholder="Confirm Password" />
+                                      
+                                        <br />
+                                        <div class="text-danger" id="errMsgCon"></div>
+
+                                    </div>
+
+
+
+
+                                    <div class="form-group">
+                                        <button type="submit" onclick="UpdatePass()" class="btn btn-heading btn-block hover-up" name="login">Update Password</button>
+
+                                    </div>
+
+                                    <div id="div_loading" style="display:none" class="text-center">
+                                        <img src="../content/imgs/theme/loading.gif" alt="" />
+                                    </div>
+
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+
+@{
+    Html.RenderPartial("CustomModal");
+}
+
+
+
+
+<script>
+
+    function UpdatePass() {
+        $('#div_loading').show('slow');
+
+        $('#errMsgOld').text("");
+        $('#errMsgNew').text("");
+        $('#errMsgCon').text("");
+
+
+        var oldPass = document.getElementById("oldPass").value;
+        var newPass = document.getElementById("newPass").value;
+        var conPass = document.getElementById("conPass").value;
+
+
+       
+
+
+        $('#errMsguser').text("");
+        if (oldPass == "") {
+            $('#errMsgOld').text( "Please enter current password");
+        } else if (newPass == "") {
+            $('#errMsgNew').text("Please enter new password");
+        } else if (conPass == "") {
+            $('#errMsgCon').text("Please enter confirm password");
+        } else if (ValidatePass(newPass) == false) {
+            $('#errMsgNew').text("Password must contains the above conditions");
+        } else if (conPass != newPass) {
+            $('#errMsgCon').text("New password and confirm password are not matching");
+        }
+        else {
+             $.ajax({
+                type: "GET",
+                url: '@Url.Action("UpdatePassword", "Landing")',
+                contentType: "application/json; charset=utf-8",
+                data: {
+                    "oldPass": oldPass,
+                    "NewPass": newPass
+                },
+                dataType: "json",
+                 success: function (data) {
+
+                     if (data.res == "1") {
+
+                         $('#modal_custom').modal('show');
+                         $('#success').text("Success");
+                         $('#msg').text("Your new password has been updated successfully, kindly proceed to login");
+                         $('#div_loading').hide('slow');
+                     } else if (data.res = "0") {
+                         $('#errMsguser').text("Couldnot find the account, please check the email");
+                         $('#div_loading').hide('slow');
+                     }
+                }
+            });
+        }
+
+
+
+
+    }
+</script>

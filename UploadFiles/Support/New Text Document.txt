@@ -1,0 +1,7 @@
+
+
+
+.txt, .csv, .log, .jpg, .png, .bmp, .gif, .tif, .svg,.docx, .pdf, .rtf, .odt, .txt, .pptx, .ppt,.xlsx, .csv, .ods, .xls
+
+
+

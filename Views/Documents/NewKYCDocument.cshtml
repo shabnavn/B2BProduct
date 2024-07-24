@@ -1,0 +1,304 @@
+﻿
+@using System.Data
+@using b2b_solution.Models
+@using System.Collections.Generic
+@using System.Collections
+@{
+    DataModel dm = new DataModel();
+    ViewBag.Title = "NewKYCDocument";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+
+}
+
+<main class="main">
+    <div class="container mb-80 mt-50">
+        <div class="row">
+            <div class="col-lg-7">
+                <div class="row">
+                    <h4 class="mb-30">Upload Document</h4>
+                    <form method="post">
+
+                        <div class="row">
+                            <div class="form-group col-lg-5" style="justify-content:end">
+                                Document Type
+                                @(Html.Kendo().DropDownList()
+                .Name("DocType")
+                .HtmlAttributes(new { style = "width:100%; background-color:white !important", @class="form-control" })
+                .OptionLabel("Select Document Type")
+                .DataTextField("DocumentType")
+                .DataValueField("DocId")
+                .DataSource(source => source
+                        .Read(read =>
+                        {
+                            read.Action("GetDocType", "Documents");
+                        }))
+                )
+                                <label id="lblDocType" style="color:red; font-size:small"></label>
+                            </div>
+                            <div class="form-group col-lg-5">
+                                Document Number
+                                <input type="text" id="DocNo" style="height:35px" autocomplete="off" name="fname" placeholder="Doc No*" maxlength="20">
+                                <label id="lblDocNo" style="color:red; font-size:small"></label>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="form-group col-lg-5" style="justify-content:end" id="expiryDateContainerSt">
+                                Start Date
+                                @(Html.Kendo().DatePicker()
+          .Name("datepickerst")
+          .Format("dd MMM yyyy")
+          .Value(DateTime.Now)
+          .Max(DateTime.Now)
+          .HtmlAttributes(new { style = "width: 100%; height: 30px; ", title = "datepicker" , @id="StartDate" , @class="form-control" })
+        )
+                                <label id="lblStDate" style="color:red; font-size:small"></label>
+                            </div>
+
+
+                            <div class="form-group col-lg-5" style="justify-content:end" id="expiryDateContainer">
+                                Expiry Date
+                                @(Html.Kendo().DatePicker()
+          .Name("datepicker")
+          .Format("dd MMM yyyy")
+          .Value(DateTime.Now)
+          .Min(DateTime.Now)
+          .HtmlAttributes(new { style = "width: 100%; height: 30px;", title = "datepicker" , @id="ExpiryDate" , @class="form-control"  })
+        )
+                                <label id="lblExDate" style="color:red; font-size:small"></label>
+                            </div>
+                        </div>
+
+
+                        <div class="form-group col-lg-6">
+                            @(Html.Kendo().Upload()
+        .Name("files")
+        .Async(a => a
+            .Save("Async_Save", "Documents")
+            .Remove("Async_Remove", "Documents")
+            .AutoUpload(true)
+        )
+    )
+                            <label id="lblFile" style="color:red; font-size:small"></label>
+                        </div>
+                    </form>
+                </div>
+                <div class="row">
+                    <span id="IsExpDate"  hidden="hidden"></span>
+                </div>
+
+            </div>
+                <div class="row">
+                    <form method="post">
+                        <div class="row">
+                            <div class="form-group col-lg-6">
+                                <a onclick="SubmitReq()" class="btn btn-fill-out btn-block mt-30">Upload<i class="fi-rs-sign-out ml-15"></i></a>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+        </div>
+    </div>
+
+</main>
+<div class="modal fade custom-modal" id="SuccessRes" tabindex="-1" aria-labelledby="quickViewModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            <div class="modal-body">
+                <div class="timeline">
+                    <div class="col-lg-12">
+                        <div class="form-group">
+                            <h4> Upload Succesfully</h4>
+                        </div>
+                        <div class="form-group" style="margin-top: 25px; text-align-last:end">
+                            <button style="background-color:lightcoral" onclick="DismissSuccess()" class="btn btn-secondary ">OK</button>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade custom-modal" id="FailureRes" tabindex="-1" aria-labelledby="quickViewModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            <div class="modal-body">
+                <div class="timeline">
+                    <div class="col-lg-12">
+                        <div class="form-group">
+                            <h4 style="color:red"> We are facing some technical issues now, please try again later <img height="40" src="../Content/imgs/order/sad.png" />  </h4>
+                        </div>
+
+                        <div class="form-group" style="margin-top: 25px; text-align-last:end">
+                            <button style="background-color:lightcoral" onclick="DismissModelRes()" class="btn btn-secondary ">OK</button>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .k-dropdown-wrap.k-state-default {
+        background-color: white !important
+    }
+
+    .k-dropzone {
+        background-color: white !important
+    }
+</style>
+
+
+<script>
+    
+    $(document).ready(function () {
+        $('#expiryDateContainer').hide();
+        $('#expiryDateContainerSt').hide();
+
+        $("#expiryDateContainerSt").on("keydown", function (e) {
+            e.preventDefault();
+        });
+        $("#expiryDateContainer").on("keydown", function (e) {
+            e.preventDefault();
+        });
+
+        $('#DocType').change(function () {
+            var selectedValue = $(this).val();
+            var expiryDateContainer = $('#expiryDateContainer');
+            var expiryDateContainerSt = $('#expiryDateContainerSt');
+
+             $.ajax({
+            type: "GET",
+            url: '@Url.Action("GetIsExpiry", "Documents")',
+                 contentType: "application/json; charset=utf-8",
+                 data: {
+                     "Id": selectedValue
+
+                 },
+            dataType: "json",
+                 success: function (data) {
+                     document.getElementById("IsExpDate").innerHTML = data.IsExpiryDate;
+
+                    if (data.IsExpiryDate === 'N') {
+                        expiryDateContainer.hide();
+                        expiryDateContainerSt.hide();
+                    } else {
+                        expiryDateContainer.show();
+                        expiryDateContainerSt.show();
+                    }
+
+                }
+            });
+
+
+            // Check if the selected value is "Adhar"
+
+        });
+        expiryDateContainer.hide();
+        expiryDateContainerSt.hide();
+
+    });
+     function DismissModelRes() {
+        $('#FailureRes').modal('hide');
+    }
+
+    function ShowSuccess() {
+        $('#SuccessRes').modal('show');
+    }
+
+    function ShowFailure() {
+        $('#FailureRes').modal('show');
+    }
+
+
+    function DismissSuccess() {
+         window.location.href = '@Url.Action("ViewCustomerDocuments", "Documents")';
+    }
+
+    function SubmitReq() {
+        var x = ValidateControls();
+        if (x == true) {
+            var IsExpDate = document.getElementById("IsExpDate").innerHTML;
+            var ExpDate;
+            var StDate;
+
+            if (IsExpDate == 'Y') {
+                ExpDate = $("#ExpiryDate").data("kendoDatePicker").value();
+                ExpDate = kendo.toString(ExpDate, 'yyyy-dd-MM');
+                StDate = $("#StartDate").data("kendoDatePicker").value();
+                StDate = kendo.toString(StDate, 'yyyy-dd-MM');
+            }
+            else {
+                ExpDate = "";
+                StDate = "";
+            }
+            var DocNo = document.getElementById("DocNo").value;
+            var DocType = $("#DocType").data("kendoDropDownList").value();
+            $.ajax({
+                type: "GET",
+                url: '@Url.Action("NewUpload", "Documents")',
+                contentType: "application/json; charset=utf-8",
+                data: {
+                    "DocNo": DocNo,
+                    "DocType": DocType,
+                    "ExpDate": ExpDate,
+                    "StartDate": StDate
+                },
+                dataType: "json",
+                success: function (data) {
+                    if (data.mode >= 1) {
+                        ShowSuccess();
+                        $('#OrderID').text(data.message)
+                    } else {
+                        ShowFailure();
+
+                    }
+                }
+            });
+        }
+    }
+
+    function ValidateControls() {
+        var valCount = 0;
+        
+        var upload = $("#files").data("kendoUpload");
+        var len = upload.getFiles().length;
+
+        
+        if (document.getElementById("DocNo").value == "") {
+            valCount++;
+            document.getElementById("lblDocNo").innerHTML = "Please enter Document No";
+        } else {
+            document.getElementById("lblDocNo").innerHTML = "";
+        }
+
+        if ($("#DocType").data("kendoDropDownList").value() == "") {
+            valCount++;
+            document.getElementById("lblDocType").innerHTML = "Please enter Document Type";
+        } else {
+            document.getElementById("lblDocType").innerHTML = "";
+        }
+        if (len === 0) {
+            valCount++;
+            document.getElementById("lblFile").innerHTML = "Please Select any File";
+
+        } else {
+            document.getElementById("lblFile").innerHTML =""
+        }
+
+       
+
+        if (valCount > 0) {
+            return false;
+        } else {
+            return true;
+        }
+
+    }
+</script>

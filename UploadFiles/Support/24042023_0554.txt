@@ -1,0 +1,8 @@
+
+
+	# notification      ( Mon, 24 Apr 2023, 12:57 )
+	----------------------------------------
+	PHP : https://uom-sfa.dev-ts.online/SFA_PHP_UAT_V2/p_user_SelRotNotifications.php
+	Input Parameter :-|rot_ID : 6||datakey : R9WM1wN2ZDM5zZw+NQ==|
+	Response :-
+	NoDataRes

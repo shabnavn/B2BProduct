@@ -1,0 +1,72 @@
+﻿
+
+@using b2b_solution.Models;
+@{
+    ViewBag.Title = "SpecialPriceDetail";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+
+<main class="main ">
+    <div class="page-content pt-10">
+        <div class="container">
+            <div class="row">
+                <div class="card mb-50">
+                    <div class="card-header" style="background-color: #ecfaf3 !important">
+                        <div class="card-header row " style="background-color: #ecfaf3 !important; border-style:none">
+                            <div class="col-lg-3" style="margin-top:15px">
+                                <h3 class="mb-0">Special Price Detail</h3>
+                            </div>
+                            <div class="col-lg-9" style="text-align-last:right">
+                                @using (Html.BeginForm("DownloadOSIItemListSP", "CustomerItem"))
+                                {
+                                    <div class="form-group" style="margin-top:0px; text-align-last:right">
+                                        <button name="login" style="border-style:none; background-color:transparent">
+                                            <img class="btn-download" id="imgExcelDownload" type="Submit" src="../../Content/imgs/order/xls.png" name="login" height="60" title="Download Excel file" />
+                                        </button>
+                                    </div>
+                                }
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            @( Html.Kendo().Grid<SpecialPriceDetailGrid>()
+    .Name("SpecialPriceDetail")
+    .Columns(columns =>
+    {
+        columns.Bound(p => p.Code).Width(100).Title("Item Code").Filterable(false);
+        columns.Bound(p => p.itm_Name).Width(100).Title("Item").Filterable(false);
+        columns.Bound(p => p.category).Width(100).Title("Category").Filterable(false);
+        columns.Bound(p => p.brand).Width(100).Title("Brand").Filterable(false);
+        columns.Bound(p => p.uom_Name).Width(80).Title("UOM").Filterable(false);
+        columns.Bound(p => p.OfferPrice).Width(80).Title("Offer Price").Filterable(false);
+        columns.Bound(p => p.standardPrice).Width(80).Title("Std.Price").Filterable(false);
+        columns.Bound(p => p.ReturnPrice).Width(80).Title("ReturnPrice").Filterable(false);
+        columns.Bound(p => p.VAT).Width(80).Title("VAT").Filterable(false);
+
+    })
+    //.HtmlAttributes(new { style = "height: 550px;" })
+    .Filterable()
+    .Navigatable()
+    .Sortable()
+    .DataSource(dataSource => dataSource
+    .Ajax()
+    .Batch(true)
+    .ServerOperation(false)
+    .Read("GetSpecialPriceDetail", "CustomerItem")
+    .Update("GetSpecialPriceDetail", "CustomerItem")
+    )
+    )
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+
+
+
+

@@ -1,0 +1,6 @@
+17-04-2024 19:31:28 +05:30-=============Mial Sending Started for freshberrywaffles@gmail.com==================
+17-04-2024 19:31:28 +05:30-Mail has been triggered
+17-04-2024 19:31:29 +05:30-=============Mail sent Exception for freshberrywaffles@gmail.com==================The SMTP server requires a secure connection or the client was not authenticated. The server response was: 5.7.0 Must issue a STARTTLS command first. For more information, go to========== No Inner Exception
+17-04-2024 19:33:02 +05:30-=============Mial Sending Started for freshberrywaffles@gmail.com==================
+17-04-2024 19:33:02 +05:30-Mail has been triggered
+17-04-2024 19:33:02 +05:30-=============Mail sent Exception for freshberrywaffles@gmail.com==================The SMTP server requires a secure connection or the client was not authenticated. The server response was: 5.7.0 Must issue a STARTTLS command first. For more information, go to========== No Inner Exception

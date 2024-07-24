@@ -1,0 +1,722 @@
+﻿
+@using System.Data;
+@using b2b_solution.Models
+@using System.Collections.Generic
+@using System.Collections
+@model SearchComplete
+@{
+    DataModel dm = new DataModel();
+    DataTable dx = dm.loadList("SelCompany", "sp_B2B_Company");
+    string Roles = Session["Roles"].ToString();
+    string Type = Session["Type"].ToString();
+}
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>DIGITS - B2B Portal</title>
+    <meta http-equiv="x-ua-compatible" content="ie=edge" />
+    <meta name="description" content="" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta property="og:title" content="" />
+    <meta property="og:type" content="" />
+    <meta property="og:url" content="" />
+    <meta property="og:image" content="" />
+    <!-- Favicon -->
+    <link rel="shortcut icon" type="image/x-icon" href="../content/imgs/theme/favicon.png" />
+    <!-- Template CSS -->
+
+
+    <link rel="stylesheet" href="../Content/css/plugins/animate.min.css" />
+    <link rel="stylesheet" href="../Content/css/main.css" />
+
+    <link rel="stylesheet" href="../Kendo/styles/kendo.common.min.css" />
+    <link rel="stylesheet" href="../Kendo/styles/kendo.default.min.css" />
+
+    <script src="../content/js/vendor/jquery-3.6.0.min.js"></script>
+
+    @*@Scripts.Render("~/Kendo")*@
+
+    <script src="../Kendo/js/kendo.all.min.js"></script>
+    <script src="../Kendo/js/kendo.aspnetmvc.min.js"></script>
+
+    @*@RenderSection("scripts", required: false)*@
+
+</head>
+
+
+<body>
+
+    <header class="header-area header-style-1 header-height-2">
+
+        <div class="header-top header-top-ptb-1 d-none d-lg-block">
+            <div class="container">
+                <div class="row align-items-center">
+                    <div class="col-xl-7 col-lg-7">
+                        <div class="header-info">
+                            <ul>
+                                <li><a href="/Home/About">About Us</a></li>
+                                <li><a href="/Profile/Account">My Account</a></li>
+                                @{
+                                    if (Roles.Contains("AD") || Roles.Contains("FN") || Roles.Contains("OT"))
+                                    {
+                                        <li><a href="/Order/AllOrders">Orders</a></li>
+                                    }
+                                }
+                                @* strip *@
+
+                                @if (Roles.Contains("AD") || Roles.Contains("FN"))
+                                {
+                                    <li>
+                                        <a href="/Transaction/Invoices">Invoices</a>
+                                    </li>
+                                    <!-- Add more account details links here -->
+                                }
+                                <li>
+                                    <a href="@dx.Rows[0]["com_Brochure"].ToString()" target="_blank">Brochure</a>
+                                </li>
+                                <li>
+                                    <a href="/Support/ViewSupports">Support</a>
+                                </li>
+
+                                <li>
+                                    <a href="/CustomerItem/ItemList">Item List</a>
+                                </li>
+                                <li>
+                                    <a href="/CustomerItem/SpecialPriceDetail">Special Price</a>
+                                </li>
+                                <li>
+                                    <a href="/CustomerItem/PromotionHeader">Promotions</a>
+                                </li>
+                                <li>
+                                    <a href="/GridOrder/NewOrder">Grid Order</a>
+                                </li>
+                                <li>
+                                    <a href="/CustomerService/CustomerServiceList">Services</a>
+                                </li>
+                                @* strip *@
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="col-xl-2 col-lg-1">
+                        <div class="text-center">
+                            <div id="news-flash" class="d-inline-block">
+                                <ul>
+                                    @*<li>100% Secure delivery without contacting the courier</li>
+                                        <li>Supper Value Deals - Save more with promotions</li>*@
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-xl-3 col-lg-4">
+                        <div class="header-info header-info-right">
+                            <ul>
+                                <li>Need help? Call Us:&nbsp; <strong class="text-brand"> <a href="tel:@dx.Rows[0]["com_HelpLineNumber"].ToString()">@dx.Rows[0]["com_HelpLineNumber"].ToString()</a> </strong></li>
+
+                                <li>
+                                    <a href="/Landing/Login">Sign out <i class="fi fi-rs-sign-out ml-10"></i></a>
+                                </li>
+
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+        <div class="header-middle header-middle-ptb-1 d-none d-lg-block sticky-bar" style="padding:10px; border-bottom:none">
+            <div class="container">
+                <div class="header-wrap">
+                    <div class="logo logo-width-1">
+                        <a href="/Landing/Landing"><img src="@Url.Content(dx.Rows[0]["com_BrandLogo"].ToString())" alt="logo" style="height: 100px; width: 100px;" /></a>
+                    </div>
+                    <div class="header-right" style="text-align: -webkit-center">
+                        <div class="search-style-2">
+                            <form action="javascript:SearchPrd(); " method="post">
+                                @{
+                                    DataTable dt = dm.loadList("SelCats", "sp_B2B_Home");
+                                }
+
+                                @(Html.Kendo().AutoComplete()
+.Name("prdSearch")
+.DataTextField("itmName")
+.Filter("contains")
+.Placeholder("Find your products here...")
+.MinLength(1)
+.HtmlAttributes(new { style = "width:100%" })
+.DataSource(source =>
+{
+    source.Read(read =>
+    {
+        read.Action("GetProdNames", "Home")
+        .Data("onAdditionalData");
+    })
+            .ServerFiltering(true);
+})
+.Events(e =>
+{
+    e.Select("onSelect");
+})
+                                 )
+
+                            </form>
+                        </div>
+
+                        <div class="header-action-right">
+                            <div class="header-action-2">
+
+                                <div class="header-action-icon-2 " style=" margin-right: 30px">
+                                    <a style="align-self:center; margin-right:5px">
+                                        <img class="svgInject" height="24" alt="Nest" src="../../Content/imgs/profile/stopwatch.png" />
+                                    </a>
+                                    <div style="display:grid; line-height:initial">
+                                        <strong>Order cut off time</strong>
+                                        <a><strong class="lable ml-0"> @Session["CutOff"].ToString() </strong></a>
+
+                                    </div>
+
+                                </div>
+                                <div class="header-action-icon-2" style="margin-right:30px">
+                                    <a class="mini-cart-icon" href="/Home/Cart">
+                                        <img alt="Nest" src="../content/imgs/theme/icons/icon-cart.svg" />
+                                        @{
+                                            string[] ar = { Session["CusID"].ToString() };
+                                            DataTable dtCartCount = dm.loadList("SelCartCount", "sp_B2B_Home", Session["userID"].ToString(), ar);
+                                            if (dtCartCount.Rows.Count > 0)
+                                            {
+                                                ViewBag.CartCount = dtCartCount.Rows[0][0].ToString();
+                                            }
+                                            else
+                                            {
+                                                ViewBag.CartCount = 0;
+
+                                            }
+                                        }
+                                        <span id="crtCount" class="pro-count blue"> @ViewBag.CartCount </span>
+
+                                    </a>
+                                    <a href="/Home/Cart"><span class="lable">Cart</span></a>
+                                </div>
+
+                                <div class="header-action-icon-2">
+                                    <a href="#" style="padding:5px" id="showCustomersButton">
+                                        <img class="svgInject" alt="Nest" src="../content/imgs/theme/icons/icon-user.svg" />
+
+                                    </a>
+
+
+                                    @* login type code starts *@
+
+                                    @if (Type.Contains("HO"))
+                                    {
+                                        string id = Session["userID"].ToString();
+                                        string[] arr = { };
+                                        DataTable dtcus = dm.loadList("SelCustomers", "sp_User", id.ToString(), arr);
+
+                                        if (dtcus.Rows.Count > 0)
+                                        {
+                                            ViewBag.Cus = dtcus.ToString();
+                                        }
+                                        else
+                                        {
+                                            ViewBag.Cus = @Session["cusHeader"].ToString();
+                                        }
+
+                                        <a href="#" style="display:grid" id="showCusBtn">
+
+                                            @{
+                                                if (@Session["cusHeader"].ToString() == @Session["cusName"].ToString())
+                                                {
+                                                    <span class="lable ml-0 text-to-wrap"> @Session["cusHeader"].ToString() </span>
+                                                    <span class="lable ml-0 text-to-wrap">  </span>
+                                                }
+                                                else
+                                                {
+                                                    <span class="lable ml-0 text-to-wrap"> @Session["cusHeader"].ToString() </span>
+                                                    <span class="lable ml-0 text-to-wrap"> @Session["cusName"].ToString() </span>
+                                                }
+                                            }
+                                            @*<span class="lable ml-0 text-to-wrap"> @Session["cusName"].ToString() </span>*@
+                                        </a>
+
+
+                                        <div class="cart-dropdown-wrap cart-dropdown-hm2 account-dropdown" id="customerDropdown" style="display: none;">
+                                            <ul>
+                                                @foreach (DataRow customer in dtcus.Rows)
+                                                {
+
+                                                    <li>
+                                                        <a href="#" class="customer-link" data-customer-id="@customer["cus_ID"]" data-customer="@customer["cus_Name"]" id="cus"> @customer["cus_Name"] </a>
+
+                                                    </li>
+                                                }
+
+                                            </ul>
+
+                                        </div>
+
+
+
+
+
+                                    }
+                                    else
+                                    {
+                                        <a href="/Profile/Account" style="display:grid">
+
+                                            @{
+                                                if (@Session["cusHeader"].ToString() == @Session["cusName"].ToString())
+                                                {
+                                                    <span class="lable ml-0 text-to-wrap"> @Session["cusHeader"].ToString() </span>
+                                                    <span class="lable ml-0 text-to-wrap">  </span>
+                                                }
+                                                else
+                                                {
+                                                    <span class="lable ml-0 text-to-wrap"> @Session["cusHeader"].ToString() </span>
+                                                    <span class="lable ml-0 text-to-wrap"> @Session["cusName"].ToString() </span>
+                                                }
+                                            }
+
+                                        </a>
+
+
+                                    }
+
+
+                                    @* login type code ends *@
+
+
+
+
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="header-bottom header-bottom-bg-color ">
+            <div class="container">
+                @*container*@
+                <div class="header-wrap header-space-between position-relative">
+                    <div class="logo logo-width-1 d-block d-lg-none">
+                        <a href="index.html"><img src="../content/imgs/theme/logo.png" alt="logo" /></a>
+                    </div>
+
+                    <div class="header-nav d-none d-lg-flex">
+
+                        <div class="main-menu main-menu-padding-1 main-menu-lh-2 d-none d-lg-block font-heading">
+                            <nav>
+
+                                <ul>
+
+                                    @{
+                                        int i = 0;
+                                        foreach (DataRow dr in dt.Rows)
+                                        {
+                                            <li class="position-static " style="margin-top:.5%; line-height:30px; padding-left:0px; padding-right:0px">
+                                                <a onclick="Search('@dr["id"].ToString()', '0', '@dr["Name"].ToString()', '')" style=" display: grid ">
+
+                                                    <img height="100" class="" src="@dr["img"]" style="justify-self:center; " />
+
+                                                    @*  <span class="" style="font-size:13px"> @dr["Name"].ToString()</span>*@
+                                                </a>
+                                                <ul class="mega-menu" style="display:flex; justify-content:center; padding:0px !important">
+                                                    <li class="col-lg-12 row">
+                                                        @*<a class="menu-title" href="#">Fruit & Vegetables</a>*@
+                                                        <div class="col-lg-6" style="padding-top:10px">
+                                                            @{
+                                                                string catDesc = dr["cat_desc"].ToString();
+                                                                string finCat = catDesc.Replace("/", "/ ");
+                                                                finCat = finCat.Replace("&", "& ");
+                                                            }
+
+                                                            <strong style="margin-bottom:5px; margin-top:5px"> @finCat</strong>
+                                                        </div>
+                                                        <div class="d-flex categori-dropdown-inner">
+
+
+                                                            <ul style="display:flex; margin-top:5px !important" class="col-lg-12 row">
+
+
+
+                                                                @{ try
+                                                                    {
+                                                                        string[] arrbrds = { dr["id"].ToString() };
+                                                                        DataTable dtBrands = dm.loadList("SelCatAllBrands", "sp_B2B_Home", Session["CusID"].ToString(), arrbrds);
+
+                                                                        foreach (DataRow drB in dtBrands.Rows)
+                                                                        {
+                                                                            <li class="col-lg-2">
+                                                                                <a onclick="Search('@dr["id"].ToString()', '@drB["brd_ID"].ToString()','@dr["Name"].ToString()' , '@drB["brd_Name"].ToString()' )"
+                                                                                   style="display:grid">   <img height="80" src="@drB["brd_Image"]" alt="@drB["brd_Name"]" /><span>@drB["brd_Name"]</span></a>
+                                                                            </li>
+                                                                        }
+                                                                    }
+                                                                    catch (Exception ex)
+                                                                    {
+
+                                                                    }
+                                                                }
+                                                            </ul>
+                                                        </div>
+                                                    </li>
+                                                </ul>
+                                            </li>
+                                            i++;
+                                        }
+                                    }
+                                </ul>
+                            </nav>
+                        </div>
+                    </div>
+
+                    <div class="hotline d-none d-lg-flex">
+                        <img src="../content/imgs/theme/icons/icon-headphone.svg" alt="hotline" />
+                        <p><a href="tel:@dx.Rows[0]["com_HelpLineNumber"].ToString()">@dx.Rows[0]["com_SupportCenter"].ToString()</a><span>@dx.Rows[0]["com_WorkingHours"].ToString()</span></p>
+                    </div>
+                    <div class="header-action-icon-2 d-block d-lg-none">
+                        <div class="burger-icon burger-icon-white">
+                            <span class="burger-icon-top"></span>
+                            <span class="burger-icon-mid"></span>
+                            <span class="burger-icon-bottom"></span>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <div class="mobile-header-active mobile-header-wrapper-style">
+        <div class="mobile-header-wrapper-inner">
+            <div class="mobile-header-top">
+                <div class="mobile-header-logo">
+                    <a href="/Home/Index"><img src="@dx.Rows[0]["com_BrandLogo"].ToString()" alt="logo" style="height: 100px; width: 100px;" /></a>
+                </div>
+                <div class="mobile-menu-close close-style-wrap close-style-position-inherit">
+                    <button class="close-style search-close">
+                        <i class="icon-top"></i>
+                        <i class="icon-bottom"></i>
+                    </button>
+                </div>
+            </div>
+            <div class="mobile-header-content-area">
+                <div class="mobile-search search-style-3 mobile-header-border">
+                    <form action="/Home/Search" method="post">
+                        <input type="text" name="prdName" placeholder="Search for items…" />
+                        <button type="submit"><i class="fi-rs-search"></i></button>
+                    </form>
+                </div>
+                <div class="mobile-menu-wrap mobile-header-border">
+                    <!-- mobile menu start -->
+                    <nav>
+                        <ul class="mobile-menu font-heading">
+
+
+                            <li>
+                                <a href="/Home/Index"><i class="fi fi-rs-home mr-10"></i>Home</a>
+                            </li>
+
+                            <li>
+                                <a href="/Home/About"><i class="fi fi-rs-document mr-10"></i>About</a>
+                            </li>
+
+                            <li>
+                                <a href="/Profile/Account"><i class="fi fi-rs-user mr-10"></i>My Account</a>
+                            </li>
+
+                            @{
+                                if (Roles.Contains("AD") || Roles.Contains("FN") || Roles.Contains("OT"))
+                                {
+                                    <li>
+                                        <a href="/Order/AllOrders"><i class="fi fi-rs-location-alt mr-10"></i>Orders</a>
+                                    </li>
+                                }
+                            }
+
+
+                            <li>
+                                <a href="/Transaction/Invoices"><i class="fi fi-rs-document mr-10"></i>Invoices</a>
+                            </li>
+
+                            <li>
+                                <a href="/Transaction/AR"><i class="fi fi-rs-money mr-10"></i>AR</a>
+                            </li>
+
+                            <li>
+                                <a href="/Support/ViewSupports"><i class="fi fi-rs-user mr-10"></i>Support</a>
+                            </li>
+
+                            <li>
+                                <a href="/Landing/Login"><i class="fi fi-rs-sign-out mr-10"></i>Sign out</a>
+                            </li>
+
+
+                        </ul>
+                    </nav>
+                    <!-- mobile menu end -->
+                </div>
+                <div class="mobile-header-info-wrap">
+                    <div class="single-mobile-header-info">
+                        <a href="tel:@dx.Rows[0]["com_SupportCenter"].ToString() "><i class="fi-rs-headphones"></i>@dx.Rows[0]["com_SupportCenter"].ToString() </a>
+                    </div>
+                </div>
+                <div class="mobile-social-icon mb-50">
+                    <h6 class="mb-15">Follow Us</h6>
+                    <a href="@dx.Rows[0]["com_fbPage"].ToString()" target="_blank"><img src="../content/imgs/theme/icons/icon-facebook-white.svg" alt="" /></a>
+                    @*<a href="@dx.Rows[0]["com_Twitter"].ToString()" target="_blank"><img src="../content/imgs/theme/icons/icon-twitter-white.svg" alt="" /></a>*@
+                    <a href="@dx.Rows[0]["com_Instagram"].ToString()" target="_blank"><img src="../content/imgs/theme/icons/icon-instagram-white.svg" alt="" /></a>
+                </div>
+                <p class="font-sm mb-0">&copy; @DateTime.Now.ToString("yyyy"), Powered By <strong class="text-brand">DigiTS</strong>  <br />All rights reserved</p>
+            </div>
+        </div>
+    </div>
+    <!--End header-->
+    @RenderBody()
+
+    <footer class="main">
+
+
+        <section class="section-padding footer-mid">
+            <div class="container pt-15 pb-20">
+                <div class="col-12 mb-30">
+                    <div class="footer-bottom"></div>
+                </div>
+                <div class="row">
+                    <div class="footer-link-widget col wow animate__ animate__fadeInUp animated">
+                        <div class="widget-about font-md mb-md-3 mb-lg-3 mb-xl-0 wow animate__animated animate__fadeInUp">
+                            <div class="logo">
+                                <a href="/Home/Index" class=""><img src="@dx.Rows[0]["com_BrandLogo"].ToString()" alt="logo" style="height: 100px; width: 100px;"/></a>
+                                @*<p class="font-lg text-heading">We offer you great service</p>*@
+                            </div>
+                            <ul class="contact-infor">
+                                <li><span style="display:grid">@Html.Raw(HttpUtility.HtmlDecode(dx.Rows[0]["com_Address"].ToString())) </span></li>
+                                @*  <li><img src="../content/imgs/theme/icons/icon-contact.svg" alt="" /><strong>Call Us:</strong><span><a href="tel:@dx.Rows[0]["com_SupportCenter"].ToString()">@dx.Rows[0]["com_SupportCenter"].ToString()</a></span></li>*@
+                                <li style="display:flex"><span><a style="color:black" href="mailto:@dx.Rows[0]["com_Email"].ToString()">@dx.Rows[0]["com_Email"].ToString()</a> </span></li>
+                                <li><strong>Working Hours:&nbsp;</strong><span>@dx.Rows[0]["com_WorkingHours"].ToString()</span></li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="footer-link-widget col wow animate__animated animate__fadeInUp">
+                        <h4 class="widget-title">Company</h4>
+                        <ul class="footer-list mb-sm-5 mb-md-0 ">
+                            <li><a href="/Home/About">About Us</a></li>
+                            <li><a href="/Home/Privacy">Privacy Policy</a></li>
+                            <li><a href="/Home/Terms">Terms &amp; Conditions</a></li>
+                            <li><a href="/Support/NewSupport">Support</a></li>
+                        </ul>
+                    </div>
+                    <div class="footer-link-widget col wow animate__animated animate__fadeInUp">
+                        <h4 class="widget-title">Account</h4>
+                        <ul class="footer-list mb-sm-5 mb-md-0">
+                            <li><a href="/Home/Cart">View Cart</a></li>
+                            @{
+                                if (Roles.Contains("AD") || Roles.Contains("FN") || Roles.Contains("OT"))
+                                {
+                                    <li><a href="/Order/AllOrders">Orders</a></li>
+                                }
+                            }
+
+                            @*<li><a href="/Promotion/AllPromo">Promotions</a></li>*@
+                        </ul>
+                    </div>
+
+                    <div class="footer-link-widget col wow animate__animated animate__fadeInUp">
+                        <h4 class="widget-title">Popular</h4>
+                        <ul class="footer-list mb-sm-5 mb-md-0">
+
+                            @{
+                                DataTable popdts = dm.loadList("SelPopularCats", "sp_B2B_Guest");
+                                foreach (DataRow dr in popdts.Rows)
+                                {
+                                    <li><a onclick="Search('@dr["cat_ID"].ToString()', '0','@dr["cat_Name"].ToString()' , '' )">@dr["cat_Name"].ToString()</a></li>
+                                }
+                            }
+                        </ul>
+                    </div>
+                    <div class="footer-link-widget widget-install-app col wow animate__animated animate__fadeInUp">
+                        <h4 class="widget-title">Install App</h4>
+                        <p class="">@*From Google Play*@</p>
+                        <div class="download-app">
+                            @*<a href="@dx.Rows[0]["com_AndroidURL"].ToString()" target="_blank" class="hover-up mb-sm-2 mb-lg-0"><img class="active" src="../content/imgs/theme/app-store.jpg" alt="" /></a>*@
+                            <a href="@dx.Rows[0]["com_AndroidURL"].ToString()" target="_blank" class="hover-up mb-sm-2"><img src="../content/imgs/theme/google-play.jpg" alt="" /></a>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+        <section class="newsletter mb-15 wow animate__animated animate__fadeIn">
+
+            <div class="container">
+
+                <div class="row">
+                    <div class="col-lg-12">
+                        <div class="position-relative newsletter-inner" style="background-image: url(../UploadFiles/banner/footerbanner.png); padding-top: 10%">
+                            <div class="newsletter-content">
+                                <h2 class="mb-20">
+                                    @*Stay home & Make order*@
+                                </h2>
+                                <p class="mb-45">@*Start You'r Daily Shopping with <span class="text-brand">Us</span>*@</p>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+
+        <div class="container pb-30 wow animate__animated animate__fadeInUp" data-wow-delay="0">
+            <div class="row align-items-center">
+                <div class="col-12 mb-30">
+                    <div class="footer-bottom"></div>
+                </div>
+                <div class="col-xl-4 col-lg-6 col-md-6">
+                    <p class="font-sm mb-0">&copy; @DateTime.Now.ToString("yyyy"), Powered By <strong class="text-brand"><a href="turbosoft.technology" target="_blank">DigiTS</a></strong>  <br /></p>
+                </div>
+                <div class="col-xl-4 col-lg-6 text-center d-none d-xl-block">
+                    @*<div class="hotline d-lg-inline-flex mr-30">
+                            <img src="../content/imgs/theme/icons/phone-call.svg" alt="hotline" />
+                            <p><a href="tel:@dx.Rows[0]["com_SupportCenter"].ToString()">@dx.Rows[0]["com_SupportCenter"].ToString()</a><span>@dx.Rows[0]["com_WorkingHours"].ToString()</span></p>
+                        </div>*@
+                    <div class="hotline d-lg-inline-flex">
+                        <img src="../content/imgs/theme/icons/phone-call.svg" alt="hotline" />
+                        <p><a href="tel:@dx.Rows[0]["com_HelpLineNumber"].ToString()">@dx.Rows[0]["com_SupportCenter"].ToString()</a><span>@dx.Rows[0]["com_WorkingHours"].ToString()</span></p>
+                    </div>
+                </div>
+                <div class="col-xl-4 col-lg-6 col-md-6 text-end d-none d-md-block">
+                    <div class="mobile-social-icon">
+                        <h6>Follow Us</h6>
+                        <a href="@dx.Rows[0]["com_fbPage"].ToString()" target="_blank"><img src="../content/imgs/theme/icons/icon-facebook-white.svg" alt="" /></a>
+                        @*<a href="@dx.Rows[0]["com_Twitter"].ToString()" target="_blank"><img src="../content/imgs/theme/icons/icon-twitter-white.svg" alt="" /></a>*@
+                        <a href="@dx.Rows[0]["com_Instagram"].ToString()" target="_blank"><img src="../content/imgs/theme/icons/icon-instagram-white.svg" alt="" /></a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </footer>
+    <!-- Preloader Start -->
+    @*<div id="preloader-active">
+            <div class="preloader d-flex align-items-center justify-content-center">
+                <div class="preloader-inner position-relative">
+                    <div class="text-center">
+                        <img src="../content/imgs/theme/loading.gif" alt="" />
+                    </div>
+                </div>
+            </div>
+        </div>*@
+
+  
+    <script src="../content/js/vendor/modernizr-3.6.0.min.js"></script>
+    <script src="../content/js/vendor/jquery-migrate-3.3.0.min.js"></script>
+    <script src="../content/js/vendor/bootstrap.bundle.min.js"></script>
+    <script src="../content/js/plugins/slick.js"></script>
+    <script src="../content/js/plugins/jquery.syotimer.min.js"></script>
+    <script src="../content/js/plugins/wow.js"></script>
+    <script src="../Content/js/plugins/slider-range.js"></script>
+    <script src="../content/js/plugins/perfect-scrollbar.js"></script>
+    <script src="../content/js/plugins/magnific-popup.js"></script>
+    <script src="../content/js/plugins/select2.min.js"></script>
+    <script src="../content/js/plugins/waypoints.js"></script>
+    <script src="../content/js/plugins/counterup.js"></script>
+    <script src="../content/js/plugins/jquery.countdown.min.js"></script>
+    <script src="../content/js/plugins/images-loaded.js"></script>
+    <script src="../content/js/plugins/isotope.js"></script>
+    <script src="../content/js/plugins/scrollup.js"></script>
+    <script src="../content/js/plugins/jquery.vticker-min.js"></script>
+    <script src="../content/js/plugins/jquery.theia.sticky.js"></script>
+    <script src="../content/js/plugins/jquery.elevatezoom.js"></script>
+    <script src="../content/js/main.js?v=4.0"></script>
+    <script src="../content/js/shop.js?v=4.0"></script>
+
+    <style>
+        .Imgresponsive {
+            width: 100%;
+            height: auto;
+        }
+
+        .header-style-1 .search-style-2 form input {
+            max-width: 690px;
+            margin-left: 0px;
+        }
+
+        .k-popup.k-calendar-container, .k-popup.k-list-container {
+            background-color: white !important
+        }
+    </style>
+
+
+    <script>
+        function Search(catID, brdID, catName , brdName) {
+            window.location.href = '@Url.Action("Search", "Home")?catID=' + catID + "&&brdID=" + brdID + "&&catName=" + encodeURIComponent(catName) + "&&brdName=" + brdName;
+        }
+
+        function onAdditionalData() {
+            return {
+                text: $("#prdSearch").val()
+            };
+        }
+
+        function onSelect(e) {
+
+            var dataItem = this.dataItem(e.item.index());
+            window.location.href = '@Url.Action("Search", "Home")?prdName=' + dataItem.itmName;
+        }
+
+        function SearchPrd() {
+            var data = $('#prdSearch').data('kendoAutoComplete');
+            window.location.href = '@Url.Action("Search", "Home")?prdName=' + data.value();
+        }
+
+
+
+
+    </script>
+
+
+    <script>
+        $(document).ready(function () {
+            $("#showCustomersButton").click(function () {
+                $("#customerDropdown").toggle();
+            });
+            $("#showCusBtn").click(function () {
+                $("#customerDropdown").toggle();
+            });
+
+        });
+    </script>
+    <script>
+        $(".customer-link").click(function (e) {
+            e.preventDefault();
+
+            // Get the customer ID from the data-customer-id attribute
+            var customerId = $(this).data("customer-id");
+            var cusName = $(this).data("customer");
+            var customerName = $(this).text(); // Get the customer name
+
+            // Set the selected customer's name in the span
+            $("#selectedCustomerName").text(customerName);
+
+
+            // Set the customer ID in TempData
+            $.ajax({
+                type: "POST",
+                url: "/Profile/SetSelectedCustomerId",
+                data: { customerId: customerId, cusName: cusName },
+                success: function () {
+                    // Redirect to the other page after setting TempData
+                    window.location.href = "/Profile/Account";
+                }
+            });
+        });
+    </script>
+
+</body>
+
+
+</html>

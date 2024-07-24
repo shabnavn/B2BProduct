@@ -1,0 +1,41 @@
+25-06-2024 00:11:38 +05:30-GetOutstandingInvoices STARTED 25-06-2024 00:11:38
+25-06-2024 00:11:38 +05:30-======================================
+25-06-2024 18:07:31 +05:30-PostScheduledReturnRequest STARTED 25-06-2024 18:07:31
+25-06-2024 18:07:31 +05:30-============================================
+25-06-2024 18:07:32 +05:30-PostScheduledReturnRequest json:[{"prdID":"55","HigherUOM":"2","HigherQty":"2","LowerUOM":"0","LowerQty":"0","HigherPrice":"0.32","LowerPrice":"0","LineTotal":"0.32","Vat":"5.00","GrandTotal":"0.32"}
+25-06-2024 18:07:45 +05:30-Unexpected end when deserializing array. Path '[0]', line 1, position 167.
+25-06-2024 18:07:45 +05:30-PostScheduledReturnRequest ENDED 25-06-2024 18:07:45
+25-06-2024 18:07:45 +05:30-========================================
+25-06-2024 18:08:08 +05:30-PostScheduledReturnRequest STARTED 25-06-2024 18:08:08
+25-06-2024 18:08:08 +05:30-============================================
+25-06-2024 18:08:08 +05:30-PostScheduledReturnRequest json:[{"prdID":"55","HigherUOM":"2","HigherQty":"2","LowerUOM":"0","LowerQty":"0","HigherPrice":"0.32","LowerPrice":"0","LineTotal":"0.32","Vat":"5.00","GrandTotal":"0.32"}]
+25-06-2024 18:08:17 +05:30-PostScheduledReturnRequest InputXml:
+25-06-2024 18:08:53 +05:30-Cannot use a leading .. to exit above the top directory.
+25-06-2024 18:08:53 +05:30-PostScheduledReturnRequest ENDED 25-06-2024 18:08:53
+25-06-2024 18:08:53 +05:30-========================================
+25-06-2024 18:10:50 +05:30-PostScheduledReturnRequest STARTED 25-06-2024 18:10:50
+25-06-2024 18:10:51 +05:30-============================================
+25-06-2024 18:10:51 +05:30-PostScheduledReturnRequest json:[{"prdID":"55","HigherUOM":"2","HigherQty":"2","LowerUOM":"0","LowerQty":"0","HigherPrice":"0.32","LowerPrice":"0","LineTotal":"0.32","Vat":"5.00","GrandTotal":"0.32"}]
+25-06-2024 18:10:55 +05:30-PostScheduledReturnRequest InputXml:
+25-06-2024 18:11:35 +05:30-Object reference not set to an instance of an object.
+25-06-2024 18:11:35 +05:30-PostScheduledReturnRequest ENDED 25-06-2024 18:11:35
+25-06-2024 18:11:35 +05:30-========================================
+25-06-2024 18:18:10 +05:30-PostScheduledReturnRequest STARTED 25-06-2024 18:18:10
+25-06-2024 18:18:10 +05:30-============================================
+25-06-2024 18:18:10 +05:30-PostScheduledReturnRequest json:[{"prdID":"55","HigherUOM":"2","HigherQty":"2","LowerUOM":"0","LowerQty":"0","HigherPrice":"0.32","LowerPrice":"0","LineTotal":"0.32","Vat":"5.00","GrandTotal":"0.32"}
+25-06-2024 18:18:13 +05:30-Unexpected end when deserializing array. Path '[0]', line 1, position 167.
+25-06-2024 18:18:14 +05:30-PostScheduledReturnRequest ENDED 25-06-2024 18:18:14
+25-06-2024 18:18:14 +05:30-========================================
+25-06-2024 18:18:37 +05:30-PostScheduledReturnRequest STARTED 25-06-2024 18:18:37
+25-06-2024 18:18:37 +05:30-============================================
+25-06-2024 18:18:37 +05:30-PostScheduledReturnRequest json:[{"prdID":"55","HigherUOM":"2","HigherQty":"2","LowerUOM":"0","LowerQty":"0","HigherPrice":"0.32","LowerPrice":"0","LineTotal":"0.32","Vat":"5.00","GrandTotal":"0.32"}]
+25-06-2024 18:18:40 +05:30-PostScheduledReturnRequest InputXml:
+25-06-2024 18:20:15 +05:30-Object reference not set to an instance of an object.
+25-06-2024 18:20:15 +05:30-PostScheduledReturnRequest ENDED 25-06-2024 18:20:15
+25-06-2024 18:20:15 +05:30-========================================
+25-06-2024 18:20:28 +05:30-PostScheduledReturnRequest STARTED 25-06-2024 18:20:28
+25-06-2024 18:20:28 +05:30-============================================
+25-06-2024 18:20:28 +05:30-PostScheduledReturnRequest json:[{"prdID":"55","HigherUOM":"2","HigherQty":"2","LowerUOM":"0","LowerQty":"0","HigherPrice":"0.32","LowerPrice":"0","LineTotal":"0.32","Vat":"5.00","GrandTotal":"0.32"}]
+25-06-2024 18:20:28 +05:30-PostScheduledReturnRequest InputXml:
+25-06-2024 18:23:43 +05:30-PostScheduledReturnRequest ENDED 25-06-2024 18:23:43
+25-06-2024 18:23:43 +05:30-========================================

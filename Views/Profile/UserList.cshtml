@@ -1,0 +1,251 @@
+﻿@using b2b_solution.Models;
+
+<div class="card-body">
+    <div class="table-responsive">
+
+        <div class="heading_s1">
+            <h4 class="mb-5">User List</h4>
+        </div>
+
+        @( Html.Kendo().Grid<Userlist>()
+    .Name("client")
+    .Columns(columns =>
+    {
+        columns.Bound(p => p.FirstName).Width(100).Filterable(false).ClientTemplate("<a style='cursor:pointer' onclick='ViewDetail(this);'>#=FirstName#</a>");
+        columns.Bound(p => p.LastName).Width(100).Filterable(false).ClientTemplate("<a style='cursor:pointer' onclick='ViewDetail(this);'>#=LastName#</a>");
+        columns.Bound(p => p.Email).Width(100).Filterable(false).ClientTemplate("<a style='cursor:pointer' onclick='ViewDetail(this);'>#=Email#</a>");
+        columns.Bound(p => p.MobileNumber).Width(100).Filterable(false).ClientTemplate("<a style='cursor:pointer' onclick='ViewDetail(this);'>#=MobileNumber#</a>");
+        columns.Bound(p => p.CreatedOn).Width(80).Filterable(false).ClientTemplate("<a style='cursor:pointer' onclick='ViewDetail(this);'>#=CreatedOn#</a>");
+        columns.Bound(p => p.Status).Width(80).Filterable(false).ClientTemplate("<a style='cursor:pointer' onclick='ViewDetail(this);'>#=Status#</a>");
+        columns.Bound(p => p.ApprStatus).Width(80).Filterable(false).ClientTemplate("<a style='cursor:pointer' onclick='ViewDetail(this);'>#=ApprStatus#</a>");
+        columns.Bound(p => p.Roles).Width(100).Filterable(false).ClientTemplate("<a style='cursor:pointer' onclick='ViewDetail(this);'>#=Roles#</a>");
+        columns.Bound(p => p.type).Width(100).Title("Type").Filterable(false).ClientTemplate("<a style='cursor:pointer' onclick='ViewDetail(this);'>#=type#</a>");
+        columns.Bound(p => p.Customer).Width(150).Title("Outlet").Filterable(false).ClientTemplate("<a style='cursor:pointer' onclick='ViewDetail(this);'>#=Customer#</a>");
+
+    })
+    //.HtmlAttributes(new { style = "height: 550px;" })
+    .Filterable()
+    .Navigatable()
+    .Sortable()
+    .DataSource(dataSource => dataSource
+    .Ajax()
+    .Batch(true)
+    .ServerOperation(false)
+    .Read("GetUsers", "Profile")
+    .Update("GetUsers", "Profile")
+    )
+    )
+
+    </div>
+
+    <div class="row">
+        <span id="UserEmail" hidden="hidden"></span>
+        <span id="IsAdmin" hidden="hidden"></span>
+    </div>
+</div>
+
+<div class="modal fade" tabindex="-1" id="SuccessRes">
+    <div class="modal-dialog modal-lg" data-backdrop="static" dmodal_customata-keyboard="false">
+        <div class="modal-content position-absolute">
+            <div class="modal-header">
+                <h5 class="modal-title">User Details</h5>
+                <div class="form-group col-lg-6 pb-5" style="display: flex; justify-content: flex-end; ">
+                    <img src="../Content/imgs/support/key.png" height="20" onclick="showpasspart()" style="cursor: pointer;" title="Reset Password" />
+                    <img src="../Content/imgs/support/close.png" height="20" onclick="DismissSuccess()" style="cursor: pointer;" title="Close" />
+                </div>
+            </div>
+
+            <div class="modal-body">
+
+                <div class="col-lg-12 row pt-5">
+                    <div class="col-lg-6 row" style="margin-bottom:5px">
+
+                        <div class="col-lg-9">
+                            Name: <strong id="UserName"></strong>
+                        </div>
+                        <div class="col-lg-9">
+                            Email : <strong id="Email"></strong>
+                        </div>
+                        <div class="col-lg-9">
+                            Mobile No: <strong id="Mobile"></strong>
+                        </div>
+                        <div class="col-lg-9">
+                            Created On : <strong id="CreatedOn"></strong>
+                        </div>
+
+                    </div>
+                    <div class="col-lg-6 row" style="margin-bottom: 5px; justify-content: end; ">
+
+                        <div class="col-lg-9">
+                            Status :  <strong id="Status"></strong>
+                        </div>
+                        <div class="col-lg-9">
+                            Aprroval Status : <strong id="Approvl"></strong>
+                        </div>
+                        <div class="col-lg-9">
+                            Roles : <strong id="Roles"></strong>
+                        </div>
+                        <div class="col-lg-9">
+                            Type : <strong id="Type"></strong>
+                        </div>
+                        <div class="col-lg-9">
+                            Outlet : <strong id="Outlet"></strong>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="modal-footer">
+
+            </div>
+            <div class="row" id="showpassbutton">
+                <div class="modal-form-group px-3 d-flex align-items-center justify-content-between">
+                    <div class="d-flex">
+                        <input class="form-check-input" type="checkbox" value="" id="chkSendMail">
+                        <label class="form-check-label" for="product-cat">Send the new password to user via mail </label>
+                    </div>
+                    <div>
+                        <button id="Reset" type="button" onclick="ResetPassword()" class="btn btn-sm" style="margin-bottom: 10px; position: relative;">
+                            <img src="../Content/imgs/support/resetpass.png" alt="Reset Icon" style="width: 20px; height: 20px; position: absolute; top: 50%; transform: translateY(-50%);">
+                            <span style="padding-left: 20px;">Reset</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <div id="showpassword" class="row ">
+                <div class="form-group col-lg-6 pb-5" style="display: flex; justify-content: flex-start; align-items: center; margin-left: 5px;">
+                    <h7 style="margin-right: 10px;">New Password:</h7>
+                    <strong>
+                        <h6 id="newpass" style="margin-right: 10px; font-weight: bold;"></h6>
+                    </strong>
+                    <img src="../Content/imgs/support/Copyicon.png" height="20" onclick="copyNewPass()" style="cursor: pointer;" title="Copy"/>
+                </div>
+                <div class="form-group col-lg-5" id="copyMessage" style="color: green; text-align: center; display: none;">Password copied to clipboard!</div>
+            </div>
+
+        </div>
+
+    </div>
+</div>
+
+
+
+<script>
+    $(document).ready(function () {
+        var showpass = $('#showpassbutton');
+        showpass.hide();
+
+    });
+
+    function showpasspart() {
+        //showpassbutton
+        var showpass = $('#showpassbutton');
+        showpass.show();
+
+        setTimeout(function () {
+            $('#showpassword').hide();
+        }, 30000);
+        setTimeout(function () {
+            $('#showpassbutton').hide();
+        }, 30000);
+    }
+    function ResetPassword() {
+        
+        var EmailId = document.getElementById("UserEmail").innerHTML;
+        var showpass = $('#showpassword');
+
+        $.ajax({
+            type: "GET",
+            url: '@Url.Action("ResetPassword", "Profile")',
+                 contentType: "application/json; charset=utf-8",
+                 data: {
+                     "email": EmailId
+
+                 },
+            dataType: "json",
+            success: function (data) {
+                if (data.res == "S") {
+                    //$('#NewPassword').modal('show');
+                    showpass.show();
+                    $('#newpass').text(data.pass);
+
+                    setTimeout(function () {
+                        $('#showpassword').hide();
+                    }, 30000);
+
+                    setTimeout(function () {
+                        $('#showpassbutton').hide();
+                    }, 30000);
+                }
+                else {
+
+                }
+
+            }
+        });
+    }
+
+    function DismissSuccess() {
+        $('#SuccessRes').modal('hide');
+    }
+
+    function DismissSuccessPassModal() {
+        $('#NewPassword').modal('hide');
+    }
+    function ViewDetail(e) {
+        var row = $(e).closest("tr");
+        var dataItem = $("#client").data("kendoGrid").dataItem(row);
+        var showpass = $('#showpassword');
+        var showpassbutton = $('#showpassbutton');
+        
+
+        $.ajax({
+            type: "GET",
+            url: '@Url.Action("SelUsersByID", "Profile")',
+                 contentType: "application/json; charset=utf-8",
+                 data: {
+                     "Id": dataItem.Email
+
+                 },
+            dataType: "json",
+            success: function (data) {
+                if (data.Email != "") {
+                    $('#newpass').text("");
+                    showpass.hide();
+                    showpassbutton.hide();
+                    document.getElementById("UserEmail").innerHTML = data.Email;
+                    $('#SuccessRes').modal('show');
+                    $('#UserName').text(data.FirstName);
+                    $('#Email').text(data.Email);
+                    $('#Mobile').text(data.MobileNumber);
+                    $('#CreatedOn').text(data.CreatedOn);
+                    $('#Status').text(data.Status);
+                    $('#Approvl').text(data.ApprStatus);
+                    $('#Roles').text(data.Roles);
+                    $('#Type').text(data.type);
+                    $('#Outlet').text(data.Customer);
+                }
+                else {
+
+                }
+
+                }
+        });
+
+    }
+    function copyNewPass() {
+        var newpassText = document.getElementById("newpass").innerText;
+
+        navigator.clipboard.writeText(newpassText)
+            .then(function () {
+                console.log('Text copied to clipboard:', newpassText);
+                document.getElementById("copyMessage").style.display = "block";
+                setTimeout(function () {
+                    document.getElementById("copyMessage").style.display = "none";
+                }, 2000);  // Hide message after 2 seconds
+            })
+            .catch(function (err) {
+                console.error('Unable to copy text to clipboard', err);
+            });
+    }
+</script>

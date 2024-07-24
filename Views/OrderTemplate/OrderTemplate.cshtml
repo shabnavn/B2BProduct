@@ -1,0 +1,118 @@
+﻿@using b2b_solution.Models;
+
+
+@{
+    ViewBag.Title = "OrderTemplate";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@model OrderTemplate
+
+
+<main class="main ">
+    <div class="page-content pt-10">
+        <div class="container">
+          
+                <div class="row">
+                    <div class="card mb-50">
+
+                        <div class="card-header" style="background-color: #ecfaf3 !important">
+
+                            <div class="card-header row " style="background-color: #ecfaf3 !important; border-style:none">
+                                <div class="col-lg-3" >
+                                    <h3 class="mb-0">Templates</h3>
+                                </div>
+                                <div class="col-lg-9" style="text-align: right;">
+                                        <a href="/OrderTemplate/AddTemplate" class="btn btn-heading btn-block hover-up" name="template">Add New</a>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="card-body">
+
+                            <div class="table-responsive">
+
+                                @( Html.Kendo().Grid<OrderTemplate>()
+.Name("client")
+.Columns(columns =>
+{
+
+
+    columns.Bound(p => p.TempName).Width(20).Filterable(false).Title("Template Name");
+
+    columns.Command(command => command.Custom("View").Click("ViewTemplate").HtmlAttributes(new { @class = "btn btn-primary" })).Width(10);
+    columns.Command(command => command.Custom("Delete").Click("Delete").HtmlAttributes(new { @class = "btn btn-primary" })).Width(10);
+
+})
+//.HtmlAttributes(new { style = "height: 550px;" })
+.Filterable()
+.Pageable()
+.Navigatable()
+.Sortable()
+//.Scrollable(scr=>scr.Height(550))
+.DataSource(dataSource => dataSource
+.Ajax()
+.Batch(true)
+.PageSize(10)
+.ServerOperation(false)
+.Read("GetOrderTemplate", "OrderTemplate")
+.Update("GetOrderTemplate", "OrderTemplate")
+)
+)
+                            </div>
+                            <div>
+                                <label id="lblCommonError2" style="color:red;  font-size:small"></label>
+                                <label id="lblSuccess2" style="color:green;  font-size:small"></label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+        </div>
+    </div>
+  
+           
+       
+</main>
+
+<script>
+
+
+    function ViewTemplate(e)
+    {
+    e.preventDefault();
+
+        var dataItem = this.dataItem($(e.currentTarget).closest("tr"));
+        window.location.href = '@Url.Action("ViewTemplate", "OrderTemplate")?id=' + dataItem.ID;
+    }
+ 
+    function Delete(e)
+    {
+        e.preventDefault();
+        var dataItem = this.dataItem($(e.currentTarget).closest("tr"));
+
+        var confirmation = confirm("Are you sure you want to delete " + dataItem.TempName + "?");
+        if (confirmation) {
+
+            $.ajax({
+                type: "GET",
+                url: '@Url.Action("DeleteTemplate", "OrderTemplate")',
+                contentType: "application/json; charset=utf-8",
+                data: {
+                    "ID": dataItem.ID
+                },
+                dataType: "json",
+                success: function (data) {
+                    if (data.mode == -2) {
+                        //Tech Exception
+                        document.getElementById("lblCommonError").innerHTML = "We are facing some issues now, please try again later";
+                    }
+                    else {
+                        location.reload();
+                    }
+                }
+            });
+        }
+
+    }
+
+</script>

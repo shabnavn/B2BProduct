@@ -1,0 +1,221 @@
+﻿@using b2b_solution.Models;
+@using System.Data;
+
+
+@{
+    ViewBag.Title = "AllCreditNotes";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    DataTable dt = (DataTable)ViewBag.DealerType;
+}
+
+@model SearchComplete
+
+
+<main class="main ">
+    <div class="page-content pt-10">
+        <div class="container">
+            <div class="row">
+                <div class="card mb-50">
+                    <div class="card-header" style="background-color: #ecfaf3 !important">
+
+                        <div class="card-header row " style="background-color: #ecfaf3 !important; border-style:none">
+                            <div class="col-lg-2" style="margin-top:15px">
+                                <h3 class="mb-0">Your Orders</h3>
+                            </div>
+                            <div class="col-lg-10 row " style="justify-content:end">
+
+
+                                
+
+                                <div class="col-lg-2">
+                                    From Date
+                                    @(Html.Kendo().DatePicker()
+          .Name("datepicker")
+          .Format("dd MMM yyyy")
+          .Value( Model.FromDate == null ? DateTime.Now.AddDays(-(DateTime.Now.Day - 1)) : DateTime.Parse(Model.FromDate))
+          .HtmlAttributes(new { style = "width: 100%", title = "datepicker" , @id="fromDate" , @class="form-control" })
+        )
+                                    <label id="lblFromDate" style="color:red; font-size:small"></label>
+                                </div>
+
+                                <div class="col-lg-2">
+                                    To Date
+                                    @(Html.Kendo().DatePicker()
+          .Name("datepicker")
+          .Format("dd MMM yyyy")
+          .Value(DateTime.Now)
+          .HtmlAttributes(new { style = "width: 100%", title = "datepicker" , @id="ToDate" , @class="form-control" })
+        )
+                                    <label id="lblToDate" style="color:red; font-size:small"></label>
+                                </div>
+
+                                <div class="col-lg-2">
+                                    <div class="form-group" style="margin-top:25px">
+                                        <button onclick="FilterData()" class="btn btn-heading btn-block hover-up" name="login">Apply Filter</button>
+
+                                    </div>
+                                </div>
+                                <div class="col-lg-2">
+                                    <div class="form-group" style="margin-top:25px">
+                                        <a href="/OrderTemplate/OrderTemplate" class="btn btn-heading btn-block hover-up" style="width:200px" name="template">Add A Credit Note Request</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive">
+
+                            @( Html.Kendo().Grid<ViewCRNote>()
+    .Name("client")
+    .Columns(columns =>
+    {
+        columns.Bound(p => p.ReqID).Width(100).Filterable(ftb => ftb.Multi(true).Search(true).ItemTemplate("OrderFilter"));
+        columns.Bound(p => p.CreatedDate).Width(100).Filterable(false);
+        columns.Bound(p => p.CreatedBy).Width(100).Filterable(false);
+        columns.Bound(p => p.Amount).Width(100).Title("Customer");
+        columns.Bound(p => p.GradnTotal).Width(100).Filterable(false);
+        columns.Bound(p => p.Status).Width(80).Filterable(false);
+        columns.Command(command => command.Custom("View Details").Click("ViewCRN").HtmlAttributes(new { @class = "btn btn-primary" })).Width(100);
+        
+    })
+    //.HtmlAttributes(new { style = "height: 550px;" })
+    .Filterable()
+    .Pageable()
+    .Navigatable()
+    .Sortable()
+    //.Scrollable(scr=>scr.Height(550))
+    .DataSource(dataSource => dataSource
+    .Ajax()
+    .Batch(true)
+    .PageSize(10)
+    .ServerOperation(false)
+        .Read("GetCRNRequest", "CustomerService", new { @FromDate = Model.FromDate == null ? DateTime.Now.AddDays(-(DateTime.Now.Day - 1)).ToString("yyyyMMdd") : DateTime.Parse(Model.FromDate).ToString("yyyyMMdd"), @ToDate = Model.ToDate == null ? DateTime.Now.ToString("yyyyMMdd") : DateTime.Parse(Model.ToDate).ToString("yyyyMMdd")})
+    .Update("GetCRNRequest", "CustomerService", new { @FromDate = Model.FromDate == null ? DateTime.Now.AddDays(-(DateTime.Now.Day - 1)).ToString("yyyyMMdd") : DateTime.Parse(Model.FromDate).ToString("yyyyMMdd"), @ToDate = Model.ToDate == null ? DateTime.Now.ToString("yyyyMMdd") : DateTime.Parse(Model.ToDate).ToString("yyyyMMdd")})
+    )
+    )
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+
+
+
+
+
+<script>
+
+
+    function OrderFilter(e) {
+
+         if (e.field == "all") {
+            //handle the check-all checkbox template
+
+            return "<div class='chek-form><div class='custome-checkbox'><input class='form-check-input' type='checkbox'  /> <strong>#= all#</strong> </div></div>";
+        } else {
+            //handle the other checkboxes
+            //return "<span class='col-lg-4' style='padding-left:0px; ' ><label style='display:flex'><input type='checkbox' style='width:13%' class='custome-checkbox' name='" + e.field + "' value='#=OrderNo#'/><span style='margin-top:20px'>#= OrderNo #</span></label></span>"
+            return "<div class='chek-form><div class='custome-checkbox'><input class='form-check-input' type='checkbox' name='" + e.field + "'  value='#=OrderNo#' /><label class='form-check-label' for='exampleCheckbox1'><span>#= OrderNo #</span></label></div></div>";
+        }
+
+    }
+
+
+    function ViewOrder(e) {
+        e.preventDefault();
+
+        var dataItem = this.dataItem($(e.currentTarget).closest("tr"));
+        window.location.href = '@Url.Action("ViewCreditNotes", "CustomerService")?id=' + dataItem.id ;
+    }
+
+     function FilterData() {
+        var x = ValidateControls();
+        if (x == true) {
+            var fromDate = document.getElementById("fromDate").value;
+            var toDate = document.getElementById("ToDate").value;
+            var delaertype = 0;
+            var dropdownlist = $("#DealerType").data("kendoDropDownList");
+            var selectedItem = dropdownlist.dataItem();
+            if (selectedItem.cusID !="") {
+
+                var delaertype = selectedItem.cusID;
+            }
+
+
+            window.location.href = '@Url.Action("AllCreditNote", "CustomerService")?FromDate=' + fromDate + '&ToDate=' + toDate + '&SubDealer=' + delaertype;
+        } else {
+
+        }
+    }
+
+    function GotoTemplate() {
+
+        window.location.href = '@Url.Action("OrderTemplate", "Order")';
+
+    }
+
+
+    function ValidateControls() {
+        var valCount = 0;
+        if (document.getElementById("fromDate").value == "") {
+            valCount++;
+            document.getElementById("lblFromDate").innerHTML = "Please enter from date";
+        } else {
+            document.getElementById("lblFromDate").innerHTML = "";
+        }
+
+        if (document.getElementById("ToDate").value == "") {
+            valCount++;
+            document.getElementById("lblToDate").innerHTML = "Please enter to date";
+        } else {
+            document.getElementById("lblToDate").innerHTML = "";
+        }
+
+        if (valCount > 0) {
+            return false;
+        } else {
+            return true;
+        }
+    }
+
+    
+
+</script>
+
+<style>
+
+    .k-primary {
+        padding: 0px !important
+    }
+
+    .k-check-all {
+        width: 10%
+    }
+
+    .k-space-right {
+        height: 32px
+    }
+
+    .k-textbox > input {
+        height: 30px
+    }
+
+    .k-header {
+        background-color: #ecfaf3;
+    }
+
+    .k-pager-wrap {
+        background-color: #ecfaf3;
+    }
+
+    .k-grid .k-alt {
+        background-color: #ecfaf3; /* specify the alternate background-color */
+    }
+
+    .k-grid-header .k-header {
+        background-color: #ecfaf3;
+    }
+</style>

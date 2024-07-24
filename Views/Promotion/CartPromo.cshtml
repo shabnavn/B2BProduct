@@ -1,0 +1,222 @@
+﻿@using b2b_solution.Models;
+@using System.Data;
+@{
+    ViewBag.Title = "CartPromo";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    DataModel dm = new DataModel();
+}
+
+
+<main class="main">
+
+    @{
+        DataTable dtPrmHeaad = dm.loadList("SelPromoByID", "sp_B2B_Promotions", ViewBag.prmID);
+        ViewBag.ashID = dtPrmHeaad.Rows[0]["prm_ash_ID"].ToString();
+    }
+
+    <div class="page-header mt-30 mb-25">
+        <div class="container">
+
+            <div class="archive-header" style="background-image:url(../Content/imgs/promotion/bg-head.png) !important; ">
+                <div class="col-xl-12" id="prmMes" style="display:none">
+                    <h4>You are eligible for a promotion</h4>
+                </div>
+                <div class="row align-items-center">
+
+                    <div class="col-xl-6">
+                        <h2 class="mb-15">@dtPrmHeaad.Rows[0]["prm_Name"].ToString()</h2>
+                        <div class="breadcrumb">
+                            <a href="#" rel="nofollow">@dtPrmHeaad.Rows[0]["prt_Name"].ToString()</a>
+                        </div>
+                    </div>
+                    <div class="col-xl-6 text-end d-none d-xl-block">
+                        <ul class="tags-list mt-10">
+                            <li class="hover-up">
+                                <strong>Start Date: @dtPrmHeaad.Rows[0]["rcp_FromDate"].ToString() | End Date: @dtPrmHeaad.Rows[0]["EndDate"].ToString() </strong>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <section class="section-padding pb-5 pt-25">
+        <div class="container">
+            <div class="section-title wow animate__animated animate__fadeIn" style="margin-bottom:10px" data-wow-delay="0">
+                <h4 class="">
+
+                    <a href="#"> Promotional Items </a>
+
+                    <i class="fi-rs-info" onclick="showtext()" style="font-size:15px"></i>
+
+
+                </h4>
+                <div style="font-size:larger; font-weight:bold">
+                    <span id="ACount"> </span> / <span id="AQCount"> </span> <span>Pcs</span>
+                </div>
+            </div>
+
+            <div class="col-lg-6" id="assgInfo" style="display:none">
+                <ul class="ulprop">
+                    <li>
+                        You must choose the eligible qty of below items
+                    </li>
+                    <li>
+                        All the quantities will be considered in pieces only
+                    </li>
+                    <li>
+                        This items will be shown in the order summary in seperate section
+                    </li>
+                    <li>
+                        You can change the eligible qty by clicking on the promotion
+                    </li>
+                    <li>
+                        3/5 means, 3 promotional qty out of 5 eligible qty
+                    </li>
+                </ul>
+            </div>
+            <div class="row">
+
+                @{
+                    string[] arr1 = { Session["userID"].ToString(), ViewBag.prmID };
+                    DataTable dtAItems = dm.loadList("SelAssignedItems", "sp_B2B_Promotions", Session["CusID"].ToString(), arr1);
+                    ViewBag.AProducts = dtAItems;
+                    if (dtAItems.Rows.Count > 0)
+                    {
+                        Html.RenderPartial("AProducts");
+                    }
+                }
+            </div>
+
+            <div class="divider-2 mb-30"></div>
+            <div class="cart-action d-flex justify-content-between">
+                <a class="btn " href="/Home/Search"><i class="fi-rs-arrow-left mr-10"></i>Continue Shopping</a>
+                <a class="btn  mr-10 mb-sm-15" onclick="CheckCount()"><i class="fi-rs-arrow-right mr-10"></i>Proceed</a>
+            </div>
+        </div>
+
+
+
+    </section>
+
+
+    <div class="modal fade custom-modal" id="GeneralErrors" tabindex="-1" aria-labelledby="quickViewModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                <div class="modal-body">
+                    <div class="timeline">
+                        <div class="col-lg-12">
+                            <div class="form-group">
+                                <h4 style="color:cornflowerblue" id="ge_msg">
+                                    <img height="40" src="../Content/imgs/order/sad.png" />
+                                </h4>
+                            </div>
+
+                            <div class="form-group" style="margin-top: 25px; text-align-last:end">
+                                <button style="background-color:lightcoral" onclick="DismissModal()" class="btn btn-secondary ">Dismiss</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+</main>
+
+<script>
+
+    $(document).ready(function () {
+
+        GetTotAssgQty();
+        GetTotQualQty();
+        $('#loaderCartPromo').gide("slow");
+        $('#prmMes').show("slow");
+        setTimeout(hideMes, 10000);
+    });
+
+    function CheckCount() {
+        
+        var Acou = parseInt(document.getElementById("ACount").innerHTML);
+        var Aqc = parseInt(document.getElementById("AQCount").innerHTML);
+        if (Acou == Aqc) {
+              window.location.href = "@Url.Action("CartPromo", "Promotion")";
+        } else {
+            alert('The promotional qty should be equal to the eligible qty');
+        }
+    }
+
+    function GetTotQualQty() {
+        debugger;
+            $.ajax({
+            type: "GET",
+            url: '@Url.Action("GetTotalCount", "Promotion")',
+                contentType: "application/json; charset=utf-8",
+                data: { prmID:  @ViewBag.prmID },
+            dataType: "json",
+                success: function (data) {
+                    if (data.desc == "0") {
+                        
+                        $('#GeneralErrors').modal('show');
+                        document.getElementById("ge_msg").innerHTML = "You're moments away from unlocking a special promotion! Just pick the qualified item you love, and the offer is all yours.";
+                    }
+                    document.getElementById("AQCount").innerHTML = data.desc;
+                }
+            });
+    }
+
+    function DismissModal() {
+        $('#GeneralErrors').modal('hide');
+    }
+
+
+    function GetTotAssgQty() {
+            $.ajax({
+            type: "GET",
+            url: '@Url.Action("GetTotalAssgCount", "Promotion")',
+                contentType: "application/json; charset=utf-8",
+                data: { prmID:  @ViewBag.prmID },
+            dataType: "json",
+                success: function (data) {
+                    document.getElementById("ACount").innerHTML = data.message;
+                }
+            });
+    }
+
+
+    function showtext() {
+
+        $('#assgInfo').show("slow");
+        setTimeout(hidetext, 10000);
+    }
+
+    function hidetext() {
+        $('#assgInfo').hide("slow");
+    }
+    function hideMes() {
+        $('#prmMes').hide("slow");
+    }
+
+</script>
+
+
+<style>
+
+    .ulprop {
+        background-color: beige;
+        border-style: groove;
+        border-width: 2px;
+        border-radius: 10px;
+        padding: 15px;
+        margin-bottom: 15px;
+    }
+
+    .countdown-section {
+        border-color: green !important;
+        border-style: groove !important;
+        border-width: 2px !important
+    }
+</style>

@@ -1,0 +1,302 @@
+﻿@using b2b_solution.Models;
+@using System.Data;
+
+@{
+    ViewBag.Title = "Detail";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    DataModel dm = new DataModel();
+}
+<main class="main">
+
+    @{
+        DataTable dtPrmHeaad = dm.loadList("SelPromoByID", "sp_B2B_Promotions", ViewBag.PrmID);
+        ViewBag.ashID = dtPrmHeaad.Rows[0]["prm_qlh_ID"].ToString();
+    }
+
+    <div class="page-header mt-30 mb-25">
+        <div class="container">
+            <div class="archive-header" style="background-image:url(../Content/imgs/promotion/bg-head.png) !important; ">
+                <div class="row align-items-center">
+                    <div class="col-xl-6">
+                        <h2 class="mb-15">@dtPrmHeaad.Rows[0]["prm_Name"].ToString()</h2>
+                        <div class="breadcrumb">
+                            <a href="#" rel="nofollow">@dtPrmHeaad.Rows[0]["prt_Name"].ToString()</a>
+                        </div>
+                    </div>
+                    <div class="col-xl-6 text-end d-none d-xl-block">
+                        <ul class="tags-list">
+                            <li class="hover-up">
+                                <div class="deals-countdown-wrap">
+                                    <div class="deals-countdown" data-countdown="@dtPrmHeaad.Rows[0]["rcp_EndDate"].ToString()"></div>
+                                </div>
+                            </li>
+                        </ul>
+
+                        <ul class="tags-list mt-10">
+                            <li class="hover-up">
+                                <strong>Start Date: @dtPrmHeaad.Rows[0]["rcp_FromDate"].ToString() | End Date: @dtPrmHeaad.Rows[0]["EndDate"].ToString() </strong>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <section class="section-padding pb-5 pt-5">
+        <div class="container">
+            <div class="section-title wow animate__animated animate__fadeIn" style="margin-bottom:10px" data-wow-delay="0">
+                <h4 class="">Promotion Range </h4>
+            </div>
+            <div class="row">
+                @{
+                    DataTable dtRange = dm.loadList("SelPromoRange", "sp_B2B_Promotions", ViewBag.PrmID);
+                    string prrID = "";
+                    foreach (DataRow dr in dtRange.Rows)
+                    {
+                        prrID += dr["prr_ID"].ToString() + "-";
+                        <div class="col-xl-3 col-lg-4 col-md-6 ">
+
+                            <div class="product-content-wrap border p-3" id="Rng-@dr["prr_ID"]" style="border-radius:15px">
+
+                                <div class="deals-content">
+                                    <span id="elg-@dr["prr_ID"]" style="color:orange !important" class="font-small text-muted">   </span>
+                                    <br />
+                                    <h5><a href="#">@dr["desc1"].ToString()</a></h5>
+                                    <div>
+                                        <strong class="font-small text-muted"> With purchase of</strong>
+                                        <br />
+                                        <span class="font-small" style="color:orange !important"> @dr["desc2"].ToString()</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    }
+
+                    <span id="elgIDs" hidden="hidden" >  @prrID </span>
+                }
+
+            </div>
+        </div>
+    </section>
+
+
+    <section class="section-padding pb-5">
+        <div class="container">
+            <div class="section-title wow animate__animated animate__fadeIn" style="margin-bottom:10px" data-wow-delay="0">
+                <h4 class="mb-5">
+                    Qualified Items
+
+                    <i class="fi-rs-info" onclick="showQtext()" style="font-size:15px"></i>
+                </h4>
+                <div style="font-size:larger; font-weight:bold">
+                    <span id="QCount"> </span> <span>Pcs</span>
+                </div>
+
+            </div>
+
+            <div class="col-lg-6" id="QInfo" style="display:none">
+                <ul class="ulprop">
+                    <li>
+                        You must finalize the qualification items first
+                    </li>
+                    <li>
+                        Upon changing the quaification, you need to enter the quantity for Assignment items
+                    </li>
+                    <li>
+                        Assignment items will reset every time you change the qualified items
+                    </li>
+                </ul>
+            </div>
+            <div class="row">
+                @{
+                    string[] arr = { Session["userID"].ToString(), ViewBag.PrmID };
+                    DataTable dtQItems = dm.loadList("SelQualifiedItems", "sp_B2B_Promotions",  Session["CusID"].ToString(), arr);
+                    ViewBag.QProducts = dtQItems;
+                    Html.RenderPartial("QProducts");
+                }
+            </div>
+        </div>
+    </section>
+
+
+    <section class="section-padding pb-5 pt-5">
+        <div class="container">
+            <div class="section-title wow animate__animated animate__fadeIn" style="margin-bottom:10px" data-wow-delay="0">
+                <h4 class="mb-5">
+                    Assignment Items
+
+                    <i class="fi-rs-info" onclick="showtext()" style="font-size:15px"></i>
+
+
+                </h4> 
+                <div style="font-size:larger; font-weight:bold">
+                    <span id="ACount"> </span> / <span id="AQCount"> </span> <span>Pcs</span>
+                </div>
+            </div>
+
+            <div class="col-lg-6" id="assgInfo" style="display:none">
+                <ul class="ulprop">
+                    <li>
+                        You cannot add more than set eligible quantity
+                    </li>
+                    <li>
+                        All the quantities will be considered in pieces only
+                    </li>
+                    <li>
+                        You could review these items while checkout
+                    </li>
+                </ul>
+            </div>
+            <div class="row">
+
+                @{
+                    string[] arr1 = { Session["userID"].ToString(), ViewBag.PrmID };
+                    DataTable dtAItems = dm.loadList("SelAssignedItems", "sp_B2B_Promotions",  Session["CusID"].ToString(), arr1);
+                    ViewBag.AProducts = dtAItems;
+                    if (dtAItems.Rows.Count> 0)
+                    {
+                        
+                        Html.RenderPartial("AProducts");
+                    }
+
+                }
+            </div>
+        </div>
+    </section>
+
+
+</main>
+
+<script>
+
+    $(document).ready(function () {
+        GetTotAssgQty();
+        GetTotQualQty();
+      
+    });
+
+    function GetTotQualQty() {
+            $.ajax({
+            type: "GET",
+            url: '@Url.Action("GetTotalCount", "Promotion")',
+                contentType: "application/json; charset=utf-8",
+                data: { prmID:  @ViewBag.prmID },
+            dataType: "json",
+                success: function (data) {
+                    document.getElementById("QCount").innerHTML = data.message;
+                    SetEligibility(data.message);
+                }
+            });
+    }
+
+    function GetTotAssgQty() {
+            $.ajax({
+            type: "GET",
+            url: '@Url.Action("GetTotalAssgCount", "Promotion")',
+                contentType: "application/json; charset=utf-8",
+                data: { prmID:  @ViewBag.prmID },
+            dataType: "json",
+                success: function (data) {
+                    document.getElementById("ACount").innerHTML = data.message;
+                }
+            });
+    }
+
+    function SetEligibility(count) {
+
+         $.ajax({
+            type: "GET",
+            url: '@Url.Action("SelRangeQty", "Promotion")',
+                contentType: "application/json; charset=utf-8",
+             data: { prmID:  @ViewBag.prmID , qty: count },
+            dataType: "json",
+             success: function (data) {
+                 debugger;
+                 if (data != "0") {
+                     
+                     var ElgIDs = document.getElementById("elgIDs").innerHTML;
+
+                     const eIDArr = ElgIDs.split("-");
+                     try {
+                         for (let i = 0; i < eIDArr.length; i++) {
+                             const xc = eIDArr[i].trim();
+                             if (xc !== "") {
+                                 const elgElement = document.getElementById("elg-" + xc);
+                                 const rngElement = document.getElementById("Rng-" + xc);
+
+                                 if (elgElement && rngElement) {
+                                     elgElement.innerHTML = "";
+                                     rngElement.style.backgroundColor = "#ffffff";
+                                 } else {
+                                     console.warn(`Element with ID elg-${xc} or Rng-${xc} not found.`);
+                                 }
+                             }
+                         }
+                     } catch (error) {
+                         console.error("An error occurred while processing ElgIDs: ", error);
+                     }
+
+                     document.getElementById("elg-" + data.prrID).innerHTML = "Eligible";
+                     document.getElementById("Rng-" + data.prrID).style.backgroundColor = "rgb(0 0 95)";
+                     document.getElementById("AQCount").innerHTML = data.Count;
+
+                     var Acnt = parseInt( document.getElementById("ACount").innerHTML);
+                     debugger;
+                     if (Acnt > data.Count) {
+                             $.ajax({
+                                type: "GET",
+                                url: '@Url.Action("DelPromoCart", "Promotion")',
+                                    contentType: "application/json; charset=utf-8",
+                                    data: { prmID:  @ViewBag.prmID , ashID : @ViewBag.ashID},
+                                dataType: "json",
+                                 success: function (data) {
+                                     document.location.reload(true);
+                                    }
+                                });
+                     }
+                 }
+                }
+         });
+    }
+
+    function showtext() {
+
+        $('#assgInfo').show("slow");
+        setTimeout(hidetext, 10000);
+    }
+
+    function hidetext() {
+        $('#assgInfo').hide("slow");
+    }
+
+    function showQtext() {
+
+        $('#QInfo').show("slow");
+        setTimeout(hideQtext, 10000);
+    }
+
+    function hideQtext() {
+        $('#QInfo').hide("slow");
+    }
+
+
+</script>
+
+<style>
+
+    .ulprop {
+        background-color: beige;
+        border-style: groove;
+        border-width: 2px;
+        border-radius: 10px;
+        padding: 15px;
+        margin-bottom: 15px;
+    }
+
+    .countdown-section {
+        border-color: green !important;
+        border-style: groove !important;
+        border-width: 2px !important
+    }
+</style>

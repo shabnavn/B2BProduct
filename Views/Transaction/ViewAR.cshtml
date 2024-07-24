@@ -1,0 +1,115 @@
+﻿
+@using System.Data;
+@using b2b_solution.Models;
+
+@{
+    ViewBag.Title = "AR Detail";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@{
+    DataTable dt = (DataTable)ViewBag.CurrentAR;
+    DataTable dtHeader = (DataTable)ViewBag.HeaderAR;
+}
+
+
+
+<main class="main ">
+    <div class="page-content pt-10">
+        <div class="container">
+            <div class="row">
+                <div class="card mb-50">
+                    <div class="card-header" style="background-color: #ecfaf3 !important">
+
+                        <div class="card-header" style="background-color: #ecfaf3 !important; border-style:none">
+                            <div class="col-lg-12 row">
+                                <div class="col-lg-6 row" style="margin-bottom:5px">
+                                    <div class="col-lg-4">
+                                        <h3 class="mb-0">AR Number : </h3>
+                                    </div>
+                                    <div class="col-lg-8">
+                                        <h3> @dtHeader.Rows[0]["arc_Code"].ToString()  </h3>
+                                    </div>
+                                </div>
+                                <div class="col-lg-6 row" style="margin-bottom:5px; justify-content:end; display:none">
+                                    <a href="../UploadFiles/downloads/Ar.pdf" target="_blank" style="display:contents">
+                                        <img src="../Content/imgs/order/pdf.png" height="40" alt="Download AR" />
+                                    </a>
+
+                                </div>
+                            </div>
+                            <div class="col-lg-12 row">
+                                <div class="col-lg-6 row " style="margin-bottom:5px">
+                                    <div class="col-lg-3">
+                                        <strong> @dt.Rows.Count Items </strong>
+                                    </div>
+                                    <div class="col-lg-3">
+                                        <strong>@dtHeader.Rows[0]["CreatedDate"].ToString() </strong>
+                                    </div>
+                                </div>
+
+                            </div>
+
+                            <div class="col-lg-12 row">
+                                <div class="col-lg-6 row">
+                                    <div class="col-lg-6">
+                                        <strong style="font-size:larger"> Payment Mode : @dtHeader.Rows[0]["arc_PaymentMode"].ToString()</strong>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            @( Html.Kendo().Grid<ARDetail>
+    ()
+    .Name("client")
+    .Columns(columns =>
+    {
+        columns.Bound(p => p.Number).Width(25).Title("Invoice Number").Filterable(false);
+        columns.Bound(p => p.InvAmount).Width(30).Title("Invoice Amount").Filterable(false);
+        columns.Bound(p => p.PaidAmount).Width(30).Title("Collection Amount").Filterable(false);
+    })
+    .Filterable()
+    .Pageable()
+    .Navigatable()
+    .Sortable()
+    //.Scrollable(scr=>scr.Height(550))
+    .DataSource(dataSource => dataSource
+    .Ajax()
+    .Batch(true)
+    .PageSize(10)
+    .ServerOperation(false)
+    .Read("GetARDetail", "Transaction")
+    .Update("GetARDetail", "Transaction")
+    )
+    )
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+
+
+
+
+<style>
+    .k-grid .k-alt {
+        background-color: #ecfaf3; /* specify the alternate background-color */
+    }
+
+    .k-grid-header .k-header {
+        background-color: #ecfaf3;
+    }
+
+    .k-pager-wrap {
+        background-color: #ecfaf3 !important;
+    }
+
+    .pricebg {
+        color: #d32027
+    }
+</style>
+

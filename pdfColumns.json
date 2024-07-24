@@ -1,0 +1,13 @@
+{
+  "Columns": [
+    {
+      "pdfColumns": "S#-Item Code-Item Name-HUOM-H.Qty-H.Price-Type-Sub Total-VAT-Grand Total",
+      "dtColumns": "S#-itm_Code-itm_Name-HUOM-odd_HigherQty-odd_HigherPrice-odd_TransType-odd_SubTotal-odd_VATAmount-odd_GrandTotal",
+      "colWidth": "170-450-1000-350-300-400-400-400-300-400",
+      "colSpan": "7",
+      "HeaderColor": "#D02028",
+      "FooterColor": "#D02028"
+    }
+
+  ]
+}

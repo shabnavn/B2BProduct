@@ -1,0 +1,402 @@
+
+
+	SFA
+	Date:01-04-2023  Time:11:36:06
+	-----------------------------------------------------
+	UserID : 2
+	RouteID : 2
+	Date : 01-04-2023
+	Time : 11:36 AM
+	version : UAT v1.0.5
+
+	# startEndDayBefore
+	----------------------------------------
+	PHP : https://uom-sfa.dev-ts.online/SFA_PHP_UAT_V2/p_user_beforeStartDay.php
+	Input Parameter :-
+	usr_ID : 2
+	rot_ID : 2
+	pass : 1234
+	appVersion : UAT v1.0.5
+	xmlData : 
+	Geo_Code : 10.7315926,76.0329839
+	udp_StartOdoMeter : 
+	datakey : R9WM1wN2ZDM5zZw+NQ==
+	Response :-
+	{"result":[{"ResID":"283","Title":"Start Already Done","Descr":"Start Day can be done one time in a day"}]}
+
+	# notification      ( Sat, 1 Apr 2023, 11:36 )
+	----------------------------------------
+	PHP : https://uom-sfa.dev-ts.online/SFA_PHP_UAT_V2/p_user_SelRotNotifications.php
+	Input Parameter :-|rot_ID : 2||datakey : R9WM1wN2ZDM5zZw+NQ==|
+	Response :-
+	NoDataRes
+
+	# routeCustomer      ( Sat, 1 Apr 2023, 11:36 )
+	----------------------------------------
+	PHP : https://uom-sfa.dev-ts.online/SFA_PHP_UAT_V2/p_offline_Customers.php
+	Input Parameter :-|rot_ID : 2||datakey : R9WM1wN2ZDM5zZw+NQ==|
+	Response :-
+	response
+
+	# settings      ( Sat, 1 Apr 2023, 11:36 )
+	----------------------------------------
+	PHP : https://uom-sfa.dev-ts.online/SFA_PHP_UAT_V2/p_user_Settings.php
+	Input Parameter :-|rot_ID : 2||datakey : R9WM1wN2ZDM5zZw+NQ==|
+	Response :-
+	response
+
+	# routeItemsUOM      ( Sat, 1 Apr 2023, 11:36 )
+	----------------------------------------
+	PHP : https://uom-sfa.dev-ts.online/SFA_PHP_UAT_V2/p_offline_RouteItems_UOM.php
+	Input Parameter :-|rotID : 2||datakey : R9WM1wN2ZDM5zZw+NQ==|
+	Response :-
+	response
+
+	# routeItemsSelUOM      ( Sat, 1 Apr 2023, 11:36 )
+	----------------------------------------
+	PHP : https://uom-sfa.dev-ts.online/SFA_PHP_UAT_V2/p_offline_SelRouteItemUOM.php
+	Input Parameter :-|rotID : 2||datakey : R9WM1wN2ZDM5zZw+NQ==|
+	Response :-
+	response
+
+	# itemsUOM      ( Sat, 1 Apr 2023, 11:36 )
+	----------------------------------------
+	PHP : https://uom-sfa.dev-ts.online/SFA_PHP_UAT_V2/p_offline_SelUOM.php
+	Input Parameter :-|rotID : 2||datakey : R9WM1wN2ZDM5zZw+NQ==|
+	Response :-
+	response
+
+	# category      ( Sat, 1 Apr 2023, 11:36 )
+	----------------------------------------
+	PHP : https://uom-sfa.dev-ts.online/SFA_PHP_UAT_V2/p_offline_Cats.php
+	Input Parameter :-|datakey : R9WM1wN2ZDM5zZw+NQ==|
+	Response :-
+	response
+
+	# subCategory      ( Sat, 1 Apr 2023, 11:36 )
+	----------------------------------------
+	PHP : https://uom-sfa.dev-ts.online/SFA_PHP_UAT_V2/p_offline_SubCats.php
+	Input Parameter :-|datakey : R9WM1wN2ZDM5zZw+NQ==|
+	Response :-
+	response
+
+	# RecentOrdersTag      ( Sat, 1 Apr 2023, 11:36 )
+	----------------------------------------
+	PHP : https://uom-sfa.dev-ts.online/SFA_PHP_UAT_V2/p_user_SelLastOrder.php
+	Input Parameter :-|rotID : 2||datakey : R9WM1wN2ZDM5zZw+NQ==|
+	Response :-
+	response
+
+	# RecentSalesTag      ( Sat, 1 Apr 2023, 11:36 )
+	----------------------------------------
+	PHP : https://uom-sfa.dev-ts.online/SFA_PHP_UAT_V2/p_user_SelLastSales.php
+	Input Parameter :-|rotID : 2||datakey : R9WM1wN2ZDM5zZw+NQ==|
+	Response :-
+	response
+
+	# reason      ( Sat, 1 Apr 2023, 11:36 )
+	----------------------------------------
+	PHP : https://uom-sfa.dev-ts.online/SFA_PHP_UAT_V2/p_offline_Reason.php
+	Input Parameter :-|datakey : R9WM1wN2ZDM5zZw+NQ==|
+	Response :-
+	response
+
+	# FocTag      ( Sat, 1 Apr 2023, 11:36 )
+	----------------------------------------
+	PHP : https://uom-sfa.dev-ts.online/SFA_PHP_UAT_V2/p_user_SelFreeGood.php
+	Input Parameter :-|rotID : 2||datakey : R9WM1wN2ZDM5zZw+NQ==|
+	Response :-
+	NoDataRes
+
+	# returnItems      ( Sat, 1 Apr 2023, 11:36 )
+	----------------------------------------
+	PHP : https://uom-sfa.dev-ts.online/SFA_PHP_UAT_V2/p_user_SelReturnItems.php
+	Input Parameter :-|rotID : 2||datakey : R9WM1wN2ZDM5zZw+NQ==|
+	Response :-
+	response
+
+	# arCollectionMaster      ( Sat, 1 Apr 2023, 11:36 )
+	----------------------------------------
+	PHP : https://uom-sfa.dev-ts.online/SFA_PHP_UAT_V2/p_offline_SelAR.php
+	Input Parameter :-|rot_ID : 2||datakey : R9WM1wN2ZDM5zZw+NQ==|
+	Response :-
+	response
+
+	# BankMaster      ( Sat, 1 Apr 2023, 11:36 )
+	----------------------------------------
+	PHP : https://uom-sfa.dev-ts.online/SFA_PHP_UAT_V2/p_offline_Bank.php
+	Input Parameter :-|datakey : R9WM1wN2ZDM5zZw+NQ==|
+	Response :-
+	response
+
+	# Brand      ( Sat, 1 Apr 2023, 11:36 )
+	----------------------------------------
+	PHP : https://uom-sfa.dev-ts.online/SFA_PHP_UAT_V2/p_offline_Brand.php
+	Input Parameter :-|datakey : R9WM1wN2ZDM5zZw+NQ==|
+	Response :-
+	response
+
+	# CustomerLocation      ( Sat, 1 Apr 2023, 11:36 )
+	----------------------------------------
+	PHP : https://uom-sfa.dev-ts.online/SFA_PHP_UAT_V2/p_offline_SelCusInnerLoc.php
+	Input Parameter :-|rot_ID : 2||datakey : R9WM1wN2ZDM5zZw+NQ==|
+	Response :-
+	response
+
+	# SuggestedLoadReq      ( Sat, 1 Apr 2023, 11:36 )
+	----------------------------------------
+	PHP : https://uom-sfa.dev-ts.online/SFA_PHP_UAT_V2/p_user_SelSuggestedLoadReq.php
+	Input Parameter :-|rotID : 2||datakey : R9WM1wN2ZDM5zZw+NQ==|
+	Response :-
+	response
+
+	# complaints      ( Sat, 1 Apr 2023, 11:36 )
+	----------------------------------------
+	PHP : https://uom-sfa.dev-ts.online/SFA_PHP_UAT_V2/p_user_complaints.php
+	Input Parameter :-|datakey : R9WM1wN2ZDM5zZw+NQ==|
+	Response :-
+	response
+
+	# RecentOrderDeliveryHeaderTag      ( Sat, 1 Apr 2023, 11:36 )
+	----------------------------------------
+	PHP : https://uom-sfa.dev-ts.online/SFA_PHP_UAT_V2/p_user_SelRecentOrders.php
+	Input Parameter :-|rotID : 2||datakey : R9WM1wN2ZDM5zZw+NQ==|
+	Response :-
+	response
+
+	# RecentOrderDeliveryDetailTag      ( Sat, 1 Apr 2023, 11:36 )
+	----------------------------------------
+	PHP : https://uom-sfa.dev-ts.online/SFA_PHP_UAT_V2/p_user_SelRecentOrderDetail.php
+	Input Parameter :-|rotID : 2||datakey : R9WM1wN2ZDM5zZw+NQ==|
+	Response :-
+	response
+
+	# customerSurvey      ( Sat, 1 Apr 2023, 11:36 )
+	----------------------------------------
+	PHP : https://uom-sfa.dev-ts.online/SFA_PHP_UAT_V2/p_user_SelCusSurvey.php
+	Input Parameter :-|rotID : 2||datakey : R9WM1wN2ZDM5zZw+NQ==|
+	Response :-
+	response
+
+	# productUomMaster      ( Sat, 1 Apr 2023, 11:36 )
+	----------------------------------------
+	PHP : https://uom-sfa.dev-ts.online/SFA_PHP_UAT_V2/p_user_SelUOM.php
+	Input Parameter :-|datakey : R9WM1wN2ZDM5zZw+NQ==|
+	Response :-
+	response
+
+	# Promotion      ( Sat, 1 Apr 2023, 11:36 )
+	----------------------------------------
+	PHP : https://uom-sfa.dev-ts.online/SFA_PHP_UAT_V2/p_user_SelCusPromo.php
+	Input Parameter :-|rot_ID : 2||datakey : R9WM1wN2ZDM5zZw+NQ==|
+	Response :-
+	response
+
+	# PromoRange      ( Sat, 1 Apr 2023, 11:36 )
+	----------------------------------------
+	PHP : https://uom-sfa.dev-ts.online/SFA_PHP_UAT_V2/p_user_SelPromRange.php
+	Input Parameter :-|rot_ID : 2||datakey : R9WM1wN2ZDM5zZw+NQ==|
+	Response :-
+	response
+
+	# PromoAssignment      ( Sat, 1 Apr 2023, 11:36 )
+	----------------------------------------
+	PHP : https://uom-sfa.dev-ts.online/SFA_PHP_UAT_V2/p_user_SelAssgnItems.php
+	Input Parameter :-|rot_ID : 2||datakey : R9WM1wN2ZDM5zZw+NQ==|
+	Response :-
+	response
+
+	# PromoQualification      ( Sat, 1 Apr 2023, 11:36 )
+	----------------------------------------
+	PHP : https://uom-sfa.dev-ts.online/SFA_PHP_UAT_V2/p_user_SelQualItems.php
+	Input Parameter :-|rot_ID : 2||datakey : R9WM1wN2ZDM5zZw+NQ==|
+	Response :-
+	response
+
+	# SalesPromoAssignItem      ( Sat, 1 Apr 2023, 11:36 )
+	----------------------------------------
+	PHP : https://uom-sfa.dev-ts.online/SFA_PHP_UAT_V2/p_user_SelPromoAssignItem.php
+	Input Parameter :-|rotID : 2||datakey : R9WM1wN2ZDM5zZw+NQ==|
+	Response :-
+	NoDataRes
+
+	# PreLoadRequest      ( Sat, 1 Apr 2023, 11:36 )
+	----------------------------------------
+	PHP : https://uom-sfa.dev-ts.online/SFA_PHP_UAT_V2/p_user_SelPrevLodRequest.php
+	Input Parameter :-|lrh_rot_ID : 2||datakey : R9WM1wN2ZDM5zZw+NQ==|
+	Response :-
+	response
+
+	# AppConfig      ( Sat, 1 Apr 2023, 11:36 )
+	----------------------------------------
+	PHP : https://uom-sfa.dev-ts.online/SFA_PHP_UAT_V2/p_offline_appConfig.php
+	Input Parameter :-|datakey : R9WM1wN2ZDM5zZw+NQ==|
+	Response :-
+	response
+
+	# RoutePrinter      ( Sat, 1 Apr 2023, 11:36 )
+	----------------------------------------
+	PHP : https://uom-sfa.dev-ts.online/SFA_PHP_UAT_V2/p_user_SelRoutePrinter.php
+	Input Parameter :-|rotID : 2||datakey : R9WM1wN2ZDM5zZw+NQ==|
+	Response :-
+	response
+
+	# CusOrderAmt      ( Sat, 1 Apr 2023, 11:36 )
+	----------------------------------------
+	PHP : https://uom-sfa.dev-ts.online/SFA_PHP_UAT_V2/p_user_SelCusOrdAmounts.php
+	Input Parameter :-|rotID : 2||datakey : R9WM1wN2ZDM5zZw+NQ==|
+	Response :-
+	response
+
+	# CusMapHeader      ( Sat, 1 Apr 2023, 11:36 )
+	----------------------------------------
+	PHP : https://uom-sfa.dev-ts.online/SFA_PHP_UAT_V2/p_offline_CusMap.php
+	Input Parameter :-|rot_ID : 2||datakey : R9WM1wN2ZDM5zZw+NQ==|
+	Response :-
+	response
+
+	# CusMapDetail      ( Sat, 1 Apr 2023, 11:36 )
+	----------------------------------------
+	PHP : https://uom-sfa.dev-ts.online/SFA_PHP_UAT_V2/p_offline_CusMapDetail.php
+	Input Parameter :-|rot_ID : 2||datakey : R9WM1wN2ZDM5zZw+NQ==|
+	Response :-
+	response
+
+	# CusSpecialPriceHeader      ( Sat, 1 Apr 2023, 11:36 )
+	----------------------------------------
+	PHP : https://uom-sfa.dev-ts.online/SFA_PHP_UAT_V2/p_offline_cusSplHead.php
+	Input Parameter :-|rot_ID : 2||datakey : R9WM1wN2ZDM5zZw+NQ==|
+	Response :-
+	response
+
+	# CusSpecialPriceDetail      ( Sat, 1 Apr 2023, 11:36 )
+	----------------------------------------
+	PHP : https://uom-sfa.dev-ts.online/SFA_PHP_UAT_V2/p_offline_cusSplDetail.php
+	Input Parameter :-|rot_ID : 2||datakey : R9WM1wN2ZDM5zZw+NQ==|
+	Response :-
+	response
+
+	# type      ( Sat, 1 Apr 2023, 11:36 )
+	----------------------------------------
+	PHP : https://uom-sfa.dev-ts.online/SFA_PHP_UAT_V2/p_user_SelType.php
+	Input Parameter :-|rotID : 2||datakey : R9WM1wN2ZDM5zZw+NQ==|
+	Response :-
+	response
+
+	# area      ( Sat, 1 Apr 2023, 11:36 )
+	----------------------------------------
+	PHP : https://uom-sfa.dev-ts.online/SFA_PHP_UAT_V2/p_user_SelArea.php
+	Input Parameter :-|rotID : 2||datakey : R9WM1wN2ZDM5zZw+NQ==|
+	Response :-
+	response
+
+	# selBrochure      ( Sat, 1 Apr 2023, 11:36 )
+	----------------------------------------
+	PHP : https://uom-sfa.dev-ts.online/SFA_PHP_UAT_V2/p_user_selCustBrochure.php
+	Input Parameter :-|cbr_rot_ID : 2||datakey : R9WM1wN2ZDM5zZw+NQ==|
+	Response :-
+	response
+
+	# cusTask      ( Sat, 1 Apr 2023, 11:36 )
+	----------------------------------------
+	PHP : https://uom-sfa.dev-ts.online/SFA_PHP_UAT_V2/p_user_selCusTasks.php
+	Input Parameter :-|cst_rot_ID : 2||datakey : R9WM1wN2ZDM5zZw+NQ==|
+	Response :-
+	response
+
+	# CompetitorBrand      ( Sat, 1 Apr 2023, 11:36 )
+	----------------------------------------
+	PHP : https://uom-sfa.dev-ts.online/SFA_PHP_UAT_V2/p_user_CompetitorBrand.php
+	Input Parameter :-|datakey : R9WM1wN2ZDM5zZw+NQ==|
+	Response :-
+	response
+
+	# assetsSurvey      ( Sat, 1 Apr 2023, 11:36 )
+	----------------------------------------
+	PHP : https://uom-sfa.dev-ts.online/SFA_PHP_UAT_V2/p_user_SelAssetSurvey.php
+	Input Parameter :-|rotID : 2||datakey : R9WM1wN2ZDM5zZw+NQ==|
+	Response :-
+	response
+
+	# customerCoolers      ( Sat, 1 Apr 2023, 11:36 )
+	----------------------------------------
+	PHP : https://uom-sfa.dev-ts.online/SFA_PHP_UAT_V2/p_user_selCustAssets.php
+	Input Parameter :-|rotID : 2||datakey : R9WM1wN2ZDM5zZw+NQ==|
+	Response :-
+	response
+
+	# InnerLocations      ( Sat, 1 Apr 2023, 11:36 )
+	----------------------------------------
+	PHP : https://uom-sfa.dev-ts.online/SFA_PHP_UAT_V2/p_offline_InnerLocations.php
+	Input Parameter :-|datakey : R9WM1wN2ZDM5zZw+NQ==|
+	Response :-
+	response
+
+	# competitorActivity      ( Sat, 1 Apr 2023, 11:36 )
+	----------------------------------------
+	PHP : https://uom-sfa.dev-ts.online/SFA_PHP_UAT_V2/p_offline_competitorActivity.php
+	Input Parameter :-|datakey : R9WM1wN2ZDM5zZw+NQ==|
+	Response :-
+	response
+
+	# competitors      ( Sat, 1 Apr 2023, 11:36 )
+	----------------------------------------
+	PHP : https://uom-sfa.dev-ts.online/SFA_PHP_UAT_V2/p_offline_competitors.php
+	Input Parameter :-|datakey : R9WM1wN2ZDM5zZw+NQ==|
+	Response :-
+	response
+
+	# newCusHeaderActivity      ( Sat, 1 Apr 2023, 11:36 )
+	----------------------------------------
+	PHP : https://uom-sfa.dev-ts.online/SFA_PHP_UAT_V2/p_user_NewCustomerActivity.php
+	Input Parameter :-|rotID : 2||datakey : R9WM1wN2ZDM5zZw+NQ==|
+	Response :-
+	response
+
+	# requestType      ( Sat, 1 Apr 2023, 11:36 )
+	----------------------------------------
+	PHP : https://uom-sfa.dev-ts.online/SFA_PHP_UAT_V2/p_user_SelNewRequestType.php
+	Input Parameter :-|datakey : R9WM1wN2ZDM5zZw+NQ==|
+	Response :-
+	response
+
+	# selResponseDetail      ( Sat, 1 Apr 2023, 11:36 )
+	----------------------------------------
+	PHP : https://uom-sfa.dev-ts.online/SFA_PHP_UAT_V2/p_user_SelNewRequest.php
+	Input Parameter :-|rotID : 2||datakey : R9WM1wN2ZDM5zZw+NQ==|
+	Response :-
+	response
+
+	# SelRoutesData      ( Sat, 1 Apr 2023, 11:36 )
+	----------------------------------------
+	PHP : https://uom-sfa.dev-ts.online/SFA_PHP_UAT_V2/p_user_SelRoutes.php
+	Input Parameter :-|rotID : 2||datakey : R9WM1wN2ZDM5zZw+NQ==|
+	Response :-
+	response
+
+	# masterDataNotification      ( Sat, 1 Apr 2023, 11:36 )
+	----------------------------------------
+	PHP : https://uom-sfa.dev-ts.online/SFA_PHP_UAT_V2/p_user_MasterDataNotification.php
+	Input Parameter :-|rotID : 2||datakey : R9WM1wN2ZDM5zZw+NQ==|
+	Response :-
+	response
+
+	# VanToVanTransferInHeader      ( Sat, 1 Apr 2023, 11:36 )
+	----------------------------------------
+	PHP : https://uom-sfa.dev-ts.online/SFA_PHP_UAT_V2/p_user_SelVanToVanTransferInHeader.php
+	Input Parameter :-|rot_ID : 2||datakey : R9WM1wN2ZDM5zZw+NQ==|
+	Response :-
+	NoDataRes
+
+	# Customer start
+	----------------------------------------
+	CustomerID : 277
+	CustomerName : اللاسلكي
+	customer_arabic : اللاسلكي
+	TransactionId : 277010420231
+	Total transaction : 1
+	GeoCode : 10.7315877,76.0329144
+	GeoName : P2JM+Q6Q, null, Nannammukku, Nannammukku, Kerala, India, 679575
+	Date : 01-04-2023
+	Time : 11:36 AM
+	Status : success

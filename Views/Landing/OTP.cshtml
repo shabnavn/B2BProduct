@@ -1,0 +1,133 @@
+﻿
+@{
+    ViewBag.Title = "Login Verification";
+    Layout = "~/Views/Shared/guest_master.cshtml";
+}
+
+
+
+
+<main class="main pages">
+
+    <div class="page-content pt-50 pb-150">
+        <div class="container">   
+            <div class="row">
+                <div class="col-xl-12 col-lg-10 col-md-12 m-auto">
+                    <div class="row">
+                        <div class="col-lg-6 pr-30 d-none d-lg-block">
+                            <img class="border-radius-15" src="../Content/imgs/page/login-1.png" alt="" />
+                        </div>
+                        <div class="col-lg-6 col-md-8">
+                            <div class="login_wrap widget-taber-content background-white" style="margin:10%">
+                                <div class="padding_eight_all bg-white">
+                                    <div class="heading_s1   ">
+                                        <h1 class="mb-5">Daily Verification</h1>
+                                        <p class="mb-30">An OTP has been sent to your account. You can use the same OTP for logging in both web and app for today</p>
+                                    </div>
+
+                                    <div class="text-danger" id="CommonError"></div>
+
+                                    <div class="form-group">
+                                        <input required="" id="otp" type="password" name="otp" placeholder="Enter the OTP" />
+                                        <div class="text-danger" id="errMessage"></div>
+                                    </div>
+
+                                    <div class="col-lg-12 row" style="margin:1px">
+
+                                        <div class="col-lg-6">
+                                            <button type="submit" onclick="UpdDailyVer()" class="btn btn-heading btn-block " name="login">Proceed</button>
+
+                                        </div>
+
+                                        <div class="col-lg-6" style="text-align-last:end">
+                                            <button type="submit" onclick="ResendOTP()" style="background-color: white; color:black" class="btn btn-outline-info" name="login">Resend OTP</button>
+
+                                        </div>
+
+                                    </div>
+
+
+
+                                    <div id="div_loading" style="display:none" class="text-center">
+                                        <img src="../content/imgs/theme/loading.gif" alt="" />
+                                    </div>
+
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+
+<script>
+    function UpdDailyVer() {
+      $('#div_loading').show('slow');
+
+        $('#errMessage').text("");
+        $('#CommonError').text("");
+
+        var otp = document.getElementById("otp").value;
+
+        if (otp == "") {
+            $('#errMessage').text( "Please enter current password");
+        }
+        else {
+             $.ajax({
+                type: "GET",
+                url: '@Url.Action("UpdDailyVer", "Landing")',
+                contentType: "application/json; charset=utf-8",
+                data: {
+                    "otp": otp,
+                    "userID": @Session["UserID"].ToString()
+                },
+                dataType: "json",
+                 success: function (data) {
+
+                     if (data.res == "1") {
+                           window.location.href = "@Url.Action("Index", "Home")";
+                     } else if (data.res = "0") {
+                         $('#errMessage').text("Invalid OTP, Please check the OTP and try again");
+                         $('#div_loading').hide('slow');
+                     }
+                }
+            });
+        }
+
+
+    }
+
+
+      function ResendOTP() {
+      $('#div_loading').show('slow');
+
+        $('#errMessage').text("");
+        $('#CommonError').text("");
+          $('#errMessage').show('slow')
+           $.ajax({
+                type: "GET",
+                url: '@Url.Action("GenerateOTP", "Landing")',
+                contentType: "application/json; charset=utf-8",
+                data: {
+                    "userID": @Session["UserID"].ToString()
+                },
+                dataType: "json",
+                 success: function (data) {
+
+                     if (data == "1") {
+                         $('#errMessage').text("Your OTP has been Resend successfully. Please check your email for the code");
+                         $('#div_loading').hide('slow');
+                        
+                     } else if (data == "0") {
+                         $('#errMessage').text("It appears that your account has already been verified today. Please attempt to log in");
+                         $('#div_loading').hide('slow');
+                     }
+                }
+            });
+
+          //setTimeout($('#errMessage').hide('slow'), 3000000);
+    }
+</script>

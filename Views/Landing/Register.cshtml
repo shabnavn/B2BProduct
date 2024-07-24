@@ -1,0 +1,119 @@
+﻿
+@{
+    ViewBag.Title = "Verify   ";
+    Layout = "~/Views/Shared/guest_master.cshtml";
+}
+
+<main class="main pages">
+
+    <div class="page-content pt-50 pb-150">
+        <div class="container">
+            <div class="row">
+                <div class="col-xl-12 col-lg-10 col-md-12 m-auto">
+                    <div class="row">
+                        <div class="col-lg-6 pr-30 d-none d-lg-block">
+                            <img class="border-radius-15" src="../Content/imgs/page/login-1.png" alt="" />
+                        </div>
+                        <div class="col-lg-6 col-md-8">
+                            <div class="login_wrap widget-taber-content background-white" style="margin:10%">
+                                <div class="padding_eight_all bg-white">
+                                    <div class="heading_s1   ">
+                                        <h1 class="mb-5">Verify your account..</h1>
+                                        <p class="mb-30">Enter your email below to receive the verification URL</p>
+                                    </div>
+
+
+
+
+                                    <div class="text-danger" id="CommonError"></div>
+
+                                    <div class="form-group">
+
+                                        <input required="" id="email" type="email" name="email" placeholder="Email" />
+                                        <div class="text-danger" id="errMsguser"></div>
+
+                                    </div>
+
+                                    <div class="form-group">
+                                        <button type="submit" onclick="SendVerification()" class="btn btn-heading btn-block hover-up" name="login">Verify</button>
+
+                                    </div>
+
+                                    <div id="div_loading" style="display:none" class="text-center">
+                                        <img src="../content/imgs/theme/loading.gif" alt="" />
+                                    </div>
+
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+
+@{ 
+    Html.RenderPartial("CustomModal");
+}
+
+
+<script>
+    function SendVerification() {
+        $('#div_loading').show('slow');
+        var email = document.getElementById("email").value;
+        $('#errMsguser').text( "");
+        if (email == "") {
+            $('#errMsguser').text( "Please enter your email address");
+        } 
+        else {
+             $.ajax({
+                type: "GET",
+                url: '@Url.Action("AccountSetup", "Landing")',
+                contentType: "application/json; charset=utf-8",
+                data: {
+                    "email": email
+                },
+                dataType: "json",
+                 success: function (data) {
+
+                     if (data.res == "S") {
+
+                         $('#modal_custom').modal('show');
+                         $('#success').text("Success");
+                         $('#msg').text("Verification e-mail has been sent, please check your mail");
+                         $('#div_loading').hide('slow');
+                         //EMAIL SENT
+                     }
+                     else if (data.res == "Y") {
+
+                         $('#modal_custom').modal('show');
+                         $('#success').text("Already Verified");
+                         $('#msg').text("Kindly proceed to login");
+                         $('#div_loading').hide('slow');
+                     }
+                     else if (data.res == "T") {
+                         $('#errMsguser').text("We are facing some technical issues, please try again later");
+                         $('#div_loading').hide('slow');
+                     }
+                     else if (data.res == "0") {
+                         $('#errMsguser').text("Please note the email address entered is not registered with us.");
+                         $('#div_loading').hide('slow');
+                     }
+                }
+            });
+        }
+
+      
+
+
+    }
+
+
+  
+
+
+</script>
+
+

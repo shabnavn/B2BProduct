@@ -1,0 +1,432 @@
+﻿@using System.Data
+@{
+    ViewBag.Title = "SupportDetail";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    DataTable dt = (DataTable)ViewBag.SupportDetail;
+    DataTable dtMessages = (DataTable)ViewBag.SupportDetailMessages;
+}
+
+
+<main class="main">
+    <div class="container mb-80 mt-50">
+
+        <div class="row">
+            <div class="col-lg-12 row">
+                <div class="col-lg-1" style="padding-right:0px; max-width:5%">
+                    @{ 
+                        if (@dt.Rows[0]["csp_Image"].ToString() != "")
+                        {
+                             <a href="@dt.Rows[0]["csp_Image"].ToString()" target="_blank"> <img src="../Content/imgs/support/preview.png" height="80" /> </a>
+                        }
+                     }
+
+                </div>
+                <div class="col-lg-10">
+                    <div class="col-lg-10">
+                        <h4> @dt.Rows[0]["csp_Title"].ToString() </h4>
+                    </div>
+                    <div class="col-lg-10">
+                        <strong>Created On: @dt.Rows[0]["CreatedDate"].ToString()  </strong> <br />
+                        <strong style="color: #aa7676">Created By: @dt.Rows[0]["Name"].ToString()  </strong>
+
+                    </div>
+
+                </div>
+                <div class="col-lg-1" style="padding-right:0px; max-width:5%">
+                    <a class="btn btn-fill-out btn-block mt-30" style="background-color:blue">@dt.Rows[0]["stat_Name"].ToString() </a>
+                </div>
+            </div>
+
+            <div class="col-lg-12">
+                <strong>Message:</strong>
+                <div class="col-lg-12">
+                    <p>@dt.Rows[0]["csp_Message"].ToString() </p>
+                </div>
+            </div>
+
+            <div class="col-lg-12">
+                <strong>Reason:</strong>
+                <div class="col-lg-12">
+                    <p>  @dt.Rows[0]["csp_Reason"].ToString() </p>
+                </div>
+            </div>
+
+            @*REPLY SECTION GOES HERE*@
+
+
+            <div class="col-lg-12">
+
+                @{
+                    if (@dt.Rows[0]["stat_Code"].ToString().Equals("PR") || @dt.Rows[0]["stat_Code"].ToString().Equals("ES"))
+                    {
+                        <div class="row">
+
+                            <div class="form-group col-lg-3" style="padding:20px">
+                                @(Html.Kendo().Upload()
+        .Name("files")
+        .Async(a => a
+            .Save("Async_Save", "Support")
+            .Remove("Async_Remove", "Support")
+            .AutoUpload(true)
+                                                                                   
+        )
+        .Validation(validation => validation.AllowedExtensions(new string[] { ".txt",".jpg", ".png",".doc",".docx", ".pdf",".xlsx",".xls" }))
+    )
+                            </div>
+
+                            <div class="form-group col-lg-9" style="padding-top:20px;">
+                                <textarea id="message" rows="3" name="message" placeholder=" Type your reply here"></textarea>
+                                <label id="lblmessage" style="color:red; font-size:small"></label>
+                                <button type="submit" class="btn btn-fill-out btn-block float-end"
+                                        style="background-color: #d32027; margin-top: -8%; margin-right: 3%; position: relative "
+                                        onclick="SendReply( @dt.Rows[0]["csp_ID"].ToString())">
+                                    Send
+                                </button>
+                            </div>
+
+                            <div class="form-group col-lg-12" style="text-align-last: end">
+                                <div>
+                                    @{
+                                        if (dt.Rows[0]["EnableEscalate"].ToString().Equals("1"))
+                                        { 
+                                            <button class="btn btn-fill-out btn-block" onclick="ShowEscalation()" style=" margin-right:15px; background-color: #009ef7 ; ">Escalate to Next Level</button>
+
+                                        }
+
+
+                                    }
+
+                                    <button class="btn btn-fill-out btn-block " onclick="ShowRes()" style="background-color: #fdc040;">Mark as Resolved</button>
+                                </div>
+
+
+                            </div>
+
+                        </div>
+                    }
+                }
+
+                <hr />
+            </div>
+
+            @{
+                foreach (DataRow dr in dtMessages.Rows)
+                {
+                    <div class="col-lg-8 row mb-3">
+
+                        <div class="col-lg-2"></div>
+                        <div class="col-lg-10 border row" style="padding:25px">
+                                        <div class="col-lg-2" style="padding-right:0px;">
+                                          @{ 
+                                                if (@dr["csd_Image"].ToString() != "") 
+                                                  { 
+
+                                                     <a href="@dr["csd_Image"].ToString()" target="_blank"> <img src="../Content/imgs/support/preview.png" height="80" /> </a>
+                                                  }
+                                            }
+                                            </div>
+                            <div class="col-lg-10">
+                                <div class="col-lg-10" style="padding-bottom:10px">
+                                    <h5> @dr["CreatedBy"].ToString() </h5>
+                                </div>
+                                <div class="col-lg-10">
+                                    <strong>Created On: @dr["CreatedDate"].ToString() </strong>
+                                </div>
+
+                            </div>
+                            <p>@dr["csd_Message"].ToString()</p>
+                        </div>
+
+                    </div>
+                }
+            }
+
+
+
+
+        </div>
+    </div>
+</main>
+
+<div class="modal fade custom-modal" id="SuccessRes" tabindex="-1" aria-labelledby="quickViewModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            <div class="modal-body">
+                <div class="timeline">
+                    <div class="col-lg-12">
+                        <div class="form-group">
+                            <h4> Your reply has been sent, our team will get back to you shortly </h4>
+                        </div>
+                        <div class="form-group" style="margin-top: 25px; text-align-last:end">
+                            <button style="background-color:lightgreen" onclick="DismissSuccess(@dt.Rows[0]["csp_ID"].ToString())" class="btn btn-secondary ">OK</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div class="modal fade custom-modal" id="ResolveRes" tabindex="-1" aria-labelledby="quickViewModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            <div class="modal-body">
+                <div class="timeline">
+                    <div class="col-lg-12">
+                        <div class="form-group">
+                            <h4> Your ticket has been marked as resolved  <img height="40" src="../Content/imgs/support/check.png" />  </h4>
+                        </div>
+                        <div class="form-group" style="margin-top: 25px; text-align-last:end">
+                            <button style="background-color:lightgreen" onclick="DismissSuccess(@dt.Rows[0]["csp_ID"].ToString())" class="btn btn-secondary ">OK</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade custom-modal" id="FailureRes" tabindex="-1" aria-labelledby="quickViewModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            <div class="modal-body">
+                <div class="timeline">
+                    <div class="col-lg-12">
+                        <div class="form-group">
+                            <h4 style="color:red">
+                                We are facing some technical issues now, please try again later
+                                <img height="40" src="../Content/imgs/order/sad.png" />
+                            </h4>
+                        </div>
+
+                        <div class="form-group" style="margin-top: 25px; text-align-last:end">
+                            <button style="background-color:lightcoral" onclick="DismissModelRes()" class="btn btn-secondary ">OK</button>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade custom-modal" id="ShowResolve" tabindex="-1" aria-labelledby="quickViewModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            <div class="modal-body">
+                <div class="timeline">
+                    <div class="col-lg-12">
+                        <div class="form-group">
+                            <h4> Are you sure you want to mark this ticket as resolved..?</h4>
+                        </div>
+                        <span hidden="hidden" id="ordID"></span>
+                        <div class="form-group" style="margin-top: 25px; text-align-last:end">
+                           
+                        </div>
+
+                        <div class="col-lg-12 row">
+                            <div class="col-lg-6" style="margin-top: 25px">
+                                <button onclick="Resolve(@dt.Rows[0]["csp_ID"].ToString())" class="btn btn-heading btn-block hover-up" name="login">Proceed</button>
+                            </div>
+                            <div class="col-lg-6" style="margin-top: 25px; text-align-last:end">
+                                <button style="background-color:lightcoral" onclick="DismissRes()" class="btn btn-secondary ">Dismiss</button>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade custom-modal" id="ShowEscalation" tabindex="-1" aria-labelledby="quickViewModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            <div class="modal-body">
+                <div class="timeline">
+                    <div class="col-lg-12">
+                        <div class="form-group">
+                            <h4> We are sorry for causing delay in our service. Are you sure you want to escalate this ticket..??</h4>
+                        </div>
+                        <span hidden="hidden" id="ordID"></span>
+                        
+                        <div class="col-lg-12 row">
+                            <div class="col-lg-6" style="margin-top: 25px">
+                                <button onclick="Escalate(@dt.Rows[0]["csp_ID"].ToString())" class="btn btn-heading btn-block " name="login">Proceed</button>
+                            </div>
+                            <div class="col-lg-6" style="margin-top: 25px; text-align-last:end">
+                                <button style="background-color:lightcoral" onclick="DismissEscalation()" class="btn btn-secondary ">Dismiss</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+<div class="modal fade custom-modal" id="EscalateRes" tabindex="-1" aria-labelledby="quickViewModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            <div class="modal-body">
+                <div class="timeline">
+                    <div class="col-lg-12">
+                        <div class="form-group">
+                            <h4> Your ticket has been escalated  <img height="40" src="../Content/imgs/support/escalation.png" />  </h4>
+                        </div>
+                        <div class="form-group" style="margin-top: 25px; text-align-last:end">
+                            <button style="background-color:lightgreen" onclick="DismissSuccess(@dt.Rows[0]["csp_ID"].ToString())" class="btn btn-secondary ">OK</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+
+
+    //REPLY STARTS HERE
+    function ValidateControls() {
+        var valCount = 0;
+        if (document.getElementById("message").value == "") {
+            valCount++;
+            document.getElementById("lblmessage").innerHTML = "Please enter message";
+        } else {
+            document.getElementById("lblmessage").innerHTML = "";
+        }
+
+        if (valCount > 0) {
+            return false;
+        } else {
+            return true;
+        }
+
+    }
+
+    function DismissModelRes() {
+        $('#FailureRes').modal('hide');
+    }
+
+    function ShowFailure() {
+        $('#FailureRes').modal('show');
+    }
+
+    function DismissSuccess(id) {
+        window.location.href = '@Url.Action("SupportDetail", "Support")?id=' + id ;
+    }
+
+    function ShowSuccess() {
+        $('#SuccessRes').modal('show');
+    }
+
+    function SendReply(id) {
+
+        var x = ValidateControls();
+        if (x == true) {
+
+            var message = document.getElementById("message").value;
+            $.ajax({
+                type: "GET",
+                url: '@Url.Action("SendReply", "Support")',
+                contentType: "application/json; charset=utf-8",
+                data: {
+                    "id": id,
+                    "Message": message
+                },
+                dataType: "json",
+                success: function (data) {
+
+
+                    if (data.mode == "1") {
+                        ShowSuccess();
+                    } else {
+                        ShowFailure();
+                    }
+                }
+            });
+        }
+    }
+
+    //MARK AS RESOLVED STARTS HERE
+
+    function Resolve(id) {
+
+            $.ajax({
+                type: "GET",
+                url: '@Url.Action("Resolve", "Support")',
+                contentType: "application/json; charset=utf-8",
+                data: {
+                    "id": id
+                },
+                dataType: "json",
+                success: function (data) {
+                    if (data.mode == "1") {
+                        DismissRes();
+                        ResolveRes();
+                    } else {
+                        ShowFailure();
+                    }
+                }
+            });
+    }
+
+    function ResolveRes() {
+        $('#ResolveRes').modal('show');
+    }
+
+    function ShowRes() {
+        $('#ShowResolve').modal('show');
+    }
+
+    function DismissRes() {
+        $('#ShowResolve').modal('hide');
+    }
+
+    //ESCALATION STARTS HERE
+
+    function ShowEscalation() {
+        $('#ShowEscalation').modal('show');
+    }
+
+    function Escalate(id) {
+
+            $.ajax({
+                type: "GET",
+                url: '@Url.Action("Escalation", "Support")',
+                contentType: "application/json; charset=utf-8",
+                data: {
+                    "id": id
+                },
+                dataType: "json",
+                success: function (data) {
+                    if (data.mode == "1") {
+                        DismissEscalation();
+                        EscalateRes();
+                    } else {
+                        ShowFailure();
+                    }
+                }
+            });
+    }
+
+    function EscalateRes() {
+        $('#EscalateRes').modal('show');
+    }
+
+    function DismissEscalation () {
+        $('#ShowEscalation').modal('hide');
+    }
+
+</script>

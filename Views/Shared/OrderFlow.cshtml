@@ -1,0 +1,110 @@
+﻿@using System.Data;
+
+@*<link rel="stylesheet" href="../content/css/timeline.css" />*@
+
+@{
+    DataTable dt = (DataTable)ViewBag.TrackOrder;
+}
+
+<div class="modal fade custom-modal" id="trackHistory" tabindex="-1" aria-labelledby="quickViewModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            <div class="modal-body">
+                <div class="timeline">
+                    <ul>
+
+                        @{
+                            foreach (DataRow dr in dt.Rows)
+                            {
+                                <li>
+                                    <span style="color:black" > @dr["CreatedDate"].ToString() </span>
+                                    <div class="content">
+                                        <h3 > @dr["olc_Status"].ToString() </h3>
+                                        <p>
+                                            @dr["olc_Remarks"].ToString()
+                                        </p>
+                                    </div>
+                                </li>
+                            }
+                        }
+
+
+
+
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+<style>
+   
+
+    .timeline {
+        width: 800px;
+        color: #fff;
+        /*box-shadow: 0px 0px 10px rgb(221 203 203 / 50%);*/
+    }
+
+        .timeline ul {
+            list-style-type: none;
+            border-left: 2px solid #094a68;
+            padding: 10px 5px;
+        }
+
+            .timeline ul li {
+                /*padding: 20px 20px;*/
+                padding-left:20px;
+                position: relative;
+                cursor: pointer;
+                transition: .5s;
+                box-shadow: 0px 0px 10px rgb(221 203 203 / 50%);
+            }
+
+                .timeline ul li span {
+                    display: inline-block;
+                    border-radius: 25px;
+                    padding: 2px 5px;
+                    font-size: 15px;
+                    text-align: center;
+                }
+
+                .timeline ul li .content h3 {
+                    color: #1e5c3f;
+                    font-size: 17px;
+                    padding-top: 5px;
+                }
+
+                .timeline ul li .content p {
+                    padding: 5px 0px 15px 0px;
+                    font-size: 15px;
+                }
+
+                .timeline ul li:before {
+                    position: absolute;
+                    content: '';
+                    width: 10px;
+                    height: 10px;
+                    background-color: #1e5c3f;
+                    border-radius: 50%;
+                    left: -11px;
+                    top: 28px;
+                    transition: .5s;
+                }
+
+                .timeline ul li:hover {
+                    /*background-color: #83c9ea;*/
+                }
+
+                    .timeline ul li:hover:before {
+                        background-color: #1e5c3f;
+                        box-shadow: 0px 0px 10px 2px #0F0;
+                    }
+
+  
+</style>

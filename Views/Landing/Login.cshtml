@@ -1,0 +1,207 @@
+﻿@using b2b_solution.Models;
+@model Creds
+
+
+@{
+    ViewBag.Title = "login";
+    Layout = "~/Views/Shared/guest_master.cshtml";
+
+}
+
+<script src="~/Scripts/jquery-1.10.2.min.js"></script>
+<script src="~/Scripts/jquery.unobtrusive-ajax.js"></script>
+<script src="~/Content/js/Validation.js"></script>
+<script src="~/Scripts/jquery.validate.min.js"></script>
+<script src="~/Scripts/jquery.validate.unobtrusive.min.js"></script>
+<script src="~/Scripts/js.cookie.min.js"></script>
+
+@*<script src="~/Scripts/jquery-1.10.2.js"></script>
+<script src="~/Scripts/jquery.unobtrusive-ajax.js"></script>
+<script src="~/Content/js/Validation.js"></script>*@
+
+
+<main class="main pages">
+
+    <div class="page-content pt-50 ">
+        <div class="container">
+            <div class="row">
+                <div class="col-xl-12 col-lg-10 col-md-12 m-auto">
+                    <div class="row">
+                        <div class="col-lg-6 pr-30 d-none d-lg-block">
+                            <img class="border-radius-15" src="../Content/imgs/page/login-1.png" alt="" />
+                        </div>
+                        <div class="col-lg-6 col-md-8">
+                            <div class="login_wrap widget-taber-content background-white" style="margin:15%">
+                                <div class="padding_eight_all bg-white">
+                                    <div class="heading_s1   ">
+                                        <h1 class="mb-5">Login</h1>
+                                        <p class="mb-30">Yet to verify account? <a href="/Landing/Register">Verify Here</a></p>
+                                    </div>
+
+                                    @using (Ajax.BeginForm("Login", "landing", new AjaxOptions { HttpMethod = "POST", OnSuccess = "OnSuccess", OnBegin = "AjaxBegin", OnComplete = "AjaxComplete" }))
+                                    {
+
+
+
+                                        @Html.AntiForgeryToken()
+
+                                        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+
+                                        <div class="text-danger" id="CommonError"></div>
+
+                                        <div class="form-group">
+
+                                            @Html.EditorFor(model => model.username, new { htmlAttributes = new { @class = "form-control", @placeholder = "Email or Username*", @Value = ViewBag.username } })
+                                            @*@Html.ValidationMessageFor(model => model.username, "", new { @class = "text-danger" })*@
+                                            <div class="text-danger" id="errMsguser"></div>
+                                        </div>
+
+                                        <div class="form-group" style="display:flex">
+                                            @Html.EditorFor(model => model.password, new
+                                       {
+                                           htmlAttributes = new
+                                           {
+                                               @class = "form-control",
+                                               @placeholder = "Your Password*",
+                                               @type = "password",
+                                               @Value = ViewBag.password
+                                           }
+                                       })
+
+                                            <span class="">
+                                                <i class=" fi-rs-eye-crossed " style=" margin-left: -20px; margin-top: 20px; position: absolute; " id="togglePassword" onclick="PasswordVisibility('password' , 'togglePassword')"></i>
+                                            </span>
+
+
+
+                                            @*@Html.ValidationMessageFor(model => model.password, "", new { @class = "text-danger" })*@
+                                            <br /><div class="text-danger" id="errMsgPass"></div>
+                                        </div>
+
+
+                                        @*<div class="fo-group-append" style="display:flex; justify-content:flex-end;">
+                                                <label style="margin-top:-20px;">
+                                                    <input type="checkbox" onclick="togglePasswordVisibility()">
+                                                    <i class="fa fa-eye"></i>
+                                                </label>
+                                                <label style="margin:1px;"> Show password </label>
+
+                                            </div>*@
+
+                                        <div class="login_footer mb-50">
+                                            <div class="chek-form">
+                                                <div class="">
+                                                    @*<input class="form-check-input" type="checkbox" name="checkbox" id="exampleCheckbox1" value="" />*@
+
+                                                    @(Html.Kendo().CheckBoxFor(model => model.remembercheck).Checked(ViewBag.check).
+HtmlAttributes(new { @class = "form-check-input", @id = "exampleCheckbox1", @type = "checkbox" }).Label("Remember me"))
+
+                                                </div>
+                                            </div>
+                                            <a class="text-muted" href="/Landing/ForgotPassword">Forgot password?</a>
+                                        </div>
+
+                                        <div class="form-group">
+                                            <button type="submit" class="btn btn-heading btn-block hover-up" name="login">Log in</button>
+
+                                        </div>
+
+                                        <div id="div_loading" style="display:none" class="text-center">
+                                            <img src="../content/imgs/theme/loading.gif" alt="" />
+                                        </div>
+                                    }
+
+                                   
+                                </div>
+                            </div>
+                        </div>
+
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+
+@*<script src="~/Scripts/js.cookie.min.js"></script>*@
+
+<script type="text/javascript">
+    function OnSuccess(data) {
+
+
+        document.getElementById("errMsguser").innerHTML = "";
+        document.getElementById("errMsgPass").innerHTML = "";
+        document.getElementById("CommonError").innerHTML = "";
+        if (data.mode == "1") {
+            document.getElementById("errMsguser").innerHTML = data.message;
+        } else if (data.mode == "2") {
+            document.getElementById("errMsgPass").innerHTML = data.message;
+        }
+        else if (data.mode == "3")
+        {
+            if (data.UserType == "HO") {
+                try {
+
+
+                    var selectedCusID = Cookies.get('selectedCusID');
+                    if (selectedCusID != null && selectedCusID != undefined) {
+                        window.location.href = "@Url.Action("Index", "Home")";
+                    }
+                    else {
+                        if (data.UserType == "HO") {
+
+                            console.log("Redirecting to BranchSelection page");
+                            window.location.href = "@Url.Action("BranchSelection", "Landing")";
+                        }
+                        else {
+
+                            console.log("Redirecting to Index page");
+                            window.location.href = "@Url.Action("Index", "Home")";
+                        }
+                    }
+                } catch (ex) {
+                    window.location.href = "@Url.Action("BranchSelection", "Landing")";
+                }
+            } else {
+                  window.location.href = "@Url.Action("Index", "Home")";
+            }
+
+
+
+
+
+        } else if (data.mode == "4") {
+            document.getElementById("CommonError").innerHTML = data.message;
+        }
+        else if (data.mode == "5") {
+            window.location.href = "@Url.Action("Activate", "Landing")";
+        }
+         else if (data.mode == "6") {
+            //window.location.href = "@Url.Action("OTP", "Landing")";
+            window.location.href = "@Url.Action("Index", "Home")";
+        }
+    }
+
+    function AjaxBegin() {
+        $('#div_loading').show();
+    }
+    function AjaxComplete() {
+        $("#div_loading").hide();
+    }
+
+
+    function OnFailure(data) {
+        alert('HTTP Status Code: ' + data.param1 + '  Error Message: ' + data.param2);
+    }
+
+    $(document).ready(function() {
+    var userType = '@ViewBag.Usertype';
+});
+
+</script>
+
+@*<script src="~/Scripts/jquery-1.10.2.min.js"></script>
+<script src="~/Scripts/jquery.validate.min.js"></script>
+<script src="~/Scripts/jquery.validate.unobtrusive.min.js"></script>*@
+

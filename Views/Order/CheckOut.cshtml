@@ -1,0 +1,381 @@
+﻿@using System.Data;
+@using b2b_solution.Models
+@using System.Collections.Generic
+@using System.Collections
+@{
+
+    DataModel dm = new DataModel();
+    ViewBag.Title = "CheckOut";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+
+<script>
+    $(document).ready(function () {
+        GetCartTotal();
+        GetCurrencyCode();
+    });
+</script>
+
+<main class="main">
+    <div class="container mb-80 mt-50">
+
+        <div class="row">
+
+
+
+            <div class="col-lg-7">
+                <div class="row mb-20">
+
+                    <div class="col-lg-8">
+                        <form method="post" class="apply" style="display:flex">
+                           
+                            <div class="col-lg-12 row">
+                                
+                                <div class="col-lg-6">
+                                    Expected Delivery Date
+
+
+                                    <i class="fi-rs-info" onclick="ShowCutOff()" style="font-size:15px"></i>
+
+                                    <div id="cutOff" style="display:none">
+                                        <small style="color:blue">Orders placed after @Session["CutOff"].ToString() will be delivered within two business days, excluding holidays.</small>
+                                    </div>
+
+                                    @(Html.Kendo().DropDownList()
+                .Name("dates")
+                .HtmlAttributes(new { style = "width:100%" })
+                .OptionLabel("Select Expected Delivery Date")
+                .DataTextField("Dates")
+                .DataValueField("Dates")
+                .DataSource(source => source
+                        .Read(read =>
+                        {
+                            read.Action("GetExpDates", "Order");
+                        }))
+                )
+
+                                    <label id="lblExpDtError" style="color:red; font-size:small"></label>
+                                </div>
+
+
+                            </div>
+                        </form>
+                    </div>
+                </div>
+                <div class="row" hidden>
+                    <h4 class="mb-30">Billing Details</h4>
+
+
+
+                    <form method="post">
+                        <div class="row">
+                            <div class="form-group col-lg-6">
+                                <input type="text" id="bldgName" autocomplete="off" name="fname" placeholder="Building Name*">
+                                <label id="lblbldgname" style="color:red; font-size:small"></label>
+                            </div>
+                            <div class="form-group col-lg-6">
+                                <input type="text" id="roomNo" required="" autocomplete="off" name="lname" placeholder="Room No*">
+                                <label id="lblroomNo" style="color:red; font-size:small"></label>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="form-group col-lg-6">
+                                <input type="text" name="street" id="street" autocomplete="off" required="" placeholder="Street*">
+                                <label id="lblstreet" style="color:red; font-size:small"></label>
+                            </div>
+                            <div class="form-group col-lg-6">
+                                <input type="text" name="landmark" id="landmark" autocomplete="off" required="" placeholder="Landmark">
+                            </div>
+                        </div>
+                        <div class="row shipping_calculator">
+                            <div class="form-group col-lg-6">
+                                <div class="custom_select">
+                                    @{
+                                        DataTable dt = dm.loadList("SelEmirate", "sp_B2B_Home");
+                                        List<SelectListItem> list = new List<SelectListItem>();
+                                        foreach (DataRow dr in dt.Rows as IEnumerable)
+                                        {
+                                            list.Add(new SelectListItem { Text = dr["Name"].ToString(), Value = dr["id"].ToString() });
+                                        }
+                                        int catCount = 6;
+                                    }
+
+                                    @Html.DropDownList("catID", new SelectList(list, "Value", "Text", 1), "Select Emirate", new { @class = "select-active" , @id = "Emirate" })
+
+                                </div>
+                            </div>
+                        </div>
+
+                    </form>
+
+
+                </div>
+
+                <div class="row">
+                    <h4 class="mb-30">LPO Details</h4>
+
+
+
+                    <form method="post">
+                        <div class="row">
+                            <div class="form-group col-lg-6">
+                                @(Html.Kendo().TextBox()
+            .Name("LPONumber")
+            .Placeholder("Enter LPO Number")
+            .HtmlAttributes(new { style = "width: 100%" , @id = "LPO", maxlength = "15" })
+      )
+                            </div>
+                            <div class="form-group col-lg-6">
+                                @(Html.Kendo().Upload()
+        .Name("files")
+        .Async(a => a
+            .Save("Async_Save", "Order")
+            .Remove("Async_Remove", "Order")
+            .AutoUpload(true)
+        )
+    )
+                            </div>
+                        </div>
+
+                    </form>
+                    <div class="row">
+                        <span id="creditDays" hidden="hidden" style="color:blue ; display:none"></span>
+                        </div>
+
+                    </div>
+                </div>
+            <div class="col-lg-5">
+                <div class="border p-40 cart-totals ml-30 mb-50">
+                    <div class="d-flex align-items-end justify-content-between mb-30">
+                        <h4>Your Order</h4>
+                        <h6 class="text-muted">Subtotal</h6>
+                    </div>
+                    <div class="divider-2 mb-30"></div>
+                    <div class="table-responsive order_table checkout">
+                        <table class="table no-border">
+                            <tbody>
+                                <tr>
+                                    <td class="cart_total_label">
+                                        <h6 class="text-muted">Total</h6>
+                                    </td>
+                                    <td class="cart_total_amount d-flex justify-content-end">
+                                        <h5 id="subTotal_WO_D_Currency" class="text-heading pe-4" hidden> </h5>
+                                            <h4 id="subTotal_WO_D" class="text-heading text-end"></h4>
+                                       
+                                    </td>
+                                </tr>
+
+                                <tr>
+                                    <td class="cart_total_label">
+                                        <h6 class="text-muted">Discount</h6>
+                                    </td>
+                                    <td class="cart_total_amount d-flex justify-content-end">
+                                        <h5 id="TotalDisc_Currency" class="text-heading pe-4" hidden> </h5>
+                                        <h4 id="TotalDisc" class="text-heading text-end"></h4>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="cart_total_label">
+                                        <h6 class="text-muted">Sub Total</h6>
+                                    </td>
+                                    <td class="cart_total_amount d-flex justify-content-end">
+                                        <h5 id="SubTotal_Currency" class="text-heading pe-4" hidden> </h5>
+                                        <h4 id="SubTotal" class="text-heading text-end"></h4>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="cart_total_label">
+                                        <h6 class="text-muted">VAT</h6>
+                                    </td>
+                                    <td class="cart_total_amount d-flex justify-content-end">
+                                        <h5 id="Vat_Currency" class="text-heading pe-4" hidden> </h5>
+                                        <h4 id="vat" class="text-heading text-end"></h4>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="cart_total_label">
+                                        <h6 class="text-muted">Grand Total</h6>
+                                    </td>
+                                    <td class="cart_total_amount d-flex justify-content-end">
+                                        <h5 id="GrandTotal_Currency" class="text-brand pe-4"> </h5>
+                                        <h4 id="grandTotal" class="text-brand text-end"></h4>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td scope="col" colspan="2">
+                                        <div class="divider-2 mt-10 mb-10"></div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td colspan="2" class="cart_total_label">
+                                        <textarea id="remarks" rows="3" maxlength="199" class="form-control" placeholder="Remarks"></textarea>
+                                    </td>
+                                </tr>
+
+                            </tbody>
+                        </table>
+                    </div>
+                    <a onclick="PlaceOrder()" class="btn btn-fill-out btn-block mt-30">Place an Order<i class="fi-rs-sign-out ml-15"></i></a>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+
+<style>
+    iconImage {
+        background-image: url(../Content/imgs/theme/icons/cal.png) !important;
+    }
+
+    /*.k-icon {
+        height: 3.1em !important;
+    }*/
+</style>
+
+<script>
+      function GetCartTotal() {
+          $.ajax({
+            type: "GET",
+            url: '@Url.Action("GetCartTotal", "Home")',
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+                success: function (data) {
+                    document.getElementById("subTotal_WO_D").innerHTML = data.Total_WO_D;
+                    document.getElementById("TotalDisc").innerHTML = data.TotalDisc;
+                    document.getElementById("SubTotal").innerHTML = data.Total_W_D;
+                    document.getElementById("vat").innerHTML = data.VAT;
+                    document.getElementById("grandTotal").innerHTML = data.GrandTotal;
+                    //document.getElementById("creditDays").innerHTML = data.CreditDayStatus;
+
+                }
+            });
+    }
+
+       function GetCurrencyCode() {
+     $.ajax({
+        type: "GET",
+        url: '@Url.Action("GetCurrencyCode", "Home")',
+        contentType: "application/json; charset=utf-8",
+        dataType: "json",
+         success: function (data) {
+
+                document.getElementById("subTotal_WO_D_Currency").innerHTML = data.CurrencyCode;
+                document.getElementById("TotalDisc_Currency").innerHTML = data.CurrencyCode;
+                document.getElementById("SubTotal_Currency").innerHTML = data.CurrencyCode;
+                document.getElementById("Vat_Currency").innerHTML = data.CurrencyCode;
+                document.getElementById("GrandTotal_Currency").innerHTML = data.CurrencyCode;
+               
+               
+            }
+        });
+    }
+
+    function PlaceOrder() {
+        var x = ValidateControls();
+        if (x == true) {
+
+
+            var ExpDate = $("#dates").data("kendoDropDownList").value();
+
+            var BuildingName = document.getElementById("bldgName").value;
+            var RoomNo = document.getElementById("roomNo").value;
+            var Street = document.getElementById("street").value;
+            var LandMark = document.getElementById("landmark").value;
+            var Emirate = document.getElementById("Emirate").value;
+            var Remarks = document.getElementById("remarks").value;
+            var LPO = document.getElementById("LPO").value;
+
+            var SubTotal = document.getElementById("SubTotal").innerHTML.replaceAll(/,/g, '');
+            var VAT = document.getElementById("vat").innerHTML.replaceAll(/,/g, '');
+            var GrandTotal = document.getElementById("grandTotal").innerHTML.replaceAll(/,/g, '');
+            var SubTotal_WO_D = document.getElementById("subTotal_WO_D").innerHTML.replaceAll(/,/g, '');
+            var TotalDisc = document.getElementById("TotalDisc").innerHTML.replaceAll(/,/g, '');
+
+
+            $.ajax({
+                type: "GET",
+                url: '@Url.Action("PlaceOrder", "Order")',
+                contentType: "application/json; charset=utf-8",
+                data: {
+                    "ExpDate": ExpDate,
+                    "BuildingName": BuildingName,
+                    "RoomNo": RoomNo,
+                    "Street": Street,
+                    "LandMark": LandMark,
+                    "Emirate": Emirate,
+                    "LPO": LPO,
+                    "SubTotal": SubTotal,
+                    "VAT": VAT,
+                    "GrandTotal": GrandTotal,
+                    "Remarks": Remarks,
+                    "SubTotal_WO_D": SubTotal_WO_D,
+                    "TotalDisc": TotalDisc
+                },
+                dataType: "json",
+                success: function (data) {
+                    if (data.mode == 1) {
+                        window.location.href = '@Url.Action("SuccessOrder", "Order")?OrderNo=' + data.message + '&id=' + data.desc;
+                    } else {
+                        alert('We are facing some technical issues now, please try again later')
+                    }
+                }
+            });
+        }
+    }
+
+    function ValidateControls() {
+        var valCount = 0;
+
+        var ExpDate = $("#dates").data("kendoDropDownList").value();
+        if (ExpDate == "") {
+            valCount++;
+            document.getElementById("lblExpDtError").innerHTML = "Choose exp delivery date";
+        } else {
+            document.getElementById("lblExpDtError").innerHTML = "";
+        }
+
+        //if (document.getElementById("bldgName").value == "") {
+        //    valCount++;
+        //    document.getElementById("lblbldgname").innerHTML = "Please enter building details";
+        //} else {
+        //    document.getElementById("lblbldgname").innerHTML = "";
+        //}
+
+        //if (document.getElementById("roomNo").value == "") {
+        //    valCount++;
+        //    document.getElementById("lblroomNo").innerHTML = "Please enter room details";
+        //} else {
+        //    document.getElementById("lblroomNo").innerHTML = "";
+        //}
+
+        //if (document.getElementById("street").value == "") {
+        //    valCount++;
+        //    document.getElementById("lblstreet").innerHTML = "Please enter street";
+        //} else {
+        //    document.getElementById("lblstreet").innerHTML = "";
+        //}
+
+        if (valCount > 0) {
+            return false;
+        } else {
+            return true;
+        }
+
+    }
+
+
+    function ShowCutOff() {
+
+        $('#cutOff').show("slow");
+        setTimeout(HideCutOff, 10000);
+    }
+
+    function HideCutOff() {
+        $('#cutOff').hide("slow");
+    }
+
+
+
+
+</script>

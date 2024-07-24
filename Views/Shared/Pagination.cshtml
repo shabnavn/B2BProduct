@@ -1,0 +1,114 @@
+﻿@using System.Data
+@using System.Collections
+@using b2b_solution.Models
+@model SearchComplete
+
+@{
+    DataModel dm = new DataModel();
+    DataTable dt = ViewBag.Products;
+}
+
+<div class="pagination-area mt-20 mb-20">
+    <nav aria-label="Page navigation example">
+        <ul class="pagination justify-content-start">
+
+
+            @{
+
+
+                try
+                {
+
+                    string catID = Model.catID;
+                    string brdID = Model.brdID;
+                    string catName = Model.catName == null ? "" : @Model.catName;
+                    string brdName = Model.brdName == null ? "" : @Model.brdName;
+                    string prdName = Model.prdName == null ? "" : @Model.prdName;
+
+                    string CurrPage = Session["CurrentPage"] == null ? "1" : Session["CurrentPage"].ToString();
+                    int activePage = Int32.Parse(CurrPage);
+                    int totalItems = Int32.Parse(dt.Rows[0]["TotItems"].ToString());
+                    int RowsOfPage = Int32.Parse(dt.Rows[0]["RowsOfPage"].ToString());
+                    int totalPages = dm.Pagination(totalItems, RowsOfPage);
+                    <li class="page-item">
+                        <a class="page-link" href="javascript:onPageClicked('@(activePage-1)', '@totalPages', '@catID' , '@brdID', '@catName', '@brdName', '@prdName')"><i class="fi-rs-arrow-small-left"></i></a>
+                    </li>
+
+
+                    string mode = "0", secmode = "0";
+                    string active = "";
+
+                    for (int i = 1; i < totalPages + 1; i++)
+                    {
+                        if (i.ToString().Equals(CurrPage)) { active = "active"; } else { active = ""; }
+
+
+                        if (i <= 3)
+                        {
+                            <li class="page-item @active"><a class="page-link" href="javascript:onPageClicked('@i.ToString()', '@totalPages', '@catID' , '@brdID', '@catName', '@brdName', '@prdName')">  @i.ToString() </a></li>
+                        }
+                        else
+                        {
+                            if (i == activePage - 1 || i == activePage || (i == activePage + 1 && i != totalPages))
+                            {
+                                <li class="page-item @active"><a class="page-link" href="javascript:onPageClicked('@i.ToString()', '@totalPages', '@catID' , '@brdID', '@catName', '@brdName', '@prdName')">  @i.ToString() </a></li>
+                            }
+                            else if (mode.Equals("0"))
+                            {
+                                if (i > 3 && i < activePage && secmode.Equals("0"))
+                                {
+                                    <li class="page-item"><a class="page-link dot" href="#">...</a></li>
+                                    secmode = "1";
+                                }
+                                else if (i > activePage + 1)
+                                {
+                                    <li class="page-item"><a class="page-link dot" href="#">...</a></li>
+                                    mode = "1";
+                                }
+
+                            }
+
+
+
+                            if (i == totalPages && activePage != totalPages)
+                            {
+                                <li class="page-item @active"><a class="page-link " href="javascript:onPageClicked('@i.ToString()', '@totalPages', '@catID' , '@brdID', '@catName', '@brdName', '@prdName')"> @i.ToString() </a></li>
+                            }
+
+                        }
+                    }
+
+                    <li class="page-item">
+                        <a class="page-link" href="javascript:onPageClicked('@(activePage+1)', '@totalPages', '@catID' , '@brdID', '@catName', '@brdName', '@prdName')"><i class="fi-rs-arrow-small-right"></i></a>
+                    </li>
+                }
+                catch (Exception ex)
+                {
+
+                }
+            }
+
+
+
+
+
+        </ul>
+    </nav>
+</div>
+
+<script>
+
+    function onPageClicked(activePage, totalPages, catID, brdID, catName, brdName, prdName) {
+
+        var active = parseInt(activePage);
+        var total = parseInt(totalPages);
+       
+        if (active <= 0 || active > total) {
+        } else {
+            window.location.href = '@Url.Action("Search", "Home")?catID=' + catID + "&&brdID=" + brdID + "&&catName=" + catName + "&&brdName=" + brdName + "&&prdName=" + prdName + "&&PageNum=" + activePage;
+        }
+
+
+    }
+
+</script>
